@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html id="game" lang="en" class="no-js">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>PyDemic</title>
+		<meta name="description" content="Pandemic Web App" />
+		<meta name="keywords" content="sliding menu, pushing menu, navigation, responsive, menu, css, jquery" />
+		<meta name="author" content="Max" />
+		<link rel="shortcut icon" href="../favicon.ico">
+		<link rel="stylesheet" type="text/css" href="css/default.css" />
+		<link rel="stylesheet" type="text/css" href="css/component.css" />
+		<script src="js/modernizr.custom.js"></script>
+		<script src="js/jquery-1.11.2.js"></script>
+		<script src="js/jquery-ui.js"></script>
+	</head>
+	<body class="cbp-spmenu-push">
+		<div class="cbp-spmenu cbp-spmenu-vertical cbp-spmenu-right" id="cbp-spmenu-s2">
+			<h3>TEAM</h3>
+			<div id="medic">
+				<p>QUARANTINE SPECIALIST</p>
+				<div><img src="img/blue_cube.svg" width="10%" style="float: left; margin-right: 2%;">SAN FRANCISCO</div>
+			</div>
+		</div>
+
+
+		<div class="container">
+			<div id="map" class="main">
+
+				<object id="cities" type="image/svg+xml" data="img/cities.svg">
+					<h3>Fallback</h3>
+				</object>
+				
+				<object id="outbreaks" type="image/svg+xml" data="img/outbreaks.svg">
+					<h3>Fallback</h3>
+				</object>
+				
+				<object id="infect-rate" type="image/svg+xml" data="img/infect_rate.svg">
+					<h3>Fallback</h3>
+				</object>
+
+				<button id="showRightPush" title="Team">
+					<img src="img/team.svg">
+				</button>
+					
+				<div id="stats">
+					<div id="content">
+						<img id="blue-cube" src="img/blue_cube.svg" height="100%" title="Blue cubes remaining">
+						<p>24</p>
+						<img id="yellow-cube" src="img/yellow_cube.svg" height="100%" title="Yellow cubes remaining">
+						<p>24</p>
+						<img id="black-cube" src="img/black_cube.svg" height="100%" title="Black cubes remaing">	
+						<p>24</p>
+						<img id="red-cube" src="img/red_cube.svg" height="100%" title="Red cubes remaining">	
+						<p>24</p>
+						<img id="research" src="img/research3.svg" height="100%" title="Research stations remaining">
+						<p>6</p>
+						<img id="pl-card-mk" src="img/pl_card.svg" height="100%" title="Player cards remaining">
+						<p>35</p>
+					</div>
+				</div>
+				
+				<div id="player">
+
+					<!-- <div id="text">
+						<p id="role">QUARANTINE SPECIALIST</p>
+					</div> -->
+
+					<div id="hand">
+						<img draggable="true" src="img/rect.svg" height="100%">
+						<img draggable="true" src="img/rect.svg" height="100%">
+						<img draggable="true" src="img/rect.svg" height="100%">
+						<img draggable="true" src="img/rect.svg" height="100%">
+						<img draggable="true" src="img/rect.svg" height="100%">
+						<img draggable="true" src="img/rect.svg" height="100%">
+						<img draggable="true" src="img/rect.svg" height="100%">
+						<img draggable="true" src="img/rect.svg" height="100%">
+					</div>
+				</div>
+
+			</div>
+		</div>
+		<!-- Classie - class helper functions by @desandro https://github.com/desandro/classie -->
+		<script src="js/classie.js"></script>
+		<script>
+			var menuRight = document.getElementById( 'cbp-spmenu-s2' ),
+				showRightPush = document.getElementById( 'showRightPush' ),
+				body = document.body;
+
+			showRightPush.onclick = function() {
+				classie.toggle( this, 'active' );
+				classie.toggle( body, 'cbp-spmenu-push-toleft' );
+				classie.toggle( menuRight, 'cbp-spmenu-open' );
+				disableOther( 'showRightPush' );
+			};
+		</script>
+		<script src="js/image_size.js"></script>
+		<script src="js/image_loc.js"></script>
+	</body>
+</html>

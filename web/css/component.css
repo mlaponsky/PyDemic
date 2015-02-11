@@ -1,0 +1,124 @@
+/* General styles for all menus */
+.cbp-spmenu {
+	background: #222222;
+	position: fixed;
+	width: 14%;
+	height: 100%;
+	top: 0;
+	z-index: 1000;
+}
+
+.cbp-spmenu h3 {
+	color: #FFFFF0;
+	font-size: 1.0em;
+	padding: 10%;
+	margin: 0;
+	font-weight: 300;
+	background: #222222;
+}
+
+/* Vertical menu that slides from the left or right */
+
+.cbp-spmenu-left {
+	left: -14%;
+}
+
+.cbp-spmenu-right {
+	right: -14%;
+}
+
+.cbp-spmenu-left.cbp-spmenu-open {
+	left: 0px;
+}
+
+.cbp-spmenu-right.cbp-spmenu-open {
+	right: 0px;
+}
+
+/* Push classes applied to the body */
+
+.cbp-spmenu-push {
+	overflow-x: hidden;
+	position: relative;
+	left: 0;
+}
+
+.cbp-spmenu-push-toright {
+	left: 130px;
+}
+
+.cbp-spmenu-push-toleft {
+	left: -130px;
+}
+
+/* Transitions */
+
+.cbp-spmenu,
+.cbp-spmenu-push {
+	-webkit-transition: all 0.3s ease;
+	-moz-transition: all 0.3s ease;
+	transition: all 0.3s ease;
+}
+
+/* Example media queries */
+
+@media screen and (max-width: 55.1875em){
+
+	.cbp-spmenu-horizontal {
+		font-size: 75%;
+		height: 110px;
+	}
+
+	.cbp-spmenu-top {
+		top: -110px;
+	}
+
+	.cbp-spmenu-bottom {
+		bottom: -110px;
+	}
+
+}
+
+@media screen and (max-height: 26.375em){
+
+	.cbp-spmenu-vertical {
+		font-size: 90%;
+		width: 180px;
+	}
+
+	.cbp-spmenu-left,
+	.cbp-spmenu-push-toleft {
+		left: -180px;
+	}
+
+	.cbp-spmenu-right {
+		right: -180px;
+	}
+
+	.cbp-spmenu-push-toright {
+		left: 180px;
+	}
+}
+
+#medic {
+	display: block;
+	margin: 0;
+}
+
+#medic > p {
+	font-size: 0.7em;
+	display: block;
+	margin-top: -5%;
+	padding-left: 10%;
+	padding-top: 5%;
+	padding-bottom: 5%;
+	background-color: green;
+	color: #fffff0;
+}
+
+#medic > div {
+	display: inline-block;
+	font-size: 0.6em;
+	color: #fffff0;
+	vertical-align: middle;
+}

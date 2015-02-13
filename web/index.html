@@ -15,13 +15,31 @@
 		<script src="js/jquery-1.11.2.js"></script>
 		<script src="js/jquery-ui.js"></script>
 	</head>
-	<body class="cbp-spmenu-push">
-		<div class="cbp-spmenu cbp-spmenu-vertical cbp-spmenu-right" id="cbp-spmenu-s2">
+	<body class="menu-push">
+		<div class="menu menu-vertical menu-right" id="team-menu">
 			<h3>TEAM</h3>
-			<div id="medic">
-				<p>QUARANTINE SPECIALIST</p>
-				<div><img src="img/blue_cube.svg" width="10%" style="float: left; margin-right: 2%;">SAN FRANCISCO</div>
-			</div>
+			<ul class="players">
+				<li>
+					<ul class="player-hand">
+						<li id="researcher" class="role">RESEARCHER</li>
+						<li class="card"><div class="blue"></div> <p>SAN FRANCISCO</p> </li>
+						<li class="card"><div class="black"></div> <p>ISTANBUL</p> </li>
+						<li class="card"><div class="event"></div> <p>RESEARCH GRANT</p> </li>
+					</ul>
+				</li>
+				<li>
+					<ul class="player-hand">
+						<li id="scientist" class="role">SCIENTIST</li>
+						<li class="card"><div class="red"></div> <p>HO CHI MINH CITY</p> </li>
+					</ul>
+				</li>
+				<li>
+					<ul class="player-hand">
+						<li id="oe" class="role">OPERATIONS EXPERT</li>
+						<li class="card"><div class="yellow"></div> <p>RIO DE JANIERO</p> </li>
+					</ul>
+				</li>
+			</ul>
 		</div>
 
 
@@ -39,8 +57,12 @@
 				<object id="infect-rate" type="image/svg+xml" data="img/infect_rate.svg">
 					<h3>Fallback</h3>
 				</object>
+				
+				<object id="player-discard" type="image/svg+xml" data="img/player_discard.svg">
+					<h3>Fallback</h3>
+				</object>
 
-				<button id="showRightPush" title="Team">
+				<button id="team-button" title="Team">
 					<img src="img/team.svg">
 				</button>
 					
@@ -54,7 +76,7 @@
 						<p>24</p>
 						<img id="red-cube" src="img/red_cube.svg" height="100%" title="Red cubes remaining">	
 						<p>24</p>
-						<img id="research" src="img/research3.svg" height="100%" title="Research stations remaining">
+						<img id="research" src="img/research.svg" height="100%" title="Research stations remaining">
 						<p>6</p>
 						<img id="pl-card-mk" src="img/pl_card.svg" height="100%" title="Player cards remaining">
 						<p>35</p>
@@ -83,19 +105,8 @@
 		</div>
 		<!-- Classie - class helper functions by @desandro https://github.com/desandro/classie -->
 		<script src="js/classie.js"></script>
-		<script>
-			var menuRight = document.getElementById( 'cbp-spmenu-s2' ),
-				showRightPush = document.getElementById( 'showRightPush' ),
-				body = document.body;
-
-			showRightPush.onclick = function() {
-				classie.toggle( this, 'active' );
-				classie.toggle( body, 'cbp-spmenu-push-toleft' );
-				classie.toggle( menuRight, 'cbp-spmenu-open' );
-				disableOther( 'showRightPush' );
-			};
-		</script>
 		<script src="js/image_size.js"></script>
 		<script src="js/image_loc.js"></script>
+		<script src="js/team_menu.js"></script>
 	</body>
 </html>

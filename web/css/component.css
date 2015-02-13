@@ -1,79 +1,79 @@
 /* General styles for all menus */
-.cbp-spmenu {
+.menu {
 	background: #222222;
 	position: fixed;
-	width: 14%;
+	width: 12%;
 	height: 100%;
 	top: 0;
 	z-index: 1000;
 }
 
-.cbp-spmenu h3 {
+.menu h3 {
 	color: #FFFFF0;
 	font-size: 1.0em;
 	padding: 10%;
-	margin: 0;
+	margin-bottom: -13%;
+	margin-top: -5%;
 	font-weight: 300;
-	background: #222222;
 }
 
 /* Vertical menu that slides from the left or right */
 
-.cbp-spmenu-left {
-	left: -14%;
+.menu-left {
+	left: -12%;
 }
 
-.cbp-spmenu-right {
-	right: -14%;
+.menu-right {
+	right: -12%;
 }
 
-.cbp-spmenu-left.cbp-spmenu-open {
+.menu-left.menu-open {
 	left: 0px;
 }
 
-.cbp-spmenu-right.cbp-spmenu-open {
+.menu-right.menu-open {
 	right: 0px;
 }
 
 /* Push classes applied to the body */
 
-.cbp-spmenu-push {
+.menu-push {
 	overflow-x: hidden;
 	position: relative;
 	left: 0;
 }
 
-.cbp-spmenu-push-toright {
-	left: 130px;
+.menu-push-toright {
+	left: 6%;
 }
 
-.cbp-spmenu-push-toleft {
-	left: -130px;
+.menu-push-toleft {
+	left: -6%;
 }
 
 /* Transitions */
 
-.cbp-spmenu,
-.cbp-spmenu-push {
-	-webkit-transition: all 0.3s ease;
-	-moz-transition: all 0.3s ease;
-	transition: all 0.3s ease;
+.menu,
+.menu-push {
+	-webkit-transition: all 0.s ease;
+	-moz-transition: all 0.4s ease;
+	transition: all 0.4s ease;
 }
 
 /* Example media queries */
 
 @media screen and (max-width: 55.1875em){
 
-	.cbp-spmenu-horizontal {
+	.menu-horizontal {
 		font-size: 75%;
 		height: 110px;
 	}
 
-	.cbp-spmenu-top {
+	.menu-top {
 		top: -110px;
 	}
 
-	.cbp-spmenu-bottom {
+	.menu-bottom {
 		bottom: -110px;
 	}
 
@@ -81,44 +81,108 @@
 
 @media screen and (max-height: 26.375em){
 
-	.cbp-spmenu-vertical {
+	.menu-vertical {
 		font-size: 90%;
 		width: 180px;
 	}
 
-	.cbp-spmenu-left,
-	.cbp-spmenu-push-toleft {
+	.menu-left,
+	.menu-push-toleft {
 		left: -180px;
 	}
 
-	.cbp-spmenu-right {
+	.menu-right {
 		right: -180px;
 	}
 
-	.cbp-spmenu-push-toright {
+	.menu-push-toright {
 		left: 180px;
 	}
 }
 
-#medic {
-	display: block;
-	margin: 0;
+ul {
+	list-style: none;
+	padding-left: 0;
 }
 
-#medic > p {
+ul > li {
+	color: #fffff0;
+	height: auto;
+}
+
+.role {
 	font-size: 0.7em;
-	display: block;
-	margin-top: -5%;
-	padding-left: 10%;
-	padding-top: 5%;
-	padding-bottom: 5%;
-	background-color: green;
-	color: #fffff0;
+	padding: 5% 0 5% 10%;
 }
 
-#medic > div {
-	display: inline-block;
+.card {
+	position: relative;
+	display: block;
+	margin-left: 10%;
+}
+
+.card > p {
 	font-size: 0.6em;
-	color: #fffff0;
-	vertical-align: middle;
+	padding-left: 12%;
+	text-overflow: ellipsis;
+}
+.card > div {
+	height: 100%;
+	width: 8%;
+	position: absolute;
+	left: 0;
+	top: 0;
+	border: 1px solid #fffff0;
+}
+
+
+/* Roles Styling */
+#medic {
+	background-color: #ff9900;
+}
+
+#qs {
+	background-color: #194719;
+}
+
+#oe {
+	background-color: #248f24; 
+}
+
+#scientist {
+	background-color: #888888;
+}
+
+#cp {
+	background-color: #29a3a3;
+}
+
+#dispatcher {
+	background-color: #6b008f;
+}
+
+#researcher {
+	background-color: #663300;
+}
+
+
+/* Card Styling */
+.blue {
+	background-color: #75a4ff;
+}
+
+.yellow {
+	background-color: #e6cf73;
+}
+
+.black {
+	background-color: #3d3d3d;
+}
+
+.red {
+	background-color: #ff6666;
+}
+
+.event {
+	background-color: #ffa319;
 }

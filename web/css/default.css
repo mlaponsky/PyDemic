@@ -141,10 +141,10 @@ a:hover {
 	color: #ccc;
 }
 
-#showRightPush {
+#team-button {
 	border: 2px solid #fffff0;
 	border-radius: 25%;
-	background: #393939;
+	background: #434343;
 	padding: 0.4%;
 	width: 2.2%;
 	cursor: pointer;
@@ -154,18 +154,18 @@ a:hover {
 	display: block;
 }
 
-#showRightPush > img {
+#team-button > img {
 	height: 30%;
 	width: 100%;
 	pointer-events: none;
 }
 
-#showRightPush:hover {
+#team-button:hover {
 	border: 4px solid #fffff0;
 	padding: 0.295%;
 }
 
-#showRightPush.active {
+#team-button.active {
 	background: #fffff0;
 	border-color: #a3ff447;
 }
@@ -191,7 +191,7 @@ a:hover {
 	top: 0;
 	bottom: 0;
 	margin: 0 auto;
-	background: url('../img/map.png') no-repeat center center;
+	background: url('../img/map_light.png') no-repeat center center;
 	-webkit-background-size: contain;
     -moz-background-size: contain;
     -o-background-size: contain;
@@ -237,6 +237,13 @@ a:hover {
 	right: 21%;
 	top: 7%;
 	width: 17%;
+}
+
+#player-discard {
+	position: absolute;
+	bottom: 2%;
+	left: 21%;
+	height: 14%;
 }
 
 #text {

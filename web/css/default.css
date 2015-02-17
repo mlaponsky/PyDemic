@@ -67,10 +67,9 @@ a:hover {
 }
 
 #stats {
-	border: 1px solid;
+	border: 2px solid #fffff0;
 	border-bottom-left-radius: 4% 50%;
 	border-bottom-right-radius: 4% 50%;
-	border-color: #fffff0;
 	border-top: none;
 	background: #222222;
 	color: #fff;
@@ -110,18 +109,17 @@ a:hover {
 }
 
 #player {
-	border: 1px solid;
+	border: 2px solid #fffff0;
 	border-top-left-radius: 1.5% 10%;
 	border-top-right-radius: 1.5% 10%;
-	border-color: #fffff0;
 	border-bottom: none;
 	background: #222222;
 	color: #fff;
-	width: 58%;
+	width: 55%;
 	height: 18%;
 	font-size: 0.8em;
 	position: absolute;
-	left: 28%;
+	left: 33%;
 	bottom: 0%;
 	white-space: nowrap;
 	overflow: auto;
@@ -242,8 +240,29 @@ a:hover {
 #player-discard {
 	position: absolute;
 	bottom: 2%;
-	left: 21%;
+	left: 26%;
 	height: 14%;
+}
+
+#player-card {
+	position: absolute;
+	bottom: 2%;
+	left: 20%;
+	height: 14%;
+}
+
+#infect-discard {
+	position: absolute;
+	top: 5%;
+	left:15%;
+	height: 9.5%;
+}
+
+#infect-card {
+	position: absolute;
+	top: 5%;
+	left: 8%;
+	height: 9.5%;
 }
 
 #text {

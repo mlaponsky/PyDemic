@@ -9,12 +9,12 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="78.493614"
+   width="76.996078"
    height="191"
    id="svg2"
    version="1.1"
    inkscape:version="0.48.4 r9939"
-   sodipodi:docname="outbreaks.svg">
+   sodipodi:docname="outbreaks2.svg">
   <defs
      id="defs4" />
   <sodipodi:namedview
@@ -25,10 +25,10 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="2.8"
-     inkscape:cx="61.28442"
-     inkscape:cy="98.482722"
+     inkscape:cx="54.793843"
+     inkscape:cy="98.482721"
      inkscape:document-units="px"
-     inkscape:current-layer="layer1"
+     inkscape:current-layer="layer2"
      showgrid="false"
      showguides="true"
      inkscape:guide-bbox="true"
@@ -49,7 +49,7 @@
        visible="true"
        enabled="true"
        snapvisiblegridlinesonly="true"
-       originx="-521.00638px"
+       originx="-522.50392px"
        originy="-2398.5px" />
   </sodipodi:namedview>
   <metadata
@@ -68,26 +68,26 @@
      inkscape:groupmode="layer"
      id="layer2"
      inkscape:label="color"
-     transform="translate(17.493616,3.8281252e-7)">
+     transform="translate(15.996075,7.6562503e-7)">
     <text
        xml:space="preserve"
-       style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:120.00000477%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#fffff0;fill-opacity:1;stroke:none;font-family:Mukti Narrow;-inkscape-font-specification:Mukti Narrow"
-       x="-76.588287"
-       y="-7.1048222"
+       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:120.00000477%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#fffff0;fill-opacity:1;stroke:none;font-family:Mukti Narrow;-inkscape-font-specification:Mukti Narrow"
+       x="-84.588287"
+       y="-7.1133575"
        id="text5766"
        sodipodi:linespacing="120%"
        transform="matrix(-0.00106688,-0.99999943,0.99999943,-0.00106688,0,0)"><tspan
          sodipodi:role="line"
          id="tspan5768"
-         x="-76.588287"
-         y="-7.1048222"
-         style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:120.00000477%;writing-mode:lr-tb;text-anchor:start;font-family:DejaVu Sans Mono;-inkscape-font-specification:DejaVu Sans Mono">OUTBREAKS</tspan></text>
+         x="-84.588287"
+         y="-7.1133575"
+         style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:120.00000477%;writing-mode:lr-tb;text-anchor:start;font-family:Mukti Narrow;-inkscape-font-specification:Mukti Narrow">OUTBREAKS</tspan></text>
   </g>
   <g
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-162.00638,-61.862183)">
+     transform="translate(-163.50392,-61.862183)">
     <path
        sodipodi:type="arc"
        style="fill:none;stroke:#fffff0;stroke-width:1;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"

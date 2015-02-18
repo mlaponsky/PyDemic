@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html id="game" lang="en" class="no-js">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>PyDemic</title>
+		<meta name="description" content="Pandemic Web App" />
+		<meta name="keywords" content="sliding menu, pushing menu, navigation, responsive, menu, css, jquery" />
+		<meta name="author" content="Max Laponsky" />
+		<link rel="shortcut icon" href="../favicon.ico">
+		<link rel="stylesheet" type="text/css"
+							   href="static/css/default.css" />
+		<link rel="stylesheet" type="text/css"
+							   href="static/css/component.css" />
+		<script src="static/js/modernizr.custom.js"></script>
+		<script src="static/js/jquery-1.11.2.js"></script>
+		<script src="static/js/jquery-ui.js"></script>
+	</head>
+	<body class="menu-push">
+		<div class="menu menu-vertical menu-right" id="team-menu">
+			<h3>TEAM</h3>
+			<ul class="players">
+				<li>
+					<ul class="player-hand">
+						<li id="researcher" class="role">RESEARCHER</li>
+						<li class="card"><div class="blue"></div> <p>SAN FRANCISCO</p> </li>
+						<li class="card"><div class="black"></div> <p>ISTANBUL</p> </li>
+						<li class="card"><div class="event"></div> <p>RESEARCH GRANT</p> </li>
+					</ul>
+				</li>
+				<li>
+					<ul class="player-hand">
+						<li id="scientist" class="role">SCIENTIST</li>
+						<li class="card"><div class="red"></div> <p>HO CHI MINH CITY</p> </li>
+					</ul>
+				</li>
+				<li>
+					<ul class="player-hand">
+						<li id="oe" class="role">OPERATIONS EXPERT</li>
+						<li class="card"><div class="yellow"></div> <p>RIO DE JANIERO</p> </li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+
+
+		<div class="container">
+			<div id="map" class="main">
+
+				<object id="cities" type="image/svg+xml" data="static/img/cities.svg">
+					<h3>Fallback</h3>
+				</object>
+
+				<object id="outbreaks" type="image/svg+xml" data="static/img/outbreaks2.svg">
+					<h3>Fallback</h3>
+				</object>
+
+				<object id="infect-rate" type="image/svg+xml" data="static/img/infect_rate.svg">
+					<h3>Fallback</h3>
+				</object>
+
+				<object id="player-discard" type="image/svg+xml" data="static/img/player_discard.svg">
+					<h3>Fallback</h3>
+				</object>
+
+				<object id="player-card" type="image/svg+xml" data="static/img/player_card.svg">
+					<h3>Fallback</h3>
+				</object>
+
+				<object id="infect-card" type="image/svg+xml" data="static/img/infect_card.svg">
+					<h3>Fallback</h3>
+				</object>
+
+				<object id="infect-discard" type="image/svg+xml" data="static/img/infect_discard.svg">
+					<h3>Fallback</h3>
+				</object>
+
+				<button id="team-button" title="Team">
+					<img src="static/img/team.svg">
+				</button>
+
+				<div id="stats">
+					<div id="content">
+						<img id="blue-cube" src="static/img/blue_cube.svg" height="100%" title="Blue cubes remaining">
+						<p>24</p>
+						<img id="yellow-cube" src="static/img/yellow_cube.svg" height="100%" title="Yellow cubes remaining">
+						<p>24</p>
+						<img id="black-cube" src="static/img/black_cube.svg" height="100%" title="Black cubes remaing">
+						<p>24</p>
+						<img id="red-cube" src="static/img/red_cube.svg" height="100%" title="Red cubes remaining">
+						<p>24</p>
+						<img id="research" src="static/img/research.svg" height="100%" title="Research stations remaining">
+						<p>6</p>
+						<img id="pl-card-mk" src="static/img/pl_card.svg" height="100%" title="Player cards remaining">
+						<p>35</p>
+					</div>
+				</div>
+
+				<div id="player">
+
+					<!-- <div id="text">
+						<p id="role">QUARANTINE SPECIALIST</p>
+					</div> -->
+
+					<div id="hand">
+						<img draggable="true" src="static/img/rect.svg" height="100%">
+						<img draggable="true" src="static/img/rect.svg" height="100%">
+						<img draggable="true" src="static/img/rect.svg" height="100%">
+						<img draggable="true" src="static/img/rect.svg" height="100%">
+						<img draggable="true" src="static/img/rect.svg" height="100%">
+						<img draggable="true" src="static/img/rect.svg" height="100%">
+						<img draggable="true" src="static/img/rect.svg" height="100%">
+						<img draggable="true" src="static/img/rect.svg" height="100%">
+						<img draggable="true" src="static/img/rect.svg" height="100%">
+					</div>
+				</div>
+
+			</div>
+		</div>
+		<!-- Classie - class helper functions by @desandro https://github.com/desandro/classie -->
+		<script src="static/js/classie.js"></script>
+		<script src="static/js/image_size.js"></script>
+		<script src="static/js/image_loc.js"></script>
+		<script src="static/js/team_menu.js"></script>
+	</body>
+</html>

@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 
-import constants, player, board, deck, city
+from player import Player
+from board import Board
+from deck import Deck, PlayerCards, InfectCards
+from constants import *
 from random import shuffle
 
 class Game:
-    board = board.Board()
     phase = 0
 
     num_outbreaks = 0
@@ -13,32 +15,32 @@ class Game:
 
     num_players = 0
     players = []
-    actions = {}
 
-    player_cards = deck.Deck()
-    infect_cards = deck.Deck()
     from_discard = []
 
     research_stations = []
-    cubes_left = [constants.NUM_CUBES] * 4
+    cubes_left = [NUM_CUBES] * 4
     cures = [False] * 4
+    eradicated = [False] * 4
     quarantined = []
 
     def __init__(self, roles, epidemics):
-        self.board.fill_neighbors()
+        self.board = Board()
         self.num_epidemics = epidemics
         self.num_players = len(roles)
-        self.research_stations.append(constants.ATL)
+        self.research_stations.append(ATL)
 
         for i in range(self.num_players):
-            self.players.append(player.Player(roles[i]))
-            self.actions[roles[i]] = 0
+            self.players.append(Player(roles[i]))
+
+        self.player_cards = PlayerCards(self.players, self.num_epidemics)
+        self.infect_cards = InfectCards()
 
         # cubes[city][color]
-        self.cubes = [ [0] * 4 for x in range(constants.NUM_CITIES) ]
+        self.cubes = [ [0] * 4 for x in range(NUM_CITIES) ]
 
         # outbreaks[color][cities]
-        self.outbreaks = [ [] for i in range(4) ]
+        self.outbreaks = []
 
     ## Manage game phase
     def get_phase(self):
@@ -46,43 +48,6 @@ class Game:
 
     def set_phase(self, phase):
         self.phase = phase
-
-    ## Set decks
-    def fill_player_deck(self):
-        for city in range(constants.NUM_CITIES):
-            self.player_cards.add_to_deck(city)
-
-        for event in constants.EVENT_C:
-            self.player_cards.add_to_deck(event)
-
-    def set_player_deck(self):
-        self.player_cards.shuffle_deck()
-        deck = self.player_cards.get_deck()
-        segmentSize = len(deck) // self.num_epidemics
-        extras = len(deck) % self.num_epidemics
-        segments = []
-        start = 0
-        end = 0
-
-        for i in range(self.num_epidemics):
-            end = start + segmentSize + (extras > 0)
-            extras -= 1
-            segment = deck[start:end]
-            segment.append(constants.EPIDEMIC)
-            shuffle(segment)
-            segments.append(segment)
-            start = end
-
-        new_deck = []
-        for segment in segments:
-            new_deck += segment
-
-        self.player_cards.set_deck(new_deck)
-
-    def fill_infect_deck(self):
-        for city in range(constants.NUM_CITIES):
-            self.infect_cards.add_to_deck(city)
-        self.infect_cards.shuffle_deck()
 
     ## The procedures for adding cubes.
     '''
@@ -94,17 +59,23 @@ class Game:
         return card
 
     def infect(self, city, color, num_cubes):
-        if city not in self.quarantined:
-            if self.cubes[city][color] + num_cubes <= constants.MAX_CUBES:
+        if city not in self.quarantined or not self.eradicated[color]:
+            if self.cubes[city][color] + num_cubes <= MAX_CUBES:
                 self.cubes[city][color] += num_cubes
                 self.cubes_left[color] -= num_cubes
             else:
-                self.cubes[city][color] = constants.MAX_CUBES
-                self.cubes_left[color] -= constants.MAX_CUBES - num_cubes
+                self.cubes[city][color] = MAX_CUBES
+                self.cubes_left[color] -= MAX_CUBES - num_cubes
                 self.outbreak(city, color)
 
     def outbreak(self, city, color):
-        if city not in self.outbreaks[color]:
+        self.execute_outbreak(city, color):
+        self.reset_outbreaks()
+
+    def execute_outbreak(self, city, color):
+        if city not in self.outbreaks[color] or
+                or city not in self.quarantined
+                or city not self.eradicated[color]:
             self.num_outbreaks += 1
             self.outbreaks[color].append(city)
             neighbors = self.board.get_neighbors(city)
@@ -112,16 +83,15 @@ class Game:
                 self.infect(n, color, 1)
 
     def resetOutbreaks(self):
-        self.outbreaks = [ [] for i in range(4) ]
+        self.outbreaks = []
 
     def epidemic(self):
         self.num_epidemics += 1
         card = self.infect_cards.draw_card(-1)
         print(card)
         self.infect_cards.add_to_discard(card)
-        self.infect(card, card // 12, constants.MAX_CUBES)
+        self.infect(card, card // CITIES_PER_COLOR, MAX_CUBES)
         self.infect_cards.recombine_decks()
-        self.reset_outbreaks()
 
 ## Special Role handlers
     # This function automates the Jesus ability for the medic with a cure.
@@ -157,7 +127,7 @@ class Game:
 
     # The general function for removing cubes. Accounts for the medic case.
     def remove_cubes(self, city, player, color):
-        if player == constants.MEDIC:
+        if player == MEDIC:
             self.cubes_left[color] += self.cubes[city][color]
             self.cubes[city][color] = 0
         else:
@@ -178,7 +148,7 @@ class Game:
 
     # Handles OE special ability.
     def build_station(self, city, player):
-        if player.get_role() != constants.OE:
+        if player.get_role() != OE:
             player.discard(city)
         if player.get_position() == city:
             self.research_stations.append(city)
@@ -187,7 +157,7 @@ class Game:
     def can_share(self, city, owner, target):
         same_city = owner.get_position() == target.get_position()
         right_city = (city == owner.get_position()
-                                or owner.get_role() == constants.RESEARCHER)
+                                or owner.get_role() == RESEARCHER)
         return same_city and right_city
 
     def share(self, city, owner, target):
@@ -204,20 +174,20 @@ class Game:
 
 # Event card handling
     def play_airlift(self, player, target, new_pos):
-        player.discard(constants.AIRLIFT)
-        self.player_cards.add_to_discard(constants.AIRLIFT)
+        player.discard(AIRLIFT)
+        self.player_cards.add_to_discard(AIRLIFT)
         target.move(new_pos)
-        if target.get_role() == constants.QS:
+        if target.get_role() == QS:
             self.quarantine_cities(target)
 
     def play_gov_grant(self, player, loc):
         self.research_stations.append(loc)
-        player.discard(constants.GG)
+        player.discard(GG)
 
     def resolve_forecast(self, reorded):
         self.infect_cards.set_deck(self.infect_cards.get_deck()[:6])
         self.infect_cards.set_deck(reorded + self.infect_cards.get_deck())
-        player.discard(constants.FORECAST)
+        player.discard(FORECAST)
 
 ## End conditions
     # Win
@@ -232,7 +202,7 @@ class Game:
         return self.cubes_left[color] - added < 0
 
     def is_outbreak_lose(self):
-        return self.num_outbreaks >= constants.MAX_OUTBREAKS
+        return self.num_outbreaks >= MAX_OUTBREAKS
 
     def is_card_lose(self):
         return self.player_cards.getSize() < 2

@@ -1,13 +1,12 @@
 import constants
 
 class City:
-    cubes = {}
-
-    def __init__(self, name, color):
+    def __init__(self, name, population, primary, secondary, tertiary):
         self.name = name
-        self.color = color
-        for i in range(0,4):
-            self.cubes[i] = 0
+        self.color = primary
+        self.secondary = secondary
+        self.tertiary = tertiary
+        self.population = population
 
     def add_cubes(self, color, number):
         self.cubes[color] += number

@@ -5,13 +5,12 @@ import city
 
 class Board:
     neighbors = {}
-    numCities = 0
-    numNeighbors = 0
     distance = 0
 
     def __init__(self):
         for num in range(constants.NUM_CITIES):
             self.neighbors[num] = []
+        self.fill_neighbors()
 
     def add_neighbor(self, n1, n2):
         self.neighbors[n1].append(n2)

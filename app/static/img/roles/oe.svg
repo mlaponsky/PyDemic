@@ -1,5 +1,5 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
-<svg id="svg2" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 131.31 229.19" version="1.1" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/">
+<svg id="svg2" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 137.8125 234.1875" height="100%" width="100%" version="1.1" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/">
  <metadata id="metadata7">
   <rdf:RDF>
    <cc:Work rdf:about="">
@@ -9,7 +9,7 @@
    </cc:Work>
   </rdf:RDF>
  </metadata>
- <g id="layer1" transform="translate(-339.34375,-208.6875)">
-  <path id="path2987" d="m405,209.19c-26.61,0-48.188,21.578-48.188,48.188,0,16.365,8.1839,30.792,20.656,39.5v0.0312l-37.47,140.47h130l-37.469-140.5c12.472-8.708,20.656-23.135,20.656-39.5,0-26.61-21.578-48.188-48.188-48.188z" stroke="#fffff0" stroke-miterlimit="4" stroke-dasharray="none" stroke-width="1" fill="#a3ff47"/>
+ <g id="layer1" transform="translate(-336.09375,-206.1875)" stroke="#fffff0" stroke-dasharray="none" stroke-miterlimit="4" stroke-width="6" fill="#248f24">
+  <path id="path2987" d="m405,209.19c-26.61,0-48.188,21.578-48.188,48.188,0,16.365,8.1839,30.792,20.656,39.5v0.0312l-37.47,140.47h130l-37.469-140.5c12.472-8.708,20.656-23.135,20.656-39.5,0-26.61-21.578-48.188-48.188-48.188z" stroke="#fffff0" stroke-miterlimit="4" stroke-dasharray="none" stroke-width="6" fill="#248f24"/>
  </g>
 </svg>

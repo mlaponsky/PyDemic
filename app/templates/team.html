@@ -1,25 +1,15 @@
 <div class="menu menu-vertical menu-right" id="team-menu">
     <h3>TEAM</h3>
     <ul class="players">
+        {% for player in team %}
         <li>
             <ul class="player-hand">
-                <li id="researcher" class="role">RESEARCHER</li>
-                <li class="card"><div class="blue"></div> <p>SAN FRANCISCO</p> </li>
-                <li class="card"><div class="black"></div> <p>ISTANBUL</p> </li>
-                <li class="card"><div class="event"></div> <p>RESEARCH GRANT</p> </li>
+                <li id="{{ player.get_id() }}" class="role">{{ player.get_role() }}</li>
+                {% for card in player.hand %}
+                <li class="card"><div class="{{ colors[card // 12] }}"></div> <p>{{ cards[card]['name'] }}</p> </li>
+                {% endfor %}
             </ul>
         </li>
-        <li>
-            <ul class="player-hand">
-                <li id="scientist" class="role">SCIENTIST</li>
-                <li class="card"><div class="red"></div> <p>HO CHI MINH CITY</p> </li>
-            </ul>
-        </li>
-        <li>
-            <ul class="player-hand">
-                <li id="oe" class="role">OPERATIONS EXPERT</li>
-                <li class="card"><div class="yellow"></div> <p>RIO DE JANIERO</p> </li>
-            </ul>
-        </li>
+        {% endfor %}
     </ul>
 </div>

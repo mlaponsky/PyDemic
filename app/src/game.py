@@ -31,12 +31,13 @@ class Game:
         self.num_epidemics = epidemics
         self.num_players = len(roles)
         self.research_stations.append(ATL)
+        self.research_stations.append(BAG)
 
         for role in roles:
             self.players.append(self.assign_player(role))
 
         self.player_cards = PlayerCards(self.players, self.num_epidemics)
-        self.set_order()
+        self.active = self.set_order()
         self.infect_cards = InfectCards()
 
         # cubes[city][color]

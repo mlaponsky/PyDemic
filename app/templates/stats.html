@@ -1,16 +1,16 @@
 <div id="stats">
     <div id="content">
         <img id="blue-cube" src="static/img/blue_cube.svg" height="100%" title="Blue cubes remaining">
-        <p>24</p>
+        <p>{{ game.cubes_left[0] }}</p>
         <img id="yellow-cube" src="static/img/yellow_cube.svg" height="100%" title="Yellow cubes remaining">
-        <p>24</p>
+        <p>{{ game.cubes_left[1] }}</p>
         <img id="black-cube" src="static/img/black_cube.svg" height="100%" title="Black cubes remaing">
-        <p>24</p>
+        <p>{{ game.cubes_left[2] }}</p>
         <img id="red-cube" src="static/img/red_cube.svg" height="100%" title="Red cubes remaining">
-        <p>24</p>
+        <p> {{ game.cubes_left[3] }}</p>
         <img id="research" src="static/img/research.svg" height="100%" title="Research stations remaining">
-        <p>6</p>
+        <p>{{ 6 - game.research_stations|length }}</p>
         <img id="pl-card-mk" src="static/img/pl_card.svg" height="100%" title="Player cards remaining">
-        <p>35</p>
+        <p>{{ game.player_cards.get_deck()|length }}</p>
     </div>
 </div>

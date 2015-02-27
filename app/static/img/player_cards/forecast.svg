@@ -1,0 +1,18 @@
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg id="svg2" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 227.48499 298.84145" height="100%" width="100%" version="1.1" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/">
+ <metadata id="metadata7">
+  <rdf:RDF>
+   <cc:Work rdf:about="">
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:title/>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <g id="layer1" transform="translate(-236.19428,-194.37427)">
+  <rect id="rect2985" rx="26.198" ry="23.883" height="291" width="219.64" stroke="#ffa319" stroke-dasharray="none" stroke-miterlimit="4" y="198.3" x="240.12" stroke-width="7.8452" fill="#333"/>
+  <rect id="rect3760" stroke-linejoin="miter" rx="0" stroke-dashoffset="0" ry="0" height="69.132" width="217.56" stroke="#ffa319" stroke-dasharray="none" stroke-miterlimit="4" y="244.57" x="241.21" stroke-width="2" fill="#ffa319"/>
+  <text id="text3762" style="writing-mode:lr-tb;letter-spacing:0px;text-anchor:middle;word-spacing:0px;text-align:center;" line-height="0%" font-family="fontawesome" xml:space="preserve" font-size="28.00000191px" font-stretch="normal" font-variant="normal" y="289.14999" x="349.91626" font-weight="bold" font-style="normal" fill="#333333"><tspan id="tspan3764" style="writing-mode:lr-tb;text-anchor:middle;text-align:center;" line-height="0%" font-size="26px" font-style="normal" font-stretch="normal" font-variant="normal" y="289.14999" x="349.91626" font-family="fontawesome">Forecast</tspan></text>
+  <text id="text6525" style="letter-spacing:0px;word-spacing:0px;" font-weight="bold" xml:space="preserve" font-size="180px" font-style="normal" y="462.82504" x="269.25317" font-family="Sans" line-height="775%" fill="#ffa319"><tspan id="tspan6527" x="269.25317" y="462.82504">⚠</tspan></text>
+ </g>
+</svg>

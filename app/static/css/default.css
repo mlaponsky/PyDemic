@@ -60,110 +60,9 @@ a:hover {
 	margin: 0 auto;
 }
 
-.buttonset {
-	max-width: 260px;
-	width: 90%;
-	margin: 0 auto;
-}
-
-#stats {
-	border: 2px solid #fffff0;
-	border-bottom-left-radius: 4% 50%;
-	border-bottom-right-radius: 4% 50%;
-	border-top: none;
-	background: #222222;
-	color: #fff;
-	height: 3%;
-	font-size: 10pt;
-	width: 17.5%;
-	position: absolute;
-	left: 28%;
-	top: 0%;
-	white-space: nowrap;
-	overflow: hidden;
-	padding-left: 1.7%;
-}
-
-#content {
-	position: absolute;
-	width: 100%;
-	height: 80%;
-	display: block;
-	margin: 0 auto;
-}
-
-#content > * {
-	display: inline;
-	height: 80%;
-	vertical-align: middle;
-}
-
-#content > img {
-	pointer-events: none;
-}
-
-#content > p {
-	padding-right: 2%;
-	font-size: 10pt;
-}
-
-#player {
-	border: 2px solid #fffff0;
-	border-top-left-radius: 1.5% 10%;
-	border-top-right-radius: 1.5% 10%;
-	border-bottom: none;
-	background: #222222;
-	color: #fff;
-	width: 56%;
-	height: 18%;
-	font-size: 0.8em;
-	position: absolute;
-	left: 33%;
-	bottom: 0%;
-	white-space: nowrap;
-	overflow: auto;
-}
-
-#player > * {
-	padding-left: 1%;
-	padding-right: 1%;
-	position: absolute;
-	height: 80%;
-	display: inline;
-}
-
 .main > section h2 {
 	font-weight: 300;
 	color: #ccc;
-}
-
-#team-button {
-	border: 2px solid #fffff0;
-	border-radius: 25%;
-	background: #434343;
-	padding: 0.4%;
-	width: 2.2%;
-	cursor: pointer;
-	position: absolute;
-	top: 7%;
-	right: 8%;
-	display: block;
-}
-
-#team-button > img {
-	height: 30%;
-	width: 100%;
-	pointer-events: none;
-}
-
-#team-button:hover {
-	border: 4px solid #fffff0;
-	padding: 0.295%;
-}
-
-#team-button.active {
-	background: #fffff0;
-	border-color: #a3ff447;
 }
 
 .main > section button.disabled {
@@ -211,28 +110,53 @@ a:hover {
 	height: 100%;
 }
 
-#pieces {
-	list-style-type: none;
+#team-button {
+	border: 2px solid #fffff0;
+	border-radius: 25%;
+	background: #434343;
+	padding: 0.4%;
+	width: 2.2%;
+	cursor: pointer;
+	position: absolute;
+	top: 7%;
+	right: 8%;
+	display: block;
 }
 
-#name {
-	height: 100%;
-	width: 5%;
-	padding-top: 2.5%;
-}
-
-#name > img {
+#team-button > img {
+	height: 30%;
 	width: 100%;
+	pointer-events: none;
 }
 
-#hand {
-	left: 5%;
-	top: 10%;
+#team-button:hover {
+	border: 4px solid #fffff0;
+	padding: 0.295%;
 }
-#hand > * {
-	padding-left: 0.01%;
-	padding-right: 0.01%;
-	display: inline-block;
+
+#team-button.active {
+	background: #fffff0;
+	border-color: #a3ff447;
+}
+
+#cures {
+	border: 2px solid #fffff0;
+	border-bottom-left-radius: 8% 27%;
+	border-bottom-right-radius: 8% 27%;
+	border-top: none;
+	position: absolute;
+	left: 18%;
+	top: 0%;
+	width: 10%;
+	height: auto;
+	background-color: #222222;
+	padding-left: 1%;
+	padding-right: 1%;
+	padding-top: 0.5%;
+}
+
+#cures > * {
+	width: 100%;
 }
 
 #outbreaks {
@@ -249,46 +173,12 @@ a:hover {
 	width: 17%;
 }
 
-#player-discard {
-	position: absolute;
-	bottom: 2%;
-	left: 26%;
-	height: 14%;
-}
-
-#player-card {
-	position: absolute;
-	bottom: 2%;
-	left: 20%;
-	height: 14%;
-}
-
-#infect-discard {
-	position: absolute;
-	top: 5%;
-	left:15%;
-	height: 9.5%;
-}
-
-#infect-card {
-	position: absolute;
-	top: 5%;
-	left: 8%;
-	height: 9.5%;
-}
-
 #text {
 	font-size: 90%;
 }
 
-#blue-cube {
-	left: 2%;
-}
-
-#blue-cnt {
-	left: 5%;
-}
-
-#yellow-cube {
-	left: 11%;
+#test {
+	position: absolute;
+	left: 30%;
+	top: 20%;
 }

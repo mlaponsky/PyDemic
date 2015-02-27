@@ -132,6 +132,7 @@ ul > li {
 	padding-left: 12%;
 	text-overflow: ellipsis;
 }
+
 .card > div {
 	height: 100%;
 	width: 8%;
@@ -140,7 +141,6 @@ ul > li {
 	top: 0;
 	border: 1px solid #fffff0;
 }
-
 
 /* Roles Styling */
 #medic {

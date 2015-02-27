@@ -1,0 +1,51 @@
+#player-color {
+	position: absolute;
+	left: 31.2%;
+	bottom: 0%;
+	height: 13%;
+}
+
+#player {
+	border: 2px solid #fffff0;
+	border-top-left-radius: 1.5% 10%;
+	border-top-right-radius: 1.5% 10%;
+	border-bottom: none;
+	background: #222222;
+	color: #fff;
+	width: 56%;
+	height: 18%;
+	font-size: 0.8em;
+	position: absolute;
+	left: 33%;
+	bottom: 0%;
+	white-space: nowrap;
+	overflow: auto;
+}
+
+#player > * {
+	padding-left: 1%;
+	padding-right: 1%;
+	position: absolute;
+	height: 86%;
+	display: inline;
+}
+
+#name {
+	height: 100%;
+	width: 5%;
+	padding-top: 2.5%;
+}
+
+#name > img {
+	width: 100%;
+}
+
+#hand {
+	left: 5%;
+	top: 7%;
+}
+#hand > * {
+	padding-left: 0.01%;
+	padding-right: 0.01%;
+	display: inline-block;
+}

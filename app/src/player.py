@@ -25,20 +25,26 @@ class Player:
     def get_position(self):
         return self.position
 
+    def can_move(self, player, research_stations, neighbors):
+        return neighbors + self.can_shuttle(player, research_stations) + self.can_fly_direct(player, neighbors) + self.can_charter(player, research_stations, neighbors)
+
     def can_shuttle(self, player, research_stations):
         shuttle = []
         if self.position in research_stations:
-            shuttle = research_stations
+            shuttle = copy(research_stations)
             shuttle.remove(self.position)
         return shuttle
 
-    def can_fly_direct(self, player):
-        can_fly = list(self.hand)
+    def can_fly_direct(self, player, neighbors):
+        can_fly = copy(self.hand)
         if self.position in can_fly:
             can_fly.remove(self.position)
+        for city in neighbors:
+            if city in can_fly:
+                can_fly.remove(city)
         return can_fly
 
-    def can_charter(self, player, neighbors):
+    def can_charter(self, player, research_stations, neighbors):
         can_charter = []
         if self.position in self.hand:
             can_charter = [ city for city in range(NUM_CITIES) ]
@@ -109,7 +115,6 @@ class Player:
 # Role subclasses; contain special implementations of actions
 class Medic(Player):
     def __init__(self):
-        super(Player, self).__init__()
         role = MEDIC
         self.role = role.upper()
         self.id = 'medic'
@@ -131,7 +136,6 @@ class Medic(Player):
 
 class QuarantineSpecialist(Player):
     def __init__(self, quarantined, neighbors):
-        super(Player, self).__init__()
         role = QS
         self.role = role.upper()
         self.id = 'qs'
@@ -153,7 +157,6 @@ class QuarantineSpecialist(Player):
 
 class OperationsExpert(Player):
     def __init__(self):
-        super(Player, self).__init__()
         role = OE
         self.role = role.upper()
         self.id = 'oe'
@@ -172,9 +175,17 @@ class OperationsExpert(Player):
             self.discard(card)
             self.position = destination
 
+    def can_charter(self, player, research_stations, neighbors):
+        can_charter = []
+        if self.position in self.hand or self.position in research_stations:
+            can_charter = [ city for city in range(NUM_CITIES) ]
+            can_charter.remove(self.position)
+            for n in neighbors:
+                can_charter.remove(n)
+        return can_charter
+
 class ContingencyPlanner(Player):
     def __init__(self):
-        super(Player, self).__init__()
         role = CP
         self.role = role.upper()
         self.id = 'cp'
@@ -236,13 +247,13 @@ class Dispatcher(Player):
             shuttle.remove(player.get_position())
         return shuttle
 
-    def can_fly_direct(self, player):
+    def can_fly_direct(self, player, neighbors):
         can_fly = self.hand
         if player.get_position() in can_fly:
             can_fly.remove(self.position)
         return can_fly
 
-    def can_charter(self, player, neighbors):
+    def can_charter(self, player, research_stations, neighbors):
         can_charter = []
         if player.get_position() in self.hand:
             can_charter = [ city for city in range(NUM_CITIES) ]

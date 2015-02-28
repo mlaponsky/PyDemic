@@ -19,7 +19,7 @@ class Deck:
         return self.graveyard
 
     def draw_card(self, index):
-        return self.deck.pop(0)
+        return self.deck.pop(index)
 
     def add_to_discard(self, name):
         self.discard.insert(name, 0)
@@ -82,8 +82,9 @@ class PlayerCards(Deck):
 class InfectCards(Deck):
     def __init__(self):
         super(InfectCards, self).__init__()
+        self.fill_deck()
 
-    def fill_deck():
+    def fill_deck(self):
         self.deck = [ card for card in range(NUM_CITIES) ]
         shuffle(self.deck)
 

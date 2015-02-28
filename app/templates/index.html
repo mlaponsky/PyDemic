@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html id="game" lang="en" class="no-js">
+<html id="game" lang="en">
 	<head>
 		<meta charset="UTF-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -8,7 +8,7 @@
 		<meta name="description" content="Pandemic Web App" />
 		<meta name="keywords" content="sliding menu, pushing menu, navigation, responsive, menu, css, jquery" />
 		<meta name="author" content="Max Laponsky" />
-		<link rel="icon" href="static/img/icon.png">
+		<link rel="icon" href="../static/img/icon.png">
 		<link rel="stylesheet" type="text/css"
 							   href="static/css/default.css" />
 		<link rel="stylesheet" type="text/css"
@@ -25,34 +25,35 @@
 		<script type="text/javascript">
 			$SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
 		</script>
+		<script src="static/js/cubes.js"></script>
 	</head>
-	
+
 	<body class="menu-push">
 		{% include 'team.html' %}
 
 		<div class="container">
 			<div id="map" class="main">
-				<object id="cities" type="image/svg+xml" data="static/img/cities.svg">
+				<object id="cities" type="image/svg+xml" data="../static/img/cities.svg">
 					<h3>Fallback</h3>
 				</object>
 
 				{% include 'cubes.html' %}
 
-				<object id="outbreaks" type="image/svg+xml" data="static/img/outbreaks2.svg">
+				<object id="outbreaks" type="image/svg+xml" data="../static/img/outbreaks2.svg">
 					<h3>Fallback</h3>
 				</object>
 
-				<object id="infect-rate" type="image/svg+xml" data="static/img/infect_rate.svg">
+				<object id="infect-rate" type="image/svg+xml" data="../static/img/infect_rate.svg">
 					<h3>Fallback</h3>
 				</object>
 				<div id="cures">
-					<object id="cure-img" type="image/svg+xml" data="static/img/cures.svg">
+					<object id="cure-img" type="image/svg+xml" data="../static/img/cures.svg">
 						<h3>Fallback</h3>
 					</object>
 				</div>
 
 				<button id="team-button" title="Team">
-					<img src="static/img/team.svg">
+					<img src="../static/img/team.svg">
 				</button>
 
 				{% include 'stats.html' %}
@@ -65,10 +66,9 @@
 			</div>
 		</div>
 		<!-- Classie - class helper functions by @desandro https://github.com/desandro/classie -->
-		<script src="static/js/classie.js"></script>
-		<script src="static/js/image_size.js"></script>
-		<script src="static/js/image_loc.js"></script>
-		<script src="static/js/team_menu.js"></script>
-		<script src="static/js/cubes.js"></script>
+		<script src="../static/js/classie.js"></script>
+		<script src="../static/js/image_size.js"></script>
+		<script src="../static/js/image_loc.js"></script>
+		<script src="../static/js/team_menu.js"></script>
 	</body>
 </html>

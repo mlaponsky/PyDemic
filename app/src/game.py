@@ -21,6 +21,8 @@ class Game:
 
         self.from_discard = []
 
+        # cubes[city][color]
+        self.cubes = [ [0] * 4 for x in range(NUM_CITIES) ]
         self.cubes_left = [NUM_CUBES] * 4
         self.cures = [False] * 4
         self.eradicated = [False] * 4
@@ -31,17 +33,16 @@ class Game:
         self.num_epidemics = epidemics
         self.num_players = len(roles)
         self.research_stations.append(ATL)
-        self.research_stations.append(BAG)
+        self.infect_cards = InfectCards()
+        for i in reversed(range(9)):
+            city = self.draw_infect_card()
+            self.infect(city, city//CITIES_PER_COLOR, i//3 + 1)
 
         for role in roles:
             self.players.append(self.assign_player(role))
 
         self.player_cards = PlayerCards(self.players, self.num_epidemics)
         self.active = self.set_order()
-        self.infect_cards = InfectCards()
-
-        # cubes[city][color]
-        self.cubes = [ [0] * 4 for x in range(NUM_CITIES) ]
 
     ## Manage game phase
     def get_phase(self):
@@ -84,7 +85,7 @@ class Game:
     The below function is a generic cube adding function. It takes the color and number of cubes to be added, and the city to infect. This function is implemented in all situations in which a city would be infected. A normal infect city action will just call the function directly with numCubes = 1. The other cube-adding scenarios are outbreak and epidemic. Notice the recursive coupling between infect and outbreak below, and infect will call outbreak when it would go over the cube limit, and outbreaks will infect, potentially chaining into other outbreaks. The outbreak function handles all conditions for outbreaks, and tracks outbreaks that have already occurred on a turn so as not to repeat. The function to reset the outbreak array is called after each epidemic AND each infect stage.
     '''
     def draw_infect_card(self):
-        card = self.infect_cards.draw_dard(0)
+        card = self.infect_cards.draw_card(0)
         self.infect_cards.add_to_discard(card)
         return card
 

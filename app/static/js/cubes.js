@@ -1,4 +1,3 @@
-
 window.onload = function() {
     $.getJSON($SCRIPT_ROOT + '/_load').success(function(result) {
         var svgObj = document.getElementById("cities");

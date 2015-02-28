@@ -1,0 +1,10 @@
+setup.cfg
+setup.py
+Flask_Session.egg-info/PKG-INFO
+Flask_Session.egg-info/SOURCES.txt
+Flask_Session.egg-info/dependency_links.txt
+Flask_Session.egg-info/not-zip-safe
+Flask_Session.egg-info/requires.txt
+Flask_Session.egg-info/top_level.txt
+flask_session/__init__.py
+flask_session/sessions.py

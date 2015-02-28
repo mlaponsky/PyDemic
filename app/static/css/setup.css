@@ -1,0 +1,63 @@
+body {
+    background-color: #222222;
+}
+
+#char-box {
+    width: 80%;
+    position: absolute;
+    top: 50%;
+    left: 10%;
+}
+
+.char-select {
+    border: 2px solid #fffff0;
+    border-radius: 15px;
+    width: 24%;
+    font-size: 16pt;
+    padding: 0.5%;
+    background-color: #555555;
+    color: #fffff0;
+}
+
+.char-select > optgroup {
+    font-size: 14pt;
+}
+
+#difficulty {
+    position: absolute;
+    left: 42.5%;
+    top: 60%;
+    border: 2px solid #fffff0;
+    border-radius: 15px;
+    width: 15%;
+    font-size: 14pt;
+    padding: 0.5%;
+    background-color: #555555;
+    color: #fffff0;
+}
+
+input {
+    background-color: #8ab800;
+    color: #fffff0;
+    width: 8%;
+    padding: 0.5%;
+    position: absolute;
+    top: 70%;
+    left: 46%%;
+    border: 2px solid #fffff0;
+    border-radius: 15px;
+    font-size: 20pt;
+}
+
+#flashes {
+    display: block;
+    position: absolute;
+    top: 75%;
+    left: 37%;
+}
+
+.flashes {
+    color: red;
+    list-style: none;
+    font-family: "Sans";
+}

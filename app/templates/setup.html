@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+    <link rel="stylesheet" type="text/css"
+                           href="../static/css/setup.css" />
+    <script src="../static/js/modernizr.custom.js"></script>
+    <script src="../static/js/jquery-1.11.2.js"></script>
+    <script src="../static/js/jquery-ui.js"></script>
+    <script src="../static/js/update_menus.js"></script>
+    <script type="text/javascript">
+        window.onload = function () {
+            var lists = document.getElementsByClassName('char-select');
+            for (var i=0; i<lists.length; i++) {
+                lists[i].onchange = updateMenus;
+                lists[i].options[1].selected = "selected";
+            }
+        }
+    </script>
+    <head>
+        <title>PyDemic</title>
+    </head>
+    <body>
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+          <div id="flashes">
+              <ul class=flashes>
+              {% for message in messages %}
+                <li>{{ message }}</li>
+              {% endfor %}
+              </ul>
+          </div>
+          {% endif %}
+        {% endwith %}
+        <form action="" method="post" name="setup">
+            {{form.hidden_tag()}}
+            <div id="char-box">
+                {{ form.char0(class_="char-select") }}
+                {{ form.char1(class_="char-select") }}
+                {{ form.char2(class_="char-select") }}
+                {{ form.char3(class_="char-select") }}
+
+            </div>
+            {{ form.difficulty }}
+            <input type="submit" value="Play">
+            {% for error in form.char0.errors %}
+              <span style="color: red;">[{{ error }}]</span><br>
+            {% endfor %}
+            {% for error in form.char1.errors %}
+              <span style="color: red;">[{{ error }}]</span><br>
+            {% endfor %}
+            {% for error in form.char2.errors %}
+              <span style="color: red;">[{{ error }}]</span><br>
+            {% endfor %}
+            {% for error in form.char3.errors %}
+              <span style="color: red;">[{{ error }}]</span><br>
+            {% endfor %}
+            {% for error in form.difficulty.errors %}
+              <span style="color: red;">[{{ error }}]</span><br>
+            {% endfor %}
+        </form>
+    </body>
+</html>

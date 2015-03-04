@@ -93,10 +93,24 @@ function execute_move(sel) {
                 card.attr("onclick", "select_card(this)");
             }
             $(".available").removeAttr("onclick");
-            $(".available").attr("class", "unavailable");
+            $(".available").attr("class", "unavailable holding");
+            $('html').on( 'click', function(e) {
+                if ($( e.target ).closest($(".selected").length === 0 )) {
+                    escape_select() }} );
+            $('html').keyup( function( e ) {
+                if (e.keyCode === 27) { escape_select() };
+            });
         }
     }).error(function(error){console.log(error);});
 };
+
+function escape_select() {
+    $(".holding").attr("class", "available");
+    $(".selected").attr("class", "available");
+    $(".available").attr("onclick", "execute_move(this)");
+    $("#hand").children('img').removeAttr("border");
+    $("#hand").children('img').removeAttr("onclick");
+}
 
 function select_card(sel) {
     var card_id = sel.getAttribute('id');

@@ -10,8 +10,10 @@
         window.onload = function () {
             var lists = document.getElementsByClassName('char-select');
             for (var i=0; i<lists.length; i++) {
-                lists[i].onchange = updateMenus;
-                lists[i].options[1].selected = "selected";
+                if (i<3) {
+                    lists[i].onchange = updateMenus;
+                    lists[i].options[1].selected = "selected";
+                }
             }
         }
     </script>

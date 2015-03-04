@@ -10,5 +10,4 @@ var menuRight = document.getElementById( 'team-menu' ),
 				classie.toggle( this, 'active' );
 				classie.toggle( body, 'menu-push-toleft' );
 				classie.toggle( menuRight, 'menu-open' );
-				disableOther( 'team-button' );
 			};

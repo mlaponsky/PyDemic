@@ -114,8 +114,8 @@ a:hover {
 	border: 2px solid #fffff0;
 	border-radius: 25%;
 	background: #434343;
-	padding: 0.4%;
-	width: 2.2%;
+	padding: 0.45%;
+	width: 2.5%;
 	cursor: pointer;
 	position: absolute;
 	top: 7%;
@@ -153,6 +153,7 @@ a:hover {
 	padding-left: 1%;
 	padding-right: 1%;
 	padding-top: 0.5%;
+	padding-bottom: 0.5%;
 }
 
 #cures > * {
@@ -175,10 +176,4 @@ a:hover {
 
 #text {
 	font-size: 90%;
-}
-
-#test {
-	position: absolute;
-	left: 30%;
-	top: 20%;
 }

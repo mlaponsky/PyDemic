@@ -5,7 +5,7 @@ BLACK = 2
 RED = 3
 EVENT = 4
 
-COLORS = [ BLUE, YELLOW, BLACK, RED, EVENT ]
+COLORS = [ BLUE, YELLOW, BLACK, RED ]
 COLOR_STRINGS = ['blue', 'yellow', 'black', 'red', 'event']
 
 # BLUE
@@ -74,6 +74,7 @@ RP = 52
 # EPIDEMIC
 EPIDEMIC = 53
 
+NUM_CITIES = 48
 CARDS = [
     {'name': 'San Francisco', 'population': 5864, 'player_card': 'static/img/player_cards/sf.svg' },
     {'name': 'Chicago', 'population': 9121, 'player_card': 'static/img/player_cards/chi.svg' },
@@ -134,6 +135,8 @@ CARDS = [
     {'name': 'Resilient Population', 'population': 0, 'player_card': 'static/img/player_cards/rp.svg'}
 ]
 
+CITIES = CARDS[:NUM_CITIES]
+
 EVENT_C = ['Government Grant', 'Forecast', 'Airlift', 'One Quiet Night', 'Resilient Population']
 
 # ROLES
@@ -145,29 +148,35 @@ QS = 'Quarantine Specialist'
 RESEARCHER = 'Researcher'
 SCIENTIST = 'Scientist'
 
-ROLES = { CP:         {'color': '#29a3a3',
-                       'title_img': 'static/img/roles/cp_txt.svg',
-                       'piece_img': 'static/img/roles/cp.svg'},
-          DISPATCHER: {'color': '#6b008f',
-                       'title_img': 'static/img/roles/dispatcher_txt.svg',
-                       'piece_img': 'static/img/roles/dispatcher.svg'},
-          MEDIC:      {'color': '#ff9900',
-                       'title_img': 'static/img/roles/medic_txt.svg',
-                       'piece_img': 'static/img/roles/medic.svg'},
-          OE:         {'color': '#248f24',
-                       'title_img': 'static/img/roles/oe_txt.svg',
-                       'piece_img': 'static/img/roles/oe.svg'},
-          QS:         {'color': '#194719',
-                       'title_img': 'static/img/roles/qs_txt.svg',
-                       'piece_img': 'static/img/roles/qs.svg'},
-          RESEARCHER: {'color': '#663300',
-                       'title_img': 'static/img/roles/researcher_txt.svg',
-                       'piece_img': 'static/img/roles/researcher.svg'},
-          SCIENTIST:  {'color': '#888888',
-                       'title_img': 'static/img/roles/scientist_txt.svg',
-                       'piece_img': 'static/img/roles/scientist.svg'}}
+ROLES = { CP:         { 'id': 'cp',
+                        'color': '#29a3a3',
+                        'title_img': 'static/img/roles/cp_txt.svg',
+                        'piece_img': 'static/img/roles/cp.svg'},
+          DISPATCHER: { 'id': 'dispatcher',
+                        'color': '#6b008f',
+                        'title_img': 'static/img/roles/dispatcher_txt.svg',
+                        'piece_img': 'static/img/roles/dispatcher.svg'},
+          MEDIC:      { 'id': 'medic',
+                        'color': '#ff9900',
+                        'title_img': 'static/img/roles/medic_txt.svg',
+                        'piece_img': 'static/img/roles/medic.svg'},
+          OE:         { 'id': 'oe',
+                        'color': '#248f24',
+                        'title_img': 'static/img/roles/oe_txt.svg',
+                        'piece_img': 'static/img/roles/oe.svg'},
+          QS:         { 'id': 'qs',
+                        'color': '#194719',
+                        'title_img': 'static/img/roles/qs_txt.svg',
+                        'piece_img': 'static/img/roles/qs.svg'},
+          RESEARCHER: { 'id': 'researcher',
+                        'color': '#663300',
+                        'title_img': 'static/img/roles/researcher_txt.svg',
+                        'piece_img': 'static/img/roles/researcher.svg'},
+          SCIENTIST:  { 'id': 'scientist',
+                        'color': '#888888',
+                        'title_img': 'static/img/roles/scientist_txt.svg',
+                        'piece_img': 'static/img/roles/scientist.svg'}}
 
-NUM_CITIES = 48
 MAX_CUBES = 3
 MAX_INFECT = 4
 MAX_OUTBREAKS = 8

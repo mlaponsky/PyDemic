@@ -10,14 +10,14 @@
   </rdf:RDF>
  </metadata>
  <style>
- 	.selected {
+ 	.on {
  		fill: #fffff0;
  	}
- 	
- 	.unselected {
+
+ 	.off {
  		fill: none;
  	}
- 	
+
  	.unselectable {
  		-webkit-touch-callout: none;
 	    -webkit-user-select: none;
@@ -31,15 +31,15 @@
   <text class="unselectable" id="text5766" style="writing-mode:lr-tb;letter-spacing:0px;text-anchor:start;word-spacing:0px;text-align:start;" font-weight="normal" xml:space="preserve" transform="matrix(-0.00106688,-0.99999943,0.99999943,-0.00106688,0,0)" font-style="normal" font-stretch="normal" font-size="14px" font-variant="normal" y="-7.1048222" x="-76.588287" font-family="Mukti Narrow" line-height="120.00000477%" fill="#fffff0"><tspan id="tspan5768" style="writing-mode:lr-tb;text-anchor:start;text-align:start;" font-weight="normal" font-size="14px" font-style="normal" line-height="120.00000477%" font-stretch="normal" font-variant="normal" y="-7.1048222" x="-76.588287" font-family="DejaVu Sans Mono">OUTBREAKS</tspan></text>
  </g>
  <g id="layer1" transform="translate(-162.00638,-61.862183)">
-  <path id="path5468" d="m160,77.362c0,8.2843-6.7157,15-15,15s-15-6.7157-15-15,6.7157-15,15-15,15,6.7157,15,15z" transform="translate(50,0)" stroke="#fffff0" stroke-dasharray="none" stroke-miterlimit="4" stroke-width="1" class="unselected"/>
-  <path id="path5468-1" d="m160,77.362c0,8.2843-6.7157,15-15,15s-15-6.7157-15-15,6.7157-15,15-15,15,6.7157,15,15z" transform="translate(80,20)" stroke="#fffff0" stroke-dasharray="none" stroke-miterlimit="4" stroke-width="1" class="unselected"/>
-  <path id="path5468-5" d="m160,77.362c0,8.2843-6.7157,15-15,15s-15-6.7157-15-15,6.7157-15,15-15,15,6.7157,15,15z" transform="translate(50,40)" stroke="#fffff0" stroke-dasharray="none" stroke-miterlimit="4" stroke-width="1" class="unselected"/>
-  <path id="path5468-8" d="m160,77.362c0,8.2843-6.7157,15-15,15s-15-6.7157-15-15,6.7157-15,15-15,15,6.7157,15,15z" transform="translate(80,60)" stroke="#fffff0" stroke-dasharray="none" stroke-miterlimit="4" stroke-width="1" class="unselected"/>
-  <path id="path5468-9" d="m160,77.362c0,8.2843-6.7157,15-15,15s-15-6.7157-15-15,6.7157-15,15-15,15,6.7157,15,15z" transform="translate(50,80)" stroke="#fffff0" stroke-dasharray="none" stroke-miterlimit="4" stroke-width="1" class="unselected"/>
-  <path id="path5468-2" d="m160,77.362c0,8.2843-6.7157,15-15,15s-15-6.7157-15-15,6.7157-15,15-15,15,6.7157,15,15z" transform="translate(80,100)" stroke="#fffff0" stroke-dasharray="none" stroke-miterlimit="4" stroke-width="1" class="unselected"/>
-  <path id="path5468-82" d="m160,77.362c0,8.2843-6.7157,15-15,15s-15-6.7157-15-15,6.7157-15,15-15,15,6.7157,15,15z" transform="translate(50,120)" stroke="#fffff0" stroke-dasharray="none" stroke-miterlimit="4" stroke-width="1" class="unselected"/>
-  <path id="path5468-99" d="m160,77.362c0,8.2843-6.7157,15-15,15s-15-6.7157-15-15,6.7157-15,15-15,15,6.7157,15,15z" transform="translate(80,140)" stroke="#fffff0" stroke-dasharray="none" stroke-miterlimit="4" stroke-width="1" class="unselected"/>
-  <path id="path5468-99-6" d="m160,77.362c0,8.2843-6.7157,15-15,15s-15-6.7157-15-15,6.7157-15,15-15,15,6.7157,15,15z" transform="translate(50,160)" stroke="#fffff0" stroke-dasharray="none" stroke-miterlimit="4" stroke-width="1" class="selected"/>
+  <path id="path5468" d="m160,77.362c0,8.2843-6.7157,15-15,15s-15-6.7157-15-15,6.7157-15,15-15,15,6.7157,15,15z" transform="translate(50,0)" stroke="#fffff0" stroke-dasharray="none" stroke-miterlimit="4" stroke-width="1" class="on"/>
+  <path id="path5468-1" d="m160,77.362c0,8.2843-6.7157,15-15,15s-15-6.7157-15-15,6.7157-15,15-15,15,6.7157,15,15z" transform="translate(80,20)" stroke="#fffff0" stroke-dasharray="none" stroke-miterlimit="4" stroke-width="1" class="off"/>
+  <path id="path5468-5" d="m160,77.362c0,8.2843-6.7157,15-15,15s-15-6.7157-15-15,6.7157-15,15-15,15,6.7157,15,15z" transform="translate(50,40)" stroke="#fffff0" stroke-dasharray="none" stroke-miterlimit="4" stroke-width="1" class="off"/>
+  <path id="path5468-8" d="m160,77.362c0,8.2843-6.7157,15-15,15s-15-6.7157-15-15,6.7157-15,15-15,15,6.7157,15,15z" transform="translate(80,60)" stroke="#fffff0" stroke-dasharray="none" stroke-miterlimit="4" stroke-width="1" class="off"/>
+  <path id="path5468-9" d="m160,77.362c0,8.2843-6.7157,15-15,15s-15-6.7157-15-15,6.7157-15,15-15,15,6.7157,15,15z" transform="translate(50,80)" stroke="#fffff0" stroke-dasharray="none" stroke-miterlimit="4" stroke-width="1" class="off"/>
+  <path id="path5468-2" d="m160,77.362c0,8.2843-6.7157,15-15,15s-15-6.7157-15-15,6.7157-15,15-15,15,6.7157,15,15z" transform="translate(80,100)" stroke="#fffff0" stroke-dasharray="none" stroke-miterlimit="4" stroke-width="1" class="off"/>
+  <path id="path5468-82" d="m160,77.362c0,8.2843-6.7157,15-15,15s-15-6.7157-15-15,6.7157-15,15-15,15,6.7157,15,15z" transform="translate(50,120)" stroke="#fffff0" stroke-dasharray="none" stroke-miterlimit="4" stroke-width="1" class="off"/>
+  <path id="path5468-99" d="m160,77.362c0,8.2843-6.7157,15-15,15s-15-6.7157-15-15,6.7157-15,15-15,15,6.7157,15,15z" transform="translate(80,140)" stroke="#fffff0" stroke-dasharray="none" stroke-miterlimit="4" stroke-width="1" class="off"/>
+  <path id="path5468-99-6" d="m160,77.362c0,8.2843-6.7157,15-15,15s-15-6.7157-15-15,6.7157-15,15-15,15,6.7157,15,15z" transform="translate(50,160)" stroke="#fffff0" stroke-dasharray="none" stroke-miterlimit="4" stroke-width="1" class="off"/>
   <text class="unselectable" id="text5530" style="writing-mode:lr-tb;letter-spacing:0px;text-anchor:start;word-spacing:0px;text-align:start;" font-weight="normal" xml:space="preserve" font-size="14px" font-style="normal" font-stretch="normal" font-variant="normal" y="102.46521" x="220.42334" font-family="Sans" line-height="125%" fill="#ff9999"><tspan id="tspan5532" x="220.42334" y="102.46521">1</tspan></text>
   <text class="unselectable" id="text5534" style="writing-mode:lr-tb;letter-spacing:0px;text-anchor:start;word-spacing:0px;text-align:start;" font-weight="normal" xml:space="preserve" font-size="14px" font-style="normal" font-stretch="normal" font-variant="normal" y="122.5575" x="190.73438" font-family="Sans" line-height="125%" fill="#ff8080"><tspan id="tspan5536" x="190.73438" y="122.5575">2</tspan></text>
   <text class="unselectable" id="text5538" style="writing-mode:lr-tb;letter-spacing:0px;text-anchor:start;word-spacing:0px;text-align:start;" font-weight="normal" xml:space="preserve" font-size="14px" font-style="normal" font-stretch="normal" font-variant="normal" y="142.45837" x="220.57373" font-family="Sans" line-height="125%" fill="#ff6666"><tspan id="tspan5540" x="220.57373" y="142.45837">3</tspan></text>

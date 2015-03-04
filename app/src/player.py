@@ -3,10 +3,11 @@
 from .constants import *
 from .deck import *
 from copy import copy
+from .board import *
 
 class Player:
     def __init__(self, role):
-        self.role = role.upper()
+        self.role = role
         self.position = ATL
         self.hand = []
         self.color = ROLES[role]['color']
@@ -25,18 +26,22 @@ class Player:
     def get_position(self):
         return self.position
 
-    def can_move(self, player, research_stations, neighbors):
-        return neighbors + self.can_shuttle(player, research_stations) + self.can_fly_direct(player, neighbors) + self.can_charter(player, research_stations, neighbors)
+    def can_move(self, research_stations, board):
+        return self.can_drive(board) + self.can_shuttle(research_stations) + self.can_fly_direct(board) + self.can_charter(research_stations, board)
 
-    def can_shuttle(self, player, research_stations):
+    def can_drive(self, board):
+        return board.get_neighbors(self.position)
+
+    def can_shuttle(self, research_stations):
         shuttle = []
         if self.position in research_stations:
             shuttle = copy(research_stations)
             shuttle.remove(self.position)
         return shuttle
 
-    def can_fly_direct(self, player, neighbors):
+    def can_fly_direct(self, board):
         can_fly = copy(self.hand)
+        neighbors = board.get_neighbors(self.position)
         if self.position in can_fly:
             can_fly.remove(self.position)
         for city in neighbors:
@@ -44,8 +49,9 @@ class Player:
                 can_fly.remove(city)
         return can_fly
 
-    def can_charter(self, player, research_stations, neighbors):
+    def can_charter(self, research_stations, board):
         can_charter = []
+        neighbors = board.get_neighbors(self.position)
         if self.position in self.hand:
             can_charter = [ city for city in range(NUM_CITIES) ]
             can_charter.remove(self.position)
@@ -53,7 +59,7 @@ class Player:
                 can_charter.remove(n)
         return can_charter
 
-    def move(self, new_pos, player, neighbors, cures, cubes, quarantined):
+    def move(self, new_pos, board, cures, cubes, quarantined):
         self.position = new_pos
 
     def get_card(self, card):
@@ -116,7 +122,7 @@ class Player:
 class Medic(Player):
     def __init__(self):
         role = MEDIC
-        self.role = role.upper()
+        self.role = role
         self.id = 'medic'
         self.position = ATL
         self.hand = []
@@ -124,11 +130,11 @@ class Medic(Player):
         self.title = ROLES[role]['title_img']
         self.piece = ROLES[role]['piece_img']
 
-    def move(self, new_pos, cures, cubes, neighbors, quarantined):
+    def move(self, new_pos, board, cures, cubes, quarantined):
         self.position = new_pos
         for color in COLORS:
             if cures[color]:
-                cubes[self.position][color] = 0
+                cubes[self.position // 12][color] = 0
 
     def treat(self, cures, cubes):
         if not cures[color]:
@@ -137,7 +143,7 @@ class Medic(Player):
 class QuarantineSpecialist(Player):
     def __init__(self, quarantined, neighbors):
         role = QS
-        self.role = role.upper()
+        self.role = role
         self.id = 'qs'
         self.position = ATL
         self.hand = []
@@ -148,17 +154,17 @@ class QuarantineSpecialist(Player):
             quarantined.append(city)
         quarantined.append(self.position)
 
-    def move(self, new_pos, cures, cubes, neighbors, quarantined):
+    def move(self, new_pos, board, cures, cubes, quarantined):
         self.position = new_pos
         del quarantined[:]
-        for city in neighbors:
+        for city in board.get_neighbors(self.position):
             quarantined.append(city)
         quarantined.append(new_pos)
 
 class OperationsExpert(Player):
     def __init__(self):
         role = OE
-        self.role = role.upper()
+        self.role = role
         self.id = 'oe'
         self.position = ATL
         self.hand = []
@@ -175,19 +181,24 @@ class OperationsExpert(Player):
             self.discard(card)
             self.position = destination
 
-    def can_charter(self, player, research_stations, neighbors):
+    def can_charter(self, research_stations, board):
         can_charter = []
-        if self.position in self.hand or self.position in research_stations:
+        cities_in_hand = False
+        for card in self.hand:
+            if card in range(NUM_CITIES):
+                cities_in_hand = True;
+                break;
+        if self.position in self.hand or (self.position in research_stations and cities_in_hand):
             can_charter = [ city for city in range(NUM_CITIES) ]
             can_charter.remove(self.position)
-            for n in neighbors:
+            for n in board.get_neighbors(self.position):
                 can_charter.remove(n)
         return can_charter
 
 class ContingencyPlanner(Player):
     def __init__(self):
         role = CP
-        self.role = role.upper()
+        self.role = role
         self.id = 'cp'
         self.event = None
         self.position = ATL
@@ -213,7 +224,7 @@ class Scientist(Player):
     def __init__(self):
         super(Player, self).__init__()
         role = SCIENTIST
-        self.role = role.upper()
+        self.role = role
         self.id = 'scientist'
         self.position = ATL
         self.hand = []
@@ -232,44 +243,64 @@ class Dispatcher(Player):
     def __init__(self):
         super(Player, self).__init__()
         role = DISPATCHER
-        self.role = role.upper()
+        self.role = role
         self.id = 'dispatcher'
         self.position = ATL
         self.hand = []
         self.color = ROLES[role]['color']
         self.title = ROLES[role]['title_img']
         self.piece = ROLES[role]['piece_img']
+        self.selected = self
 
-    def can_shuttle(self, player, research_stations):
+    def select_player(self, selected):
+        self.selected = selected
+
+    def can_drive(self, board):
+        if self.selected == self:
+            return board.get_neighbors(self.position)
+        else:
+            return board.get_neighbors(self.selected.get_position())
+
+    def can_shuttle(self, research_stations):
         shuttle = []
-        if player.get_position() in research_stations:
-            shuttle = research_stations
-            shuttle.remove(player.get_position())
+        if self.selected.get_position() in research_stations:
+            shuttle = copy(research_stations)
+            shuttle.remove(self.selected.get_position())
         return shuttle
 
-    def can_fly_direct(self, player, neighbors):
-        can_fly = self.hand
-        if player.get_position() in can_fly:
+    def can_fly_direct(self, board):
+        can_fly = copy(self.hand)
+        neighbors = board.get_neighbors(self.selected.get_position())
+        if self.selected.get_position() in can_fly:
             can_fly.remove(self.position)
+        for city in neighbors:
+            if city in can_fly:
+                can_fly.remove(city)
         return can_fly
 
-    def can_charter(self, player, research_stations, neighbors):
+    def can_charter(self, research_stations, board):
         can_charter = []
-        if player.get_position() in self.hand:
+        if self.selected.get_position() in self.hand:
             can_charter = [ city for city in range(NUM_CITIES) ]
-            can_charter.remove(player.get_position())
-            for n in neighbors:
+            can_charter.remove(self.selected.get_position())
+            for n in board.get_neighbors(self.selected.get_position()):
                 can_charter.remove(n)
         return can_charter
 
-    def move(self, new_pos, player, neighbors, cures, cubes, quarantined):
-        player.move(new_pos, player, neighbors, cures, cubes, quarantined)
+    def can_move(self, research_stations, board):
+        return self.can_drive(board) + self.can_shuttle(research_stations) + self.can_fly_direct(board) + self.can_charter(research_stations, board)
+
+    def move(self, new_pos, board, cures, cubes, quarantined):
+        if self.selected == self:
+            self.position = new_pos
+        else:
+            self.selected.move(new_pos, board, cures, cubes, quarantined)
 
 class Researcher(Player):
     def __init__(self):
         super(Player, self).__init__()
         role = RESEARCHER
-        self.role = role.upper()
+        self.role = role
         self.id = 'researcher'
         self.position = ATL
         self.hand = []

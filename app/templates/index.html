@@ -22,10 +22,11 @@
 		<script src="static/js/modernizr.custom.js"></script>
 		<script src="static/js/jquery-1.11.2.js"></script>
 		<script src="static/js/jquery-ui.js"></script>
+		<script src="static/js/raphael.js"></script>
 		<script type="text/javascript">
 			$SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
 		</script>
-		<script src="static/js/cubes.js"></script>
+		<script src="static/js/movement.js"></script>
 	</head>
 
 	<body class="menu-push">
@@ -33,24 +34,23 @@
 
 		<div class="container">
 			<div id="map" class="main">
-				<object id="cities" type="image/svg+xml" data="../static/img/cities.svg">
-					<h3>Fallback</h3>
-				</object>
+				{% with messages = get_flashed_messages() %}
+				  {% if messages %}
+				    <ul class=flashes>
+				    {% for message in messages %}
+				      <li>{{ message }}</li>
+				    {% endfor %}
+				    </ul>
+				  {% endif %}
+				{% endwith %}
 
-				{% include 'cubes.html' %}
+				{% include 'cities.html' %}
 
-				<object id="outbreaks" type="image/svg+xml" data="../static/img/outbreaks2.svg">
-					<h3>Fallback</h3>
-				</object>
+				{% include 'outbreaks.html' %}
 
-				<object id="infect-rate" type="image/svg+xml" data="../static/img/infect_rate.svg">
-					<h3>Fallback</h3>
-				</object>
-				<div id="cures">
-					<object id="cure-img" type="image/svg+xml" data="../static/img/cures.svg">
-						<h3>Fallback</h3>
-					</object>
-				</div>
+				{% include 'infect_rate.html' %}
+
+				{% include 'cures.html' %}
 
 				<button id="team-button" title="Team">
 					<img src="../static/img/team.svg">
@@ -64,6 +64,7 @@
 
 				{% include 'player.html' %}
 			</div>
+
 		</div>
 		<!-- Classie - class helper functions by @desandro https://github.com/desandro/classie -->
 		<script src="../static/js/classie.js"></script>

@@ -22,10 +22,11 @@ class Game:
         self.from_discard = []
 
         # cubes[city][color]
-        self.cubes = [ [0] * 4 for x in range(NUM_CITIES) ]
+        self.cubes = { }
+        for city in range(NUM_CITIES):
+             self.cubes[city] = [0] * 4
         self.cubes_left = [NUM_CUBES] * 4
-        self.cures = [False] * 4
-        self.eradicated = [False] * 4
+        self.cures = [1] * 4
         self.research_stations = []
         self.quarantined = []
 
@@ -91,6 +92,8 @@ class Game:
 
     def infect(self, city, color, num_cubes):
         if city not in self.quarantined or not self.eradicated[color]:
+            if self.cubes[city][color] == 0:
+                self.board.set_row(city, color)
             if self.cubes[city][color] + num_cubes <= MAX_CUBES:
                 self.cubes[city][color] += num_cubes
                 self.cubes_left[color] -= num_cubes
@@ -98,11 +101,6 @@ class Game:
                 self.cubes[city][color] = MAX_CUBES
                 self.cubes_left[color] -= MAX_CUBES - num_cubes
                 self.outbreak(city, color)
-
-    def outbreak(self, city, color):
-        outbreaks = []
-        self.execute_outbreak(city, color, outbreaks)
-        self.reset_outbreaks(outbreaks)
 
     def execute_outbreak(self, city, color, outbreaks):
         if city not in outbreaks \
@@ -114,7 +112,12 @@ class Game:
             for n in neighbors:
                 self.infect(n, color, 1)
 
-    def resetOutbreaks(self, outbreaks):
+    def outbreak(self, city, color):
+        outbreaks = []
+        self.execute_outbreak(city, color, outbreaks)
+        self.reset_outbreaks(outbreaks)
+
+    def reset_outbreaks(self, outbreaks):
         outbreaks = []
 
     def epidemic(self):

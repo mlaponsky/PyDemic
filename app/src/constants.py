@@ -6,6 +6,10 @@ RED = 3
 EVENT = 4
 
 COLORS = [ BLUE, YELLOW, BLACK, RED ]
+COLOR_IMG = [ '../static/img/cubes/blue_cube.svg',
+              '../static/img/cubes/yellow_cube.svg',
+              '../static/img/cubes/black_cube.svg',
+              '../static/img/cubes/red_cube.svg' ]
 COLOR_STRINGS = ['blue', 'yellow', 'black', 'red', 'event']
 
 # BLUE

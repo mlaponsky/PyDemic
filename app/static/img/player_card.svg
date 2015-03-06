@@ -20,6 +20,6 @@
  <g id="layer1" stroke="#7aa3cc" fill="#2e3d4c" transform="translate(-234.90625,-193.09375)">
   <rect id="rect2985" rx="24.842" ry="23.886" height="291.03" width="208.27" stroke="#7aa3cc" stroke-dasharray="none" stroke-miterlimit="4" y="198.28" x="240.1" stroke-width="10.4" fill="#2e3d4c"/>
  </g>
- <text id="text3777" style="word-spacing:0px;letter-spacing:0px;" font-weight="normal" xml:space="preserve" font-size="170px" line-height="125%" class="unselectable" stroke="#fffff0" font-style="normal" y="212.66658" x="38.108055" font-family="Sans" fill="#2e3d4c"><tspan id="tspan3779" y="212.66658" x="38.108055">✙</tspan></text>
+ <text id="text3777" style="word-spacing:0px;letter-spacing:0px;" font-weight="normal" xml:space="preserve" font-size="170px" line-height="125%" class="unselectable" stroke="#fffff0" font-style="normal" y="212.66658" x="38.108055" font-family="Sans" fill="#2e3d4c"><tspan id="tspan3779" y="212.66658" x="38.108055">✚</tspan></text>
  <text id="text3812" style="word-spacing:0px;letter-spacing:0px;" font-family="Sans" font-weight="normal" xml:space="preserve" font-size="170px" class="unselectable" stroke="#fffff0" stroke-dasharray="none" line-height="125%" font-style="normal" y="212.66658" x="38.108055" stroke-width="2" stroke-miterlimit="4" fill="#7aa3cc"><tspan id="tspan3814" stroke-miterlimit="4" x="38.108055" y="212.66658" stroke-dasharray="none" stroke-width="2">✙</tspan></text>
 </svg>

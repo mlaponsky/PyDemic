@@ -59,7 +59,7 @@ class Player:
                 can_charter.remove(n)
         return can_charter
 
-    def move(self, new_pos, board, cures, cubes, quarantined):
+    def move(self, new_pos, board, cures, cubes, cubes_left, quarantined):
         self.position = new_pos
 
     def get_card(self, card):
@@ -70,11 +70,15 @@ class Player:
         if card in self.hand:
             self.hand.remove(card)
 
-    def treat(self, color, cures, cubes):
+    def treat(self, color, cures, cubes, cubes_left, board):
         if not cures[color]:
+            cubes_left[color] += 1
             cubes[self.position][color] -= 1
         else:
+            cubes_left[color] += cubes[self.position][color]
             cubes[self.position][color] = 0
+        if cubes[self.position][color] == 0:
+            board.delete_row(self.position, color)
 
     def can_cure(self, color, research_stations):
         if self.position not in research_stations:
@@ -130,15 +134,19 @@ class Medic(Player):
         self.title = ROLES[role]['title_img']
         self.piece = ROLES[role]['piece_img']
 
-    def move(self, new_pos, board, cures, cubes, quarantined):
+    def move(self, new_pos, board, cures, cubes, cubes_left, quarantined):
         self.position = new_pos
         for color in COLORS:
             if cures[color]:
-                cubes[self.position // 12][color] = 0
+                cubes_left[color] += cubes[self.position][color]
+                cubes[self.position][color] = 0
+                board.delete_row(color, self.position)
 
-    def treat(self, cures, cubes):
+    def treat(self, color, cures, cubes, cubes_left, board):
         if not cures[color]:
+            cubes_left[color] += cubes[self.position][color]
             cubes[self.position][color] = 0
+            board.delete_row(self.position, color)
 
 class QuarantineSpecialist(Player):
     def __init__(self, quarantined, neighbors):
@@ -154,7 +162,7 @@ class QuarantineSpecialist(Player):
             quarantined.append(city)
         quarantined.append(self.position)
 
-    def move(self, new_pos, board, cures, cubes, quarantined):
+    def move(self, new_pos, board, cures, cubes, cubes_left, quarantined):
         self.position = new_pos
         del quarantined[:]
         for city in board.get_neighbors(self.position):
@@ -290,7 +298,7 @@ class Dispatcher(Player):
     def can_move(self, research_stations, board):
         return self.can_drive(board) + self.can_shuttle(research_stations) + self.can_fly_direct(board) + self.can_charter(research_stations, board)
 
-    def move(self, new_pos, board, cures, cubes, quarantined):
+    def move(self, new_pos, board, cures, cubes, cubes_left, quarantined):
         if self.selected == self:
             self.position = new_pos
         else:

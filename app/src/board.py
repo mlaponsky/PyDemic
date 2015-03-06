@@ -5,9 +5,11 @@ from .constants import *
 class Board:
     def __init__(self):
         self.neighbors = {}
+        self.rows = {}
         self.distance = 0
-        for num in range(NUM_CITIES):
-            self.neighbors[num] = []
+        for city in range(NUM_CITIES):
+            self.neighbors[city] = []
+            self.rows[city] = [-1] * 4
         self.fill_neighbors()
 
     def add_neighbor(self, n1, n2):
@@ -74,7 +76,7 @@ class Board:
 
         self.add_neighbor(LIM, SAN)
         self.add_neighbor(LIM, BA)
-        
+
         self.add_neighbor(SP, BA)
         self.add_neighbor(SP, LAG)
 
@@ -170,3 +172,25 @@ class Board:
             self.distance += 1
             for neighbor in self.neighbors[start]:
                 self.getDistance(neighbor, end)
+
+    def set_row(self, city, color):
+        for row in range(3):
+            if row not in self.rows[city]:
+                self.rows[city][color] = row
+                break
+
+    def get_all_rows(self, city):
+        return self.rows[city]
+
+    def get_row(self, city, color):
+        if self.rows[city][color] != -1:
+            return self.rows[city][color]
+        else:
+            self.set_row(city, color)
+            return self.rows[city][color]
+
+    def delete_row(self, city, color):
+        self.rows[city][city//CITIES_PER_COLOR] = -1
+        for color in range( len(self.rows[city]) ):
+            if self.rows[city][color] > 0:
+                self.rows[city][color] -= 1

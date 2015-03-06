@@ -53,7 +53,7 @@ class PlayerCards(Deck):
         elif len(players) == 3:
             hand_size = 3
         else:
-            hand_size = 4
+            hand_size = 2
         for i in range(hand_size):
             for player in players:
                 player.get_card(self.deck.pop(0))

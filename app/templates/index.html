@@ -17,8 +17,6 @@
 							   href="static/css/stats.css" />
 		<link rel="stylesheet" type="text/css"
 							   href="static/css/player.css" />
-		<link rel="stylesheet" type="text/css"
-							   href="static/css/cubes.css" />
 		<script src="static/js/modernizr.custom.js"></script>
 		<script src="static/js/jquery-1.11.2.js"></script>
 		<script src="static/js/jquery-ui.js"></script>
@@ -26,7 +24,10 @@
 		<script type="text/javascript">
 			$SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
 		</script>
+		<script src="static/js/util.js"></script>
+		<script src="static/js/cubes.js"></script>
 		<script src="static/js/movement.js"></script>
+		<script src="static/js/load.js"></script>
 	</head>
 
 	<body class="menu-push">

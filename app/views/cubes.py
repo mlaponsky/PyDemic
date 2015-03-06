@@ -1,0 +1,52 @@
+from app import app
+from ..src.game import Game
+from ..src.constants import *
+from flask import render_template, flash, redirect, url_for, request, jsonify, \
+                    session, Blueprint
+import json
+import random
+import pickle
+
+disease = Blueprint('disease', __name__)
+
+@disease.route('/_treat_disease')
+def remove_cubes():
+    game = pickle.loads(session['game'])
+    player = game.players[game.active]
+    board = game.board
+    city = player.get_position()
+
+    colors = []
+    for color in range(len(game.cubes[city])):
+        if game.cubes[city][color] != 0:
+            colors.append(color)
+
+    if len(colors) > 1:
+        session['game'] = pickle.dumps(game)
+        return jsonify( colors=colors )
+    else:
+        c = colors[0]
+        starting_cubes = game.cubes[city][c]
+        player.treat(c, game.cures, game.cubes, game.cubes_left, board)
+        cubes_removed = starting_cubes - game.cubes[city][c]
+        cubes_left = game.cubes_left[c]
+        session['game'] = pickle.dumps(game)
+        return jsonify( c=str(c),
+                        num_cubes=cubes_removed,
+                        cubes_left=cubes_left )
+
+@disease.route('/_select_color')
+def get_treatment_color():
+    game = pickle.loads(session['game'])
+    player = game.players[game.active]
+    board = game.board
+    city = player.get_position()
+    color = request.args.get('color', 0, type=int)
+    starting_cubes = game.cubes[city][color]
+    player.treat(color, game.cures, game.cubes, game.cubes_left, board)
+    cubes_removed = starting_cubes - game.cubes[city][color]
+    cubes_left = game.cubes_left[color]
+    print(cubes_left)
+    session['game'] = pickle.dumps(game)
+    return jsonify( num_cubes=cubes_removed,
+                    cubes_left=cubes_left )

@@ -1,5 +1,11 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
-<svg id="svg3046" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 91 96" height="100%" width="100%" version="1.1" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/">
+<svg id="svg3046" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 108 108" height="100%" width="100%" version="1.1" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/">
+ <defs id="defs2991">
+  <filter id="filter2995" color-interpolation-filters="sRGB">
+   <feGaussianBlur id="feGaussianBlur2997" stdDeviation="5" result="result91"/>
+   <feComposite id="feComposite2999" operator="over" in2="result91" in="SourceGraphic"/>
+  </filter>
+ </defs>
  <metadata id="metadata3051">
   <rdf:RDF>
    <cc:Work rdf:about="">
@@ -9,6 +15,6 @@
    </cc:Work>
   </rdf:RDF>
  </metadata>
- <path id="path3866" fill="none" d="m45.5,0.5,45,35,0,60-90,0,0-60z" stroke-opacity="0"/>
- <path id="path3931" fill="#fffff0" d="m45.5,0,45,40,0,50-90,0,0-50z"/>
+ <path id="path3866" fill="none" stroke-opacity="0" d="m54,9.5,45,35,0,60-90,0,0-60z"/>
+ <path id="path3931" filter="url(#filter2995)" fill="#fffff0" d="M54,9,99,49,99,99,9,99,9,49z"/>
 </svg>

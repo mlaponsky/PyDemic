@@ -1,33 +1,33 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
-<svg id="svg2" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1166.9463 340.91993" height="100%" width="100%" version="1.1" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/">
+<svg id="cures" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1178.948 360.10709" height="100%" width="100%" version="1.1" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/">
  <defs id="defs2996">
   <filter id="filter4995" color-interpolation-filters="sRGB">
-   <feFlood id="feFlood4997" result="flood" flood-color="rgb(255,255,255)" flood-opacity="0.442"/>
-   <feComposite id="feComposite4999" operator="in" result="composite1" in2="SourceGraphic" in="flood"/>
+   <feFlood id="feFlood4997" flood-color="rgb(255,255,255)" flood-opacity="0.442" result="flood"/>
+   <feComposite id="feComposite4999" operator="in" in="flood" in2="SourceGraphic" result="composite1"/>
    <feGaussianBlur id="feGaussianBlur5001" stdDeviation="12.2" result="blur"/>
-   <feOffset id="feOffset5003" result="offset" dx="0" dy="0"/>
-   <feComposite id="feComposite5005" operator="over" result="composite2" in2="offset" in="SourceGraphic"/>
+   <feOffset id="feOffset5003" dy="0" dx="0" result="offset"/>
+   <feComposite id="feComposite5005" operator="over" in="SourceGraphic" in2="offset" result="composite2"/>
   </filter>
   <filter id="filter5007" color-interpolation-filters="sRGB">
-   <feFlood id="feFlood5009" result="flood" flood-color="rgb(255,255,255)" flood-opacity="0.442"/>
-   <feComposite id="feComposite5011" operator="in" result="composite1" in2="SourceGraphic" in="flood"/>
+   <feFlood id="feFlood5009" flood-color="rgb(255,255,255)" flood-opacity="0.442" result="flood"/>
+   <feComposite id="feComposite5011" operator="in" in="flood" in2="SourceGraphic" result="composite1"/>
    <feGaussianBlur id="feGaussianBlur5013" stdDeviation="12.2" result="blur"/>
-   <feOffset id="feOffset5015" result="offset" dx="0" dy="0"/>
-   <feComposite id="feComposite5017" operator="over" result="composite2" in2="offset" in="SourceGraphic"/>
+   <feOffset id="feOffset5015" dy="0" dx="0" result="offset"/>
+   <feComposite id="feComposite5017" operator="over" in="SourceGraphic" in2="offset" result="composite2"/>
   </filter>
   <filter id="filter5019" color-interpolation-filters="sRGB">
-   <feFlood id="feFlood5021" result="flood" flood-color="rgb(255,255,255)" flood-opacity="0.442"/>
-   <feComposite id="feComposite5023" operator="in" result="composite1" in2="SourceGraphic" in="flood"/>
+   <feFlood id="feFlood5021" flood-color="rgb(255,255,255)" flood-opacity="0.442" result="flood"/>
+   <feComposite id="feComposite5023" operator="in" in="flood" in2="SourceGraphic" result="composite1"/>
    <feGaussianBlur id="feGaussianBlur5025" stdDeviation="12.2" result="blur"/>
-   <feOffset id="feOffset5027" result="offset" dx="0" dy="0"/>
-   <feComposite id="feComposite5029" operator="over" result="composite2" in2="offset" in="SourceGraphic"/>
+   <feOffset id="feOffset5027" dy="0" dx="0" result="offset"/>
+   <feComposite id="feComposite5029" operator="over" in="SourceGraphic" in2="offset" result="composite2"/>
   </filter>
   <filter id="filter5031" color-interpolation-filters="sRGB">
-   <feFlood id="feFlood5033" result="flood" flood-color="rgb(255,255,255)" flood-opacity="0.442"/>
-   <feComposite id="feComposite5035" operator="in" result="composite1" in2="SourceGraphic" in="flood"/>
+   <feFlood id="feFlood5033" flood-color="rgb(255,255,255)" flood-opacity="0.442" result="flood"/>
+   <feComposite id="feComposite5035" operator="in" in="flood" in2="SourceGraphic" result="composite1"/>
    <feGaussianBlur id="feGaussianBlur5037" stdDeviation="12.2" result="blur"/>
-   <feOffset id="feOffset5039" result="offset" dx="0" dy="0"/>
-   <feComposite id="feComposite5041" operator="over" result="composite2" in2="offset" in="SourceGraphic"/>
+   <feOffset id="feOffset5039" dy="0" dx="0" result="offset"/>
+   <feComposite id="feComposite5041" operator="over" in="SourceGraphic" in2="offset" result="composite2"/>
   </filter>
  </defs>
  <metadata id="metadata7">
@@ -39,11 +39,11 @@
    </cc:Work>
   </rdf:RDF>
  </metadata>
- <g id="cures-paths" transform="translate(230.88844,-404.99993)">
-  <path id="blue-cure" stroke-linejoin="miter" d="m-94.18,615-51.962-90-51.962-90,103.92,0.00001,103.92-0.00001-51.962,90z" stroke-dashoffset="0" filter="url(#filter5031)" stroke="#00F" stroke-miterlimit="4" stroke-dasharray="none" stroke-width="20" fill="none"/>
-  <path id="yellow-cure" stroke-linejoin="miter" d="m-34.286,526.65-51.962-90-51.962-90,103.92,0.00001,103.92-0.00001-51.962,90z" stroke-dashoffset="0" transform="translate(237.95165,89.533205)" filter="url(#filter5019)" stroke="#FF0" stroke-miterlimit="4" stroke-dasharray="none" stroke-width="20" fill="none"/>
-  <path id="black-cure" stroke-linejoin="miter" d="m-34.286,526.65-51.962-90-51.962-90,103.92,0.00001,103.92-0.00001-51.962,90z" stroke-dashoffset="0" transform="translate(535.79775,89.533205)" filter="url(#filter5007)" stroke="#000" stroke-miterlimit="4" stroke-dasharray="none" stroke-width="20" fill="none"/>
-  <path id="path3755-6" stroke-linejoin="miter" d="m799.36,615-51.962-90-51.962-90,103.92,0.00001,103.92-0.00001-51.962,90z" stroke-dashoffset="0" filter="url(#filter4995)" stroke="#F00" stroke-miterlimit="4" stroke-dasharray="none" stroke-width="20" fill="none"/>
-  <text id="red-cure" style="letter-spacing:0px;text-anchor:middle;word-spacing:0px;text-align:center;" font-family="Droid Sans Mono" xml:space="preserve" font-variant="normal" font-size="80px" line-height="775%" font-stretch="normal" font-style="normal" y="745.13861" x="352.81909" font-weight="normal" fill="#fffff0"><tspan id="tspan3841" style="text-anchor:middle;text-align:center;" font-family="Droid Sans Mono" font-size="80px" font-style="normal" font-stretch="normal" font-variant="normal" y="745.13861" x="352.81909" font-weight="bold" fill="#fffff0">CURES</tspan></text>
+ <g id="cures-paths" transform="translate(236.88799,-292.07611)">
+  <path id="blue-cure" stroke-linejoin="miter" d="m-94.18,615-51.962-90-51.962-90,103.92,0.00001h103.92l-51.962,90z" stroke-dashoffset="0" filter="url(#filter5031)" stroke="#00F" stroke-miterlimit="4" stroke-dasharray="none" stroke-width="30" fill="none"/>
+  <path id="yellow-cure" stroke-linejoin="miter" d="m203.67,616.18-51.962-90-51.962-90,103.92,0.00001,103.92-0.00001-51.962,90z" stroke-dashoffset="0" filter="url(#filter5019)" stroke="#c2c200" stroke-miterlimit="4" stroke-dasharray="none" stroke-width="30" fill="none"/>
+  <path id="black-cure" stroke-linejoin="miter" d="m501.51,616.18-51.962-90-51.962-90,103.92,0.00001,103.92-0.00001-51.962,90z" stroke-dashoffset="0" filter="url(#filter5007)" stroke="#000" stroke-miterlimit="4" stroke-dasharray="none" stroke-width="30" fill="none"/>
+  <path id="path3755-6" stroke-linejoin="miter" d="m799.36,615-51.962-90-51.962-90,103.92,0.00001,103.92-0.00001-51.962,90z" stroke-dashoffset="0" filter="url(#filter4995)" stroke="#F00" stroke-miterlimit="4" stroke-dasharray="none" stroke-width="30" fill="none"/>
+  <text id="red-cure" style="writing-mode:lr-tb;letter-spacing:0px;text-anchor:middle;word-spacing:0px;text-align:center;" font-family="Sans" xml:space="preserve" font-size="120px" y="381.13861" font-stretch="normal" font-variant="normal" font-style="normal" x="352.81909" font-weight="normal" line-height="775%" fill="#fffff0"><tspan id="tspan3841" style="writing-mode:lr-tb;text-anchor:middle;text-align:center;" font-family="Sans" font-size="120px" font-style="normal" font-stretch="normal" line-height="775%" font-variant="normal" y="381.13861" x="352.81909" font-weight="normal" fill="#fffff0">CURES</tspan></text>
  </g>
 </svg>

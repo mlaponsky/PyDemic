@@ -11,6 +11,7 @@ import pickle
 load = Blueprint('load', __name__)
 
 @load.route('/', methods=['GET','POST'])
+@load.route('/index', methods=['GET', 'POST'])
 @load.route('/setup', methods=['GET','POST'])
 def setup():
     available_roles = [CP, DISPATCHER, MEDIC, OE, QS, RESEARCHER, SCIENTIST]
@@ -32,18 +33,26 @@ def setup():
                                     title="Pandemic Setup",
                                     form=form)
         game = Game(chosen, form.difficulty.data)
+        game.infect(0,0,3);
+        game.infect(0,3,2);
+        game.research_stations.append(BAG)
+        session.clear()
         session['game'] = pickle.dumps(game)
-        return redirect(url_for('index'))
+        return redirect(url_for('load.start_game', _external=True))
     return render_template("setup.html",
                             title="Pandemic Setup",
                             form=form)
 
-@load.route('/index')
-def index():
-    game = pickle.loads(session['game'])
+@load.route('/game')
+def start_game():
+    try:
+        game = pickle.loads(session['game'])
+    except:
+        return redirect(url_for('load.setup', _external=True))
     active = game.active
     active_player = game.players[active]
     team = game.players[active+1:] + game.players[:active]
+
     session['game'] = pickle.dumps(game)
     return render_template("index.html",
                             title = 'GAME',
@@ -52,4 +61,4 @@ def index():
                             team = team,
                             cards = CARDS,
                             cities = CITIES,
-                            colors = COLOR_STRINGS)
+                            colors = COLOR_STRINGS )

@@ -117,7 +117,7 @@ ul > li {
 }
 
 .role {
-	font-size: 0.6em;
+	font-size: 0.8vw;
 	padding: 5% 0 5% 10%;
 }
 
@@ -128,7 +128,7 @@ ul > li {
 }
 
 .card > p {
-	font-size: 0.6em;
+	font-size: 0.8vw;
 	padding-left: 12%;
 	text-overflow: ellipsis;
 }
@@ -178,7 +178,7 @@ ul > li {
 }
 
 .yellow {
-	background-color: #e6cf73;
+	background-color: #d1bf74;
 }
 
 .black {

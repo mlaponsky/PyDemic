@@ -34,7 +34,10 @@ def undo_action():
     return jsonify(result=action)
 
 def undo_move(data, player, game):
-    player.position = data['origin']
+    if player.get_id() == 'dispatcher':
+        player.selected.position = data['origin']
+    else:
+        player.position = data['origin']
     for color in COLORS:
         number = data['cubes'][color]
         if number != game.cubes[data['destination']][color]:

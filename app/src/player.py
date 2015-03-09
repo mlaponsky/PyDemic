@@ -176,7 +176,7 @@ class Dispatcher(Player):
         self.piece = ROLES[role]['piece_img']
         self.selected = self
 
-    def select_player(self, selected):
+    def select(self, selected):
         self.selected = selected
 
     def can_drive(self, board):
@@ -196,7 +196,7 @@ class Dispatcher(Player):
         can_fly = copy(self.hand)
         neighbors = board.get_neighbors(self.selected.get_position())
         if self.selected.get_position() in can_fly:
-            can_fly.remove(self.position)
+            can_fly.remove(self.selected.position)
         for city in neighbors:
             if city in can_fly:
                 can_fly.remove(city)
@@ -218,7 +218,7 @@ class Dispatcher(Player):
         if self.selected == self:
             self.position = new_pos
         else:
-            self.selected.move(new_pos, board, cures, cubes, quarantined)
+            self.selected.move(new_pos, board, cures, cubes, cubes_left, quarantined)
 
 class Medic(Player):
     def __init__(self):

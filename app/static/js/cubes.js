@@ -3,8 +3,12 @@ function create_cube(position, dims, color, image, row, num) {
     var class_name = "city-"+position + " " + "cube-"+color + " " + "row-"+String(row);
     cube.attr("class", class_name);
     cube.attr("src", image);
+    var menu_on = 0;
+    if ( $('#team-menu').hasClass('menu-open') ) {
+        menu_on = 1;
+    }
     cube.width(dims.width/2.2);
-    cube_l = dims.left + dims.width/3 + (num)*dims.width/2.4 - left_offset;
+    cube_l = dims.left + dims.width/3 + (num)*dims.width/2.4 - left_offset + menu_on*menu_shift;
     cube_t = dims.top + (row+1)*dims.height/2.2 - top_offset;
     cube.offset({ left: cube_l, top: cube_t }).css('position', 'absolute');
     cube.css('z-index', 900);
@@ -15,8 +19,12 @@ function create_cube(position, dims, color, image, row, num) {
 function set_cube_position(position, dims, color, row, num) {
     var class_name = ".city-"+position+".cube-"+color+".row-"+String(row);
     var cube = $(class_name);
+    var menu_on = 0;
+    if ( $('#team-menu').hasClass('menu-open') ) {
+        menu_on = 1;
+    }
     cube.width(dims.width/2.2);
-    cube_l = dims.left + dims.width/3 + (num)*dims.width/2.4 - left_offset;
+    cube_l = dims.left + dims.width/3 + (num)*dims.width/2.4 - left_offset + menu_on*menu_shift;
     cube_t = dims.top + (row+1)*dims.height/2.2 -top_offset;
     cube.offset({ left: cube_l, top: cube_t }).css('position', 'absolute');
     cube.css('z-index', 900);

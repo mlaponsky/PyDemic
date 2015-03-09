@@ -10,7 +10,6 @@ function set_cities(cities, position) {
         $("#"+cities[i]).attr("class", "available");
         $("#"+cities[i]).off().on("click", execute_move);
     }
-    set_treatable(position);
     $(".unavailable").off('click');
 }
 
@@ -55,14 +54,61 @@ function set_cure(color, cured) {
     }
 }
 
+function set_selectable_players(active) {
+    if (active === 'dispatcher') {
+        $('.role').attr('class', 'role choosable');
+        $('.role').click( select_player );
+    } else {
+        $('#team-players .role').attr('class', 'role');
+        $('#team-players .role').off();
+    }
+}
+
+function select_player(event) {
+    var target = $(event.target);
+    var select = target.parent().index() + 1
+    $.getJSON( $SCRIPT_ROOT + '/_select_player', { index: select }).success(
+        function(data) {
+            $(".available").attr('class', 'unavailable');
+            $(".treatable").attr('class', 'unavailable');
+            set_cities(data.available, data.position);
+            target.attr('class', 'role chosen');
+            escape_select_player();
+        }
+    ).error(function(error){console.log(error)});
+}
+
+function deselect_player() {
+    var target = $(event.target);
+    $.getJSON( $SCRIPT_ROOT + '/_select_player', { index: 0 }).success(
+        function(data) {
+            $(".available").attr('class', 'unavailable');
+            set_cities(data.available, data.position);
+            set_treatable(data.position);
+            $('#build-station').prop('disabled', !data.can_build);
+            $('#can-cure').prop('disabled', !data.can_cure);
+            $('.role').attr('class', 'role choosable');
+            $('.role').off().on('click', select_player );
+        }
+    )
+}
+
+function escape_select_player() {
+    if ( $(".chosen").length !== 0 ) {
+        $('html').keyup( function( e ) {
+            if (e.keyCode === 27) { deselect_player() };
+        });
+        $('#name').off().on('click', deselect_player);
+    }
+}
+
 function escape_card_select(objects) {
     $(".holding").attr("class", "available");
     $(".selected").attr("class", "available");
     $(".available").off().on("click", execute_move);
     objects.css("border", '');
-    objects.off("click");
-    $('html').off('click');
-    $('html').off('keyup');
+    objects.off();
+    $('html').off();
 }
 
 function escape_cube_select(objects, city) {
@@ -79,5 +125,6 @@ function escape_cube_select(objects, city) {
 function escape_station_select(available, city) {
     $(".holding").attr("class", "unavailable");
     set_cities(available, city);
+    set_treatable(city);
     $("#build-station").attr('class', 'action');
 }

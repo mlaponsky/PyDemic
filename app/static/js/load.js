@@ -19,7 +19,9 @@ function initial_load() {
         place_cubes(cubes, rows, images);
         init_cities();
         set_cities(available, positions[0]);
+        set_treatable(positions[0])
         set_stations(rs);
+        set_selectable_players(roles[0]);
 
         for (var i=0; i<cures.length; i++) {
             set_cure(String(i), cures[i]);

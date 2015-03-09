@@ -3,6 +3,7 @@
  */
 var left_offset;
 var top_offset;
+var menu_shift;
 
 function sizeGame() {
 	var raw_image_w = 4378;
@@ -12,6 +13,8 @@ function sizeGame() {
 	var screen_w = $(window).width();
 	var screen_h = $(window).height();
 	var screen_ratio = screen_w / screen_h;
+
+	menu_shift = screen_w*0.06;
 
 	if (image_ratio >= screen_ratio) {
 		$("#map").width(screen_w).height(screen_w*(1/image_ratio));

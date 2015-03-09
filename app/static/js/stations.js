@@ -8,7 +8,11 @@ function create_station(loc) {
     station.attr('src', '../static/img/research.svg');
     station.width(dims.width/2);
     station.height(dims.height/2);
-    station.offset({left: dims.left - 0.2*dims.width - left_offset,
+    var menu_on = 0;
+    if ( $('#team-menu').hasClass('menu-open') ) {
+        menu_on = 1;
+    }
+    station.offset({left: dims.left - 0.2*dims.width - left_offset + menu_on*menu_shift,
                     top: dims.top + 0.6*dims.height - top_offset
                     }).css('position', 'absolute');
     station.css('z-index', '800');
@@ -33,6 +37,7 @@ function select_station(event) {
             $("#card-"+String(data.position)).remove()
         }
         set_cities(data.available, data.position);
+        set_treatable(data.posittion);
         $('#build-station').attr('class', 'action');
         $("#build-station").prop('disabled', true);
         $("#undo-action").prop('disabled', ACTIONS === 0);
@@ -50,6 +55,7 @@ function build_station() {
             }
             document.getElementById("research-cnt").getElementsByTagName('tspan')[0].textContent = String(6-data.num_stations-1);
             set_cities(data.available, data.position);
+            set_treatable(data.position);
             $("#build-station").attr('class', 'action');
             $("#build-station").prop('disabled', true);
             $("#undo-action").prop('disabled', ACTIONS === 0);

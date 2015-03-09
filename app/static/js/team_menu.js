@@ -1,7 +1,3 @@
-/**
- * @author max
- */
-
 var menu_right = document.getElementById( 'team-menu' ),
 				team_menu = document.getElementById( 'team-button' ),
 				body = document.body;
@@ -9,5 +5,5 @@ var menu_right = document.getElementById( 'team-menu' ),
 			team_menu.onclick = function() {
 				classie.toggle( this, 'active' );
 				classie.toggle( body, 'menu-push-toleft' );
-				classie.toggle( menu_right, 'menu-open' );
+				classie.toggle( menu_right, 'menu-open' );	
 			};

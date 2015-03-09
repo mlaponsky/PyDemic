@@ -5,12 +5,17 @@ function move(new_pos, data) {
     var city_h = city_dims.height;
     var city_l = city_dims.left;
     var city_t = city_dims.top;
+    var menu_on = 0;
+    if ( $('#team-menu').hasClass('menu-open') ) {
+        menu_on = 1;
+    }
+
     var player_l;
     var player_t = city_t - 0.57*city_h - top_offset;
     // Find the first open player position
     for (var j=0; j<4; j++) {
         if ( $("."+new_pos+"-"+String(j)).length === 0 ) {
-            player_l = city_l + (j+1)*3*city_w/8 - left_offset;
+            player_l = city_l + (j+1)*3*city_w/8 - left_offset + menu_on*menu_shift;
             $("#"+data.player_id+"-piece").attr("class", new_pos+"-"+String(j));
             break;
         }
@@ -21,9 +26,12 @@ function move(new_pos, data) {
     //Animate movement and set availability.
     $("#"+data.player_id+"-piece").stop().animate({left: player_l, top: player_t}, function() { medic_with_cure(data, new_pos);
                  set_cities(data.available, new_pos);
-                 $("#build-station").prop('disabled', !data.can_build);
-                 $("#make-cure").prop('disabled', !data.can_cure),
-                 $("#undo-action").prop('disabled', ACTIONS === 0);
+                 if ($("#"+data.player_id).length === 0) {
+                     set_treatable(new_pos);
+                     $("#build-station").prop('disabled', !data.can_build);
+                     $("#make-cure").prop('disabled', !data.can_cure),
+                     $("#undo-action").prop('disabled', ACTIONS === 0);
+                 }
     });
 
 }

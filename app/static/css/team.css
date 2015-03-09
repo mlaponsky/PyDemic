@@ -1,0 +1,7 @@
+.choosable:hover{
+    border: 4px solid #fffff0;
+}
+
+.chosen {
+    border: 4px solid #fffff0;
+}

@@ -25,6 +25,10 @@ function undo_move(data) {
     var city_h = city_dims.height;
     var city_l = city_dims.left;
     var city_t = city_dims.top;
+    var menu_on = 0;
+    if ( $('#team-menu').hasClass('menu-open') ) {
+        menu_on = 1;
+    }
     var player_l;
     var player_t = city_t - 0.57*city_h;
     // Find the first open player position

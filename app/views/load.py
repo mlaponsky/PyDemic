@@ -53,16 +53,22 @@ def set_game():
     pieces = []
     roles = []
     positions = []
+
+    team = game.players[game.active:] + game.players[:game.active]
+    if game.players[game.active].get_role() == DISPATCHER:
+        game.players[game.active].select(game.players[game.active])
+        for x in team:
+            if x != game.players[game.active]:
+                available.append(x.get_position())
+    for x in team:
+        pieces.append(ROLES[x.get_role()]['piece_img'])
+        roles.append(x.get_id())
+        positions.append(str(x.get_position()))
     research_stations = copy(game.research_stations)
     can_build = player.can_build( player.get_position(), research_stations)
     can_cure = player.can_cure(research_stations)
     for city in player.can_move(game.research_stations, board):
         available.append(str(city))
-    team = game.players[game.active:] + game.players[:game.active]
-    for x in team:
-        pieces.append(ROLES[x.get_role()]['piece_img'])
-        roles.append(x.get_id())
-        positions.append(str(x.get_position()))
     cubes = {}
     rows = {}
     cures = game.cures

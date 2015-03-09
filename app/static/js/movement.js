@@ -53,9 +53,9 @@ function execute_move(event) {
             $(".available").attr("class", "unavailable holding");
             $('html').off().on( 'click', function( e ) {
                 if ($( e.target ).closest($(".selected").length === 0 )) {
-                    escape_card_select( $('#hand').children('img')) }} );
+                    escape_card_select( $('.pl-card').children('div')) }} );
             $('html').keyup( function( e ) {
-                if (e.keyCode === 27) { escape_card_select( $('#hand').children('img') ) };
+                if (e.keyCode === 27) { escape_card_select( $('.pl-card').children('div') ) };
             });
         }
     }).error(function(error){console.log(error);});

@@ -53,5 +53,6 @@ def undo_station(data, player, game):
         player.add_card(int(data['position']))
 
 def undo_treatment(data, game):
-    game.cubes[int(data['city'])][int(data['color'])] += data['num_cubes']
-    game.cubes_left[int(data['color'])] -= data['num_cubes']
+    game.cubes_left[int(data['color'])] -= data['removed']
+    game.cubes[int(data['city'])][int(data['color'])] = data['num_cubes']
+    game.board.rows[int(data['city'])] = data['rows']

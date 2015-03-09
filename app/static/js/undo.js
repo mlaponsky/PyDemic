@@ -76,8 +76,8 @@ function undo_station(data) {
 function undo_treatment(data) {
     var city = document.getElementById(data['city']);
     var dims = city.getBoundingClientRect();
-    add_cubes(data['city'], dims, data['color'], data['image'], data['row'], data['num_cubes']);
+    add_cubes(data['city'], dims, data['color'], data['image'], data['rows'][Number(data['color'])], data['num_cubes']);
 
-    var cubes_left = document.getElementById(data['color']+"-cnt").getElementsByTagName('tspan')[0].textContent
-    cubes_left = String(Number(cubes_left) + data['num_cubes']);
+    var cubes_left = Number(document.getElementById(data['color']+"-cnt").getElementsByTagName('tspan')[0].textContent)
+    document.getElementById(data['color']+"-cnt").getElementsByTagName('tspan')[0].textContent = cubes_left - data['removed'];
 }

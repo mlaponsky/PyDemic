@@ -6,6 +6,7 @@ from flask import render_template, flash, redirect, url_for, request, jsonify, \
 import json
 import random
 import pickle
+from copy import copy
 
 disease = Blueprint('disease', __name__)
 
@@ -28,14 +29,16 @@ def remove_cubes():
     else:
         c = colors[0]
         starting_cubes = game.cubes[city][c]
-        row = board.rows[city][c]
+        rows = copy(board.rows[city])
+        print(rows)
         player.treat(c, game.cures, game.cubes, game.cubes_left, board)
         cubes_removed = starting_cubes - game.cubes[city][c]
         cubes_left = game.cubes_left[c]
         action = { 'act': "treat", 'data': { 'city': str(city),
                                              'color': str(c),
-                                             'num_cubes': cubes_removed,
-                                             'row': row,
+                                             'num_cubes': starting_cubes,
+                                             'removed': cubes_removed,
+                                             'rows': rows,
                                              'image': COLOR_IMG[c] }}
         actions.append(action)
         session['actions'] = actions
@@ -53,15 +56,16 @@ def get_treatment_color():
     city = player.get_position()
     color = request.args.get('color', 0, type=int)
     starting_cubes = game.cubes[city][color]
-    row = board.rows[city][color]
+    rows = copy(board.rows[city])
     player.treat(color, game.cures, game.cubes, game.cubes_left, board)
     cubes_removed = starting_cubes - game.cubes[city][color]
     cubes_left = game.cubes_left[color]
     action = { 'act': "treat",  'data': { 'city': str(city),
-                                          'color': str(c),
-                                          'num_cubes': cubes_removed,
-                                          'row': row,
-                                          'image': COLOR_IMG[c] }}
+                                          'color': str(color),
+                                          'num_cubes': starting_cubes,
+                                          'removed': cubes_removed,
+                                          'rows': rows,
+                                          'image': COLOR_IMG[color] }}
     actions.append(action)
     session['actions'] = actions
     session['game'] = pickle.dumps(game)

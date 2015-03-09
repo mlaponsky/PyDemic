@@ -35,7 +35,9 @@ def undo_action():
 
 def undo_move(data, player, game):
     if player.get_id() == 'dispatcher':
-        player.selected.position = data['origin']
+        for p in game.players:
+            if p.get_id() == data['role']:
+                p.position = data['origin']
     else:
         player.position = data['origin']
     for color in COLORS:

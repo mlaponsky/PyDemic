@@ -66,9 +66,12 @@ function set_selectable_players(active) {
 
 function select_player(event) {
     var target = $(event.target);
-    var select = target.parent().index() + 1
+    var select = target.parent().parent().index() + 1
     $.getJSON( $SCRIPT_ROOT + '/_select_player', { index: select }).success(
         function(data) {
+            if ($(".chosen").length !== 0) {
+                $(".chosen").attr('class', 'role choosable');
+            }
             $(".available").attr('class', 'unavailable');
             $(".treatable").attr('class', 'unavailable');
             set_cities(data.available, data.position);

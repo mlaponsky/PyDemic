@@ -25,7 +25,7 @@ def set_move():
         player_id = player.selected.get_id()
         origin = player.selected.get_position()
         for p in game.players:
-            if player.selected != p:
+            if player.selected != p and origin != p.get_position():
                 available.append(str(p.get_position()))
     cures = copy(game.cures)
     move = ""
@@ -211,7 +211,7 @@ def select_player():
     for city in player.can_move(game.research_stations, game.board):
         available.append(str(city))
     for p in game.players:
-        if p != player.selected:
+        if p != player.selected and p.get_position() != player.selected.get_position():
             available.append(str(p.get_position()))
     can_build = player.can_build(player.get_position(), game.research_stations)
     can_cure = player.can_cure(game.research_stations)

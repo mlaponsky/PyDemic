@@ -58,7 +58,7 @@ def set_game():
     if game.players[game.active].get_role() == DISPATCHER:
         game.players[game.active].select(game.players[game.active])
         for x in team:
-            if x != game.players[game.active]:
+            if x != game.players[game.active] and x.get_position() != game.players[game.active].get_position():
                 available.append(x.get_position())
     for x in team:
         pieces.append(ROLES[x.get_role()]['piece_img'])

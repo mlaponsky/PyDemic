@@ -27,6 +27,9 @@
 		<script src="static/js/util.js"></script>
 		<script src="static/js/cubes.js"></script>
 		<script src="static/js/movement.js"></script>
+		<script src="static/js/stations.js"></script>
+		<script src="static/js/cards.js"></script>
+		<script src="static/js/undo.js"></script>
 		<script src="static/js/load.js"></script>
 	</head>
 
@@ -56,6 +59,14 @@
 				<button id="team-button" title="Team">
 					<img src="../static/img/team.svg">
 				</button>
+
+				<button id="build-station" class="action" title="Build research station" onclick="build_station()" disabled >BUILD</button>
+
+				<button id="make-cure" class="action" title="Make cure" disabled >CURE</button>
+
+				<button id="undo-action" class="action" title="Make cure" onclick="undo()" disabled >UNDO</button>
+
+				<button id="next-phase" class="action" title="Make cure" disabled >NEXT</button>
 
 				{% include 'stats.html' %}
 

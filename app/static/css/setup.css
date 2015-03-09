@@ -23,6 +23,10 @@ body {
     font-size: 14pt;
 }
 
+.char-select option[disabled] {
+    display: none;
+}
+
 #difficulty {
     position: absolute;
     left: 42.5%;

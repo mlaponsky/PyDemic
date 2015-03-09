@@ -190,7 +190,7 @@ class Board:
             return self.rows[city][color]
 
     def delete_row(self, city, color):
-        self.rows[city][city//CITIES_PER_COLOR] = -1
-        for color in range( len(self.rows[city]) ):
-            if self.rows[city][color] > 0:
-                self.rows[city][color] -= 1
+        self.rows[city][color] = -1
+        for c in COLORS:
+            if self.rows[city][c] > 0:
+                self.rows[city][c] -= 1

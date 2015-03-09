@@ -1,14 +1,12 @@
-<div id="player">
-
-    <!-- <div id="text">
-        <p id="role">QUARANTINE SPECIALIST</p>
-    </div> -->
-    <div id="name">
-        <img id="active-role" title="{{ active_player.get_role() }}" src="{{ active_player.title }}" height="80%">
-    </div>
-    <div id="hand">
+<div id="player-container">
+    <ul id="player">
+        <li id="name">
+            <div class="pl-name"></div>
+        </li>
         {% for card in active_player.hand %}
-            <img id="card-{{ card }}" draggable="true" title="{{ cards[card]['name'] }}&#013; Population: {{ '{:,}'.format(cards[card]['population']*1000) }}" src="{{ cards[card]['player_card'] }}" height="100%">
+            <li id="card-{{ card }}" class="pl-card" >
+                <div title="{{ cards[card]['name'] }}&#013; {{ cards[card]['description'] }} "></div>
+            </li>
         {% endfor %}
-    </div>
+    </ul>
 </div>

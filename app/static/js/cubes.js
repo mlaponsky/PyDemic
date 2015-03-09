@@ -1,22 +1,47 @@
-function create_cube(position, dims, color, image, num, row) {
+function create_cube(position, dims, color, image, row, num) {
     var cube = $('<img/>');
-    var class_name = "city-"+position + " " + "cube-"+color;
+    var class_name = "city-"+position + " " + "cube-"+color + " " + "row-"+String(row);
     cube.attr("class", class_name);
     cube.attr("src", image);
     cube.width(dims.width/2.2);
-    cube_l = dims.left + dims.width/3 + (num)*dims.width/2.2;
-    cube_t = dims.top + dims.height/2.5 + (row-1)*dims.width/2.5;
+    cube_l = dims.left + dims.width/3 + (num)*dims.width/2.4 - left_offset;
+    cube_t = dims.top + (row+1)*dims.height/2.2 - top_offset;
     cube.offset({ left: cube_l, top: cube_t }).css('position', 'absolute');
     cube.css('z-index', 900);
     cube.css('pointer-events', 'none');
     cube.appendTo('#map');
 }
 
+function set_cube_position(position, dims, color, row, num) {
+    var class_name = ".city-"+position+".cube-"+color+".row-"+String(row);
+    var cube = $(class_name);
+    cube.width(dims.width/2.2);
+    cube_l = dims.left + dims.width/3 + (num)*dims.width/2.4 - left_offset;
+    cube_t = dims.top + (row+1)*dims.height/2.2 -top_offset;
+    cube.offset({ left: cube_l, top: cube_t }).css('position', 'absolute');
+    cube.css('z-index', 900);
+    cube.css('pointer-events', 'none');
+}
+
 function create_cube_row(position, dims, color, image, row, total) {
     for (var num=0; num<total; num++) {
-        create_cube(position, dims, String(color), image, num, row);
+        create_cube(position, dims, String(color), image, row, num);
     }
 }
+
+function set_cube_row(position, dims, color, row, total) {
+    for (var num=0; num<total; num++) {
+        set_cube_position(position, dims, String(color), row, num);
+    }
+}
+
+function add_cubes(position, dims, color, image, row, total) {
+    var class_name = ".city-"+position+".cube-"+color+".row-"+String(row);
+    var cube_row = $(class_name);
+    for (var i=cube_row.length; i<total; i++) {
+        create_cube(position, dims, color, image, row, i);
+    }
+};
 
 function place_cubes(cubes, rows, images) {
     positions = Object.keys(cubes);
@@ -32,12 +57,28 @@ function place_cubes(cubes, rows, images) {
     }
 }
 
+function set_cubes(cubes, rows) {
+    positions = Object.keys(cubes);
+    for (var i=0; i<positions.length; i++ ) {
+        var cube_set = cubes[positions[i]];
+        for (var color=0; color<cube_set.length; color++) {
+            if (cube_set[color] !== 0) {
+                var city = document.getElementById(positions[i]);
+                var dims = city.getBoundingClientRect();
+                set_cube_row(positions[i], dims, color, rows[positions[i]][color], cube_set[color]);
+            }
+        }
+    }
+}
+
 function remove_cubes(city, color, num_cubes, cubes_left) {
     var cubes = $(".city-"+city+".cube-"+color);
     var to_remove = cubes.slice(cubes.length-num_cubes, cubes.length);
     for (var i=0; i<to_remove.length; i++) {
         to_remove[i].remove();
     }    document.getElementById(color+"-cnt").getElementsByTagName('tspan')[0].textContent = String(cubes_left);
+    actions++;
+    $("#undo-action").prop('disabled', actions === 0);
 }
 
 function medic_with_cure(data, position) {
@@ -56,13 +97,17 @@ function treat(event) {
     $.getJSON( $SCRIPT_ROOT + '/_treat_disease').success( function(data) {
         if (typeof data.c !== 'undefined') {
             remove_cubes(city, data.c, data.num_cubes, data.cubes_left);
+            actions++;
         } else {
             $(".city-"+city).css("border", "2px solid #FFFFF0");
+            $(".city-"+city).css('-webkit-border-radius', 4);
+            $(".city-"+city).css('-moz-border-radius', 4);
+            $(".city-"+city).css('border-radius', 4);
             $(".city-"+city).css("pointer-events", '');
             $(".city-"+city).off().on('click', function(e) { select_cube_color(e) });
 
-            $(".available").off("click");
-            $(".treatable").off("click");
+            $(".available").off();
+            $(".treatable").off();
             $(".treatable").attr("class", "treating");
             $(".available").attr("class", "unavailable holding");
             $('html').on( 'click', function( e ) {
@@ -84,9 +129,10 @@ function select_cube_color(event) {
     $.getJSON( $SCRIPT_ROOT + '/_select_color', { color: Number(color) }).success(
         function(data) {
             remove_cubes(city, color, data.num_cubes, data.cubes_left);
+            actions++;
             $("."+class_array[0]).css("border", '')
             $("."+class_array[0]).css("fill", '')
-            $("."+class_array[0]).off('click');
+            $("."+class_array[0]).off();
             $("."+class_array[0]).css('pointer-events', 'none');
 
         }).error(function(error){console.log(error);});

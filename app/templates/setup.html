@@ -6,17 +6,6 @@
     <script src="../static/js/jquery-1.11.2.js"></script>
     <script src="../static/js/jquery-ui.js"></script>
     <script src="../static/js/update_menus.js"></script>
-    <script type="text/javascript">
-        window.onload = function () {
-            var lists = document.getElementsByClassName('char-select');
-            for (var i=0; i<lists.length; i++) {
-                if (i<3) {
-                    lists[i].onchange = updateMenus;
-                    lists[i].options[1].selected = "selected";
-                }
-            }
-        }
-    </script>
     <head>
         <title>PyDemic</title>
     </head>

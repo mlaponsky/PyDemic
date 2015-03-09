@@ -7,6 +7,7 @@ import json
 from ..forms import SetupForm
 import random
 import pickle
+from copy import copy
 
 load = Blueprint('load', __name__)
 
@@ -33,22 +34,69 @@ def setup():
                                     title="Pandemic Setup",
                                     form=form)
         game = Game(chosen, form.difficulty.data)
-        game.infect(0,0,3);
-        game.infect(0,3,2);
-        game.research_stations.append(BAG)
+        actions = []
         session.clear()
         session['game'] = pickle.dumps(game)
-        return redirect(url_for('load.start_game', _external=True))
+        session['actions'] = actions
+        return redirect(url_for('load.start_game'))
     return render_template("setup.html",
                             title="Pandemic Setup",
                             form=form)
+
+@load.route('/_load')
+def set_game():
+    game = pickle.loads(session['game'])
+    actions = session['actions']
+    player = game.players[game.active]
+    board = game.board
+    available = []
+    pieces = []
+    roles = []
+    positions = []
+    research_stations = copy(game.research_stations)
+    can_build = player.can_build( player.get_position(), research_stations)
+    can_cure = player.can_cure(research_stations)
+    for city in player.can_move(game.research_stations, board):
+        available.append(str(city))
+    team = game.players[game.active:] + game.players[:game.active]
+    for x in team:
+        pieces.append(ROLES[x.get_role()]['piece_img'])
+        roles.append(x.get_id())
+        positions.append(str(x.get_position()))
+    cubes = {}
+    rows = {}
+    cures = game.cures
+    hand = player.hand
+
+    for city in range(NUM_CITIES):
+        if not all(v==0 for v in game.cubes[city]):
+            cubes[city] = game.cubes[city]
+            rows[city] = board.get_all_rows(city)
+
+    session['actions'] = actions
+    session['game'] = pickle.dumps(game)
+    return jsonify( available=available,
+                    pieces=pieces,
+                    roles=roles,
+                    positions=positions,
+                    cubes=cubes,
+                    cube_rows=rows,
+                    colors=COLOR_IMG,
+                    cures=cures,
+                    rs=research_stations,
+                    can_build=can_build,
+                    can_cure=can_cure,
+                    role_img=ROLES[player.get_role()]['title_img'],
+                    hand=hand,
+                    cards=CARDS,
+                    actions=actions )
 
 @load.route('/game')
 def start_game():
     try:
         game = pickle.loads(session['game'])
     except:
-        return redirect(url_for('load.setup', _external=True))
+        return redirect(url_for('setup'))
     active = game.active
     active_player = game.players[active]
     team = game.players[active+1:] + game.players[:active]

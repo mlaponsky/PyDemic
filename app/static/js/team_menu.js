@@ -2,12 +2,12 @@
  * @author max
  */
 
-var menuRight = document.getElementById( 'team-menu' ),
-				teamMenu = document.getElementById( 'team-button' ),
+var menu_right = document.getElementById( 'team-menu' ),
+				team_menu = document.getElementById( 'team-button' ),
 				body = document.body;
 
-			teamMenu.onclick = function() {
+			team_menu.onclick = function() {
 				classie.toggle( this, 'active' );
 				classie.toggle( body, 'menu-push-toleft' );
-				classie.toggle( menuRight, 'menu-open' );
+				classie.toggle( menu_right, 'menu-open' );
 			};

@@ -10,9 +10,9 @@
   </rdf:RDF>
  </metadata>
  <g id="layer1" transform="translate(-236.19428,-194.37427)">
-  <rect id="rect2985" rx="26.198" ry="23.883" height="291" width="219.64" stroke="#D1BF74" stroke-dasharray="none" x="240.12" y="198.3" stroke-miterlimit="4" stroke-width="7.8452" fill="#333"/>
-  <path id="path3813" d="m408.87,400.5a58.93,58.93,0,0,1,-117.86,0,58.93,58.93,0,1,1,117.86,0z" stroke="#D1BF74" stroke-dasharray="none" stroke-miterlimit="4" stroke-width="3" fill="#D1BF74"/>
-  <rect id="rect3760" stroke-linejoin="miter" stroke-width="2" rx="0" ry="0" stroke-dashoffset="0" width="217.56" stroke="#D1BF74" stroke-dasharray="none" x="241.21" y="244.57" stroke-miterlimit="4" height="69.132" fill="#D1BF74"/>
+  <rect id="rect2985" rx="26.198" ry="23.883" height="291" width="219.64" stroke="#BCAC68" stroke-dasharray="none" x="240.12" y="198.3" stroke-miterlimit="4" stroke-width="7.8452" fill="#333"/>
+  <path id="path3813" d="m408.87,400.5a58.93,58.93,0,0,1,-117.86,0,58.93,58.93,0,1,1,117.86,0z" stroke="#BCAC68" stroke-dasharray="none" stroke-miterlimit="4" stroke-width="3" fill="#BCAC68"/>
+  <rect id="rect3760" stroke-linejoin="miter" stroke-width="2" rx="0" ry="0" stroke-dashoffset="0" width="217.56" stroke="#BCAC68" stroke-dasharray="none" x="241.21" y="244.57" stroke-miterlimit="4" height="69.132" fill="#BCAC68"/>
   <text id="text3762" style="writing-mode:lr-tb;letter-spacing:0px;text-anchor:middle;word-spacing:0px;text-align:center;" line-height="0%" font-family="fontawesome" xml:space="preserve" font-size="28.00000191px" font-style="normal" font-stretch="normal" font-variant="normal" y="289.14999" x="349.91626" font-weight="bold" fill="#333333"><tspan id="tspan3764" style="writing-mode:lr-tb;text-anchor:middle;text-align:center;" font-size="26px" y="289.14999" font-stretch="normal" font-variant="normal" font-style="normal" x="349.91626" font-family="fontawesome" line-height="0%">São Paulo</tspan></text>
  </g>
 </svg>

@@ -22,13 +22,13 @@ class Deck:
         return self.deck.pop(index)
 
     def add_to_discard(self, name):
-        self.discard.insert(name, 0)
+        self.discard.insert(0, name)
 
     def add_to_graveyard(self, name):
         self.graveyard.append(name)
 
     def remove_from_discard(self, card):
-        self.discard.remove[card]
+        self.discard.remove(card)
 
     def shuffle_deck(self):
         shuffle(self.deck)
@@ -56,7 +56,7 @@ class PlayerCards(Deck):
             hand_size = 2
         for i in range(hand_size):
             for player in players:
-                player.get_card(self.deck.pop(0))
+                player.add_card(self.deck.pop(0))
 
     def set_deck(self, num_epidemics):
         segment_size = len(self.deck) // num_epidemics

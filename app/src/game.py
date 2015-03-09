@@ -26,18 +26,19 @@ class Game:
         for city in range(NUM_CITIES):
              self.cubes[city] = [0] * 4
         self.cubes_left = [NUM_CUBES] * 4
-        self.cures = [1] * 4
+        self.cures = [0] * 4
+
         self.research_stations = []
         self.quarantined = []
+        self.outbreaks = []
 
         self.board = Board()
         self.num_epidemics = epidemics
         self.num_players = len(roles)
         self.research_stations.append(ATL)
         self.infect_cards = InfectCards()
-        for i in reversed(range(9)):
-            city = self.draw_infect_card()
-            self.infect(city, city//CITIES_PER_COLOR, i//3 + 1)
+
+        self.initial_infect()
 
         for role in roles:
             self.players.append(self.assign_player(role))
@@ -85,13 +86,20 @@ class Game:
     '''
     The below function is a generic cube adding function. It takes the color and number of cubes to be added, and the city to infect. This function is implemented in all situations in which a city would be infected. A normal infect city action will just call the function directly with numCubes = 1. The other cube-adding scenarios are outbreak and epidemic. Notice the recursive coupling between infect and outbreak below, and infect will call outbreak when it would go over the cube limit, and outbreaks will infect, potentially chaining into other outbreaks. The outbreak function handles all conditions for outbreaks, and tracks outbreaks that have already occurred on a turn so as not to repeat. The function to reset the outbreak array is called after each epidemic AND each infect stage.
     '''
+    def initial_infect(self):
+        for i in reversed(range(9)):
+            city = self.infect_cards.draw_card(0)
+            self.infect(city, city//CITIES_PER_COLOR, i//3 + 1)
+
     def draw_infect_card(self):
         card = self.infect_cards.draw_card(0)
         self.infect_cards.add_to_discard(card)
+        self.infect(card, card // CITIES_PER_COLOR, 1)
+        self.reset_outbreaks()
         return card
 
     def infect(self, city, color, num_cubes):
-        if city not in self.quarantined or not self.eradicated[color]:
+        if city not in self.quarantined and self.cures[color] != ERADICATED:
             if self.cubes[city][color] == 0:
                 self.board.set_row(city, color)
             if self.cubes[city][color] + num_cubes <= MAX_CUBES:
@@ -102,57 +110,30 @@ class Game:
                 self.cubes_left[color] -= MAX_CUBES - num_cubes
                 self.outbreak(city, color)
 
-    def execute_outbreak(self, city, color, outbreaks):
-        if city not in outbreaks \
-                or city not in self.quarantined \
-                or not self.eradicated[color]:
+    def outbreak(self, city, color):
+        if city not in self.outbreaks \
+                and city not in self.quarantined \
+                and self.cures[color] != ERADICATED:
             self.num_outbreaks += 1
-            outbreaks.append(city)
+            self.outbreaks.append(city)
             neighbors = self.board.get_neighbors(city)
             for n in neighbors:
                 self.infect(n, color, 1)
 
-    def outbreak(self, city, color):
-        outbreaks = []
-        self.execute_outbreak(city, color, outbreaks)
-        self.reset_outbreaks(outbreaks)
-
-    def reset_outbreaks(self, outbreaks):
-        outbreaks = []
+    def reset_outbreaks(self):
+        self.outbreaks = []
 
     def epidemic(self):
         self.num_epidemics += 1
         card = self.infect_cards.draw_card(-1)
         self.infect_cards.add_to_discard(card)
         self.infect(card, card // CITIES_PER_COLOR, MAX_CUBES)
+        self.reset_outbreaks()
         self.infect_cards.recombine_decks()
 
     # Handles all functions relating to research stations.
     def check_num_stations(self):
         return len(self.research_stations)
-
-    def remove_station(self, city):
-        self.research_stations.remove(city)
-
-    # Handles OE special ability.
-
-    # Handles RESEARCHER ability in trade check.
-    def can_share(self, city, owner, target):
-        same_city = owner.get_position() == target.get_position()
-        right_city = (city == owner.get_position()
-                                or owner.get_role() == RESEARCHER)
-        return same_city and right_city
-
-    def share(self, city, owner, target):
-        if self.can_share(city, owner, target):
-            owner.discard(city)
-            target.get_card(city)
-
-    def can_move(self, player, city):
-        if player.get_position() in self.research_stations and city in self.research_stations:
-            return True
-        else:
-            return city in self.board.get_neighbors(player.getPosition())
 
 # Event card handling
     def play_airlift(self, player, target, new_pos):

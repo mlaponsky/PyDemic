@@ -106,12 +106,12 @@
 	}
 }
 
-ul {
+.menu ul {
 	list-style: none;
 	padding-left: 0;
 }
 
-ul > li {
+.menu ul > li {
 	color: #fffff0;
 	height: auto;
 }
@@ -178,7 +178,7 @@ ul > li {
 }
 
 .yellow {
-	background-color: #d1bf74;
+	background-color: #BCAC68;
 }
 
 .black {

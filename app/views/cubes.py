@@ -12,12 +12,13 @@ disease = Blueprint('disease', __name__)
 @disease.route('/_treat_disease')
 def remove_cubes():
     game = pickle.loads(session['game'])
+    actions = session['actions']
     player = game.players[game.active]
     board = game.board
     city = player.get_position()
 
     colors = []
-    for color in range(len(game.cubes[city])):
+    for color in COLORS:
         if game.cubes[city][color] != 0:
             colors.append(color)
 
@@ -27,9 +28,17 @@ def remove_cubes():
     else:
         c = colors[0]
         starting_cubes = game.cubes[city][c]
+        row = board.rows[city][c]
         player.treat(c, game.cures, game.cubes, game.cubes_left, board)
         cubes_removed = starting_cubes - game.cubes[city][c]
         cubes_left = game.cubes_left[c]
+        action = { 'act': "treat", 'data': { 'city': str(city),
+                                             'color': str(c),
+                                             'num_cubes': cubes_removed,
+                                             'row': row,
+                                             'image': COLOR_IMG[c] }}
+        actions.append(action)
+        session['actions'] = actions
         session['game'] = pickle.dumps(game)
         return jsonify( c=str(c),
                         num_cubes=cubes_removed,
@@ -38,15 +47,23 @@ def remove_cubes():
 @disease.route('/_select_color')
 def get_treatment_color():
     game = pickle.loads(session['game'])
+    actions = session['actions']
     player = game.players[game.active]
     board = game.board
     city = player.get_position()
     color = request.args.get('color', 0, type=int)
     starting_cubes = game.cubes[city][color]
+    row = board.rows[city][color]
     player.treat(color, game.cures, game.cubes, game.cubes_left, board)
     cubes_removed = starting_cubes - game.cubes[city][color]
     cubes_left = game.cubes_left[color]
-    print(cubes_left)
+    action = { 'act': "treat",  'data': { 'city': str(city),
+                                          'color': str(c),
+                                          'num_cubes': cubes_removed,
+                                          'row': row,
+                                          'image': COLOR_IMG[c] }}
+    actions.append(action)
+    session['actions'] = actions
     session['game'] = pickle.dumps(game)
     return jsonify( num_cubes=cubes_removed,
                     cubes_left=cubes_left )

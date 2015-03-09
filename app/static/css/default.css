@@ -139,10 +139,67 @@ a:hover {
 	border-color: #a3ff447;
 }
 
+#build-station {
+	position: absolute;
+	left: 19%;
+	bottom: 10%;
+}
+
+#make-cure {
+	position: absolute;
+	left: 19%;
+	bottom: 2.5%;
+}
+
+#undo-action {
+	position: absolute;
+	left: 12%;
+	bottom: 10%;
+}
+
+#next-phase {
+	position: absolute;
+	left: 12%;
+	bottom: 2.5%;
+}
+
+.action {
+	width: 5%;
+	height: 4.5%;
+	border-top-left-radius: 22% 50%;
+	border-top-right-radius: 22% 50%;
+	border-bottom-left-radius: 22% 50%;
+	border-bottom-right-radius: 22% 50%;
+	padding: 0.3%;
+	font-size: 0.75vw;
+}
+
+.action:enabled {
+	border: 2px solid #fffff0;
+	background: #333333;
+	color: #fffff0;
+}
+
+.action:hover {
+	background: #fffff0;
+	color: #222222;
+}
+
+.action.activated {
+	background: #fffff0;
+	color: #222222;
+}
+
+.action:disabled {
+	border: 2px solid #666666;
+	background: #333333;
+	color: #666666;
+}
+
 #cures {
 	border: 2px solid #fffff0;
-	border-bottom-left-radius: 8% 27%;
-	border-bottom-right-radius: 8% 27%;
+	border-bottom-left-radius: 12% 28%;
+	border-bottom-right-radius: 12% 28%;
 	border-top: none;
 	position: absolute;
 	left: 7%;
@@ -150,10 +207,10 @@ a:hover {
 	width: 8%;
 	height: auto;
 	background-color: #222222;
-	padding-left: 0.7%;
-	padding-right:0.7%;
+	padding-left: 0.3%;
+	padding-right:0.3%;
 	padding-top: 0.5%;
-	padding-bottom: 0.5%;
+	padding-bottom: 0.3%;
 }
 
 #cures > * {

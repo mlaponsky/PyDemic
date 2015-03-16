@@ -13,28 +13,27 @@ stations = Blueprint('stations', __name__)
 @stations.route('/_select_station')
 def select_station():
     game = pickle.loads(session['game'])
+    actions = session['actions']
     player = game.players[game.active]
     position = player.get_position()
     to_remove = request.args.get('id', 0, type=int)
     discard = (player.get_role() != OE)
-    available = []
-    prev_avail = []
 
-    for city in player.can_move(game.research_stations, game.board):
-        prev_avail.append(str(city))
-    action = { 'act': "build", 'data': { 'position': str(position),
-                                        'discard': str(position) if discard else 'none',
-                                        'card': CARDS[position],
+    prev_avail, dispatch, origin, player_id = game.set_available(player)
+
+    action = { 'act': "build", 'data': { 'origin': str(position),
+                                        'removed': str(to_remove),
+                                        'cards': str(position) if discard else 'none',
+                                        'card_data': CARDS[position],
                                         'available': prev_avail }}
     actions.append(action)
 
     game.research_stations.remove(to_remove)
     player.build_station(position, game.research_stations, game.player_cards)
 
-    player.can_move(game.research_stations, game.board)
-    for city in player.can_move(game.research_stations, game.board):
-        available.append(str(city))
+    available, new_dispatch, origin, player_id = game.set_available(player)
 
+    session['actions'] = actions
     session['game'] = pickle.dumps(game)
     return jsonify( position=position,
                     discard=discard,
@@ -48,22 +47,19 @@ def build_station():
     position = player.get_position()
     num_stations = len(game.research_stations)
     discard = (player.get_role() != OE)
-    available = []
-    prev_avail = []
 
-    for city in player.can_move(game.research_stations, game.board):
-        prev_avail.append(str(city))
-    action = { 'act': "build", 'data': { 'position': str(position),
-                                        'discard': str(position) if discard else 'none',
-                                        'card': CARDS[position],
-                                        'available': prev_avail }}
-    actions.append(action)
+    prev_avail, dispatch, origin, player_id = game.set_available(player)
 
     if num_stations < MAX_STATIONS:
+        action = { 'act': "build", 'data': { 'origin': str(position),
+                                            'removed': 'none',
+                                            'cards': str(position) if discard else 'none',
+                                            'card_data': CARDS[position],
+                                            'available': prev_avail }}
+        actions.append(action)
         player.build_station(position, game.research_stations, game.player_cards)
 
-    for city in player.can_move(game.research_stations, game.board):
-        available.append(str(city))
+    available, new_dispatch, origin, player_id = game.set_available(player)
 
     session['actions'] = actions
     session['game'] = pickle.dumps(game)

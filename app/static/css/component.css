@@ -1,5 +1,5 @@
 /* General styles for all menus */
-.menu {
+#team-menu {
 	background: #222222;
 	position: fixed;
 	width: 12%;
@@ -14,7 +14,7 @@
 	border-bottom: none;
 }
 
-.menu h3 {
+#team-menu h3 {
 	color: #FFFFF0;
 	font-size: 1.0em;
 	padding: 10%;
@@ -131,6 +131,7 @@
 	font-size: 0.8vw;
 	padding-left: 12%;
 	text-overflow: ellipsis;
+	cursor: default;
 }
 
 .card > div {

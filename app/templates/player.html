@@ -1,11 +1,11 @@
 <div id="player-container">
-    <ul id="player">
+    <ul id="active-{{ active_player.get_id() }}" class="active-player">
         <li id="name">
             <div class="pl-name"></div>
         </li>
-        {% for card in active_player.hand %}
+        {% for card in range(cards|length) %}
             <li id="card-{{ card }}" class="pl-card" >
-                <div title="{{ cards[card]['name'] }}&#013; {{ cards[card]['description'] }} "></div>
+                <div title="{{ cards[card]['name'] }} &#013; {{ cards[card]['description'] }}"></div>
             </li>
         {% endfor %}
     </ul>

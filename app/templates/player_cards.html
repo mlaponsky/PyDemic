@@ -1,0 +1,8 @@
+<div class="menu menu-vertical menu-left" id="player-menu">
+    <h3>PLAYER DISCARD</h3>
+    <ul id="player-discard">
+        {% for card in range(cards|length) %}
+        <li id="pl-discard-{{ card }}" class="card"><div class="{{ colors[card // 12] }}"></div> <p>{{ cards[card]['name'] }}</p> </li>
+        {% endfor %}
+    </ul>
+</div>

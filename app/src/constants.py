@@ -6,6 +6,7 @@ RED = 3
 EVENT = 4
 
 COLORS = [ BLUE, YELLOW, BLACK, RED ]
+CARD_COLORS = [ BLUE, YELLOW, BLACK, RED, EVENT ]
 COLOR_IMG = [ '../static/img/cubes/blue_cube.svg',
               '../static/img/cubes/yellow_cube.svg',
               '../static/img/cubes/black_cube.svg',
@@ -44,7 +45,7 @@ SP = 23
 ALG = 24
 BAG = 25
 CAI = 26
-CHE = 37
+CHE = 27
 DEL = 28
 IST = 29
 KAR = 30
@@ -190,6 +191,9 @@ MAX_ACTIONS = 4
 MAX_STATIONS = 6
 NUM_PLAYER_CARDS = 53
 CITIES_PER_COLOR = 12
+
+LIVE = 0
+CURED = 1
 ERADICATED = 2
 
 ## Phases

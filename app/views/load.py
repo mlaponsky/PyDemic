@@ -55,15 +55,20 @@ def set_game():
     positions = []
 
     team = game.players[game.active:] + game.players[:game.active]
+    team_hands = []
     if game.players[game.active].get_role() == DISPATCHER:
         game.players[game.active].select(game.players[game.active])
-        for x in team:
-            if x != game.players[game.active] and x.get_position() != game.players[game.active].get_position():
-                available.append(x.get_position())
-    for x in team:
-        pieces.append(ROLES[x.get_role()]['piece_img'])
-        roles.append(x.get_id())
-        positions.append(str(x.get_position()))
+        for p in team:
+            if p != game.players[game.active] and p.get_position() != game.players[game.active].get_position():
+                available.append([].get_position())
+    for p in team:
+        pieces.append(ROLES[p.get_role()]['piece_img'])
+        roles.append(p.get_id())
+        positions.append(str(p.get_position()))
+        team_hands.append(p.hand)
+
+    can_take, can_give = game.set_share()
+
     research_stations = copy(game.research_stations)
     can_build = player.can_build( player.get_position(), research_stations)
     can_cure = player.can_cure(research_stations)
@@ -94,6 +99,9 @@ def set_game():
                     can_cure=can_cure,
                     role_img=ROLES[player.get_role()]['title_img'],
                     hand=hand,
+                    team_hands=team_hands,
+                    can_give=can_give,
+                    can_take=can_take,
                     cards=CARDS,
                     actions=actions )
 
@@ -105,7 +113,7 @@ def start_game():
         return redirect(url_for('setup'))
     active = game.active
     active_player = game.players[active]
-    team = game.players[active+1:] + game.players[:active]
+    team = game.players[active:] + game.players[:active]
 
     session['game'] = pickle.dumps(game)
     return render_template("index.html",
@@ -115,4 +123,5 @@ def start_game():
                             team = team,
                             cards = CARDS,
                             cities = CITIES,
-                            colors = COLOR_STRINGS )
+                            colors = COLOR_STRINGS,
+                            num_cities=NUM_CITIES )

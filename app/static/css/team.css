@@ -5,3 +5,12 @@
 .chosen {
     border: 4px solid #fffff0;
 }
+
+.takeable:hover > div {
+    border: 3px solid #fffff0;
+}
+
+.takeable:hover > p {
+    font-weight: bold;
+    font-size: 0.85vw;
+}

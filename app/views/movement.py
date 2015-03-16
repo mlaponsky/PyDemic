@@ -19,16 +19,9 @@ def set_move():
     origin = player.get_position()
     new_pos = request.args.get('id', 0, type=int)
     discard = ""
-    available = []
-    player_id = player.get_id()
-    if player_id == 'dispatcher':
-        player_id = player.selected.get_id()
-        origin = player.selected.get_position()
-        for p in game.players:
-            if player.selected != p and origin != p.get_position():
-                available.append(str(p.get_position()))
     cures = copy(game.cures)
     move = ""
+
 
     selectable = []
 
@@ -37,17 +30,20 @@ def set_move():
     can_charter = player.can_charter(game.research_stations, board)
     can_fly_direct = player.can_fly_direct(board)
 
-    prev_avail = []
-    for city in player.can_move(game.research_stations, board):
-        prev_avail.append(str(city))
+    prev_avail, dispatch, origin, player_id = game.set_available(player)
+    prev_take, prev_give = game.set_share()
     prev_build = player.can_build(origin, game.research_stations)
     prev_cure = player.can_cure(game.research_stations)
     orig_cubes = copy(game.cubes[new_pos])
     orig_rows = copy(board.rows[new_pos])
 
+
     if new_pos in player.can_drive(board):
         player.move(new_pos, board, game.cures, game.cubes, game.cubes_left, game.quarantined)
         move="drive"
+    elif new_pos in dispatch:
+        player.move(new_pos, board, game.cures, game.cubes, game.cubes_left, game.quarantined)
+        move="dispatch"
     elif new_pos in player.can_shuttle(game.research_stations):
         player.move(new_pos, board, game.cures, game.cubes, game.cubes_left, game.quarantined)
         move = "shuttle"
@@ -88,26 +84,26 @@ def set_move():
         session['game'] = pickle.dumps(game)
         return jsonify(selectable=selectable)
     else:
-        action = { 'act': move, 'data': { 'role': player_id,
+        action = { 'act': move, 'data': { 'id': player_id,
                                           'origin': origin,
                                           'destination': new_pos,
-                                          'discard': discard,
+                                          'cards': discard,
                                           'available': prev_avail,
                                           'can_build': prev_build,
                                           'can_cure': prev_cure,
                                           'cubes': orig_cubes,
                                           'rows': orig_rows,
                                           'color_img': COLOR_IMG,
-                                          'card': CARDS[int(discard)] if discard != '' else 'none' }}
-        print(action)
+                                          'card_data': CARDS[int(discard)] if discard != '' else 'none',
+                                          'give': prev_give,
+                                          'take': prev_take }}
         actions.append(action)
-        for city in player.can_move(game.research_stations, board):
-            available.append(str(city))
+        available, new_dispatch, origin, player_id = game.set_available(player)
+        can_take, can_give = game.set_share()
         if player.get_role() == MEDIC:
             cubes_left = copy(game.cubes_left)
             can_build = player.can_build(new_pos, game.research_stations)
             can_cure = player.can_cure(game.research_stations)
-
             session['actions'] = actions
             session['game'] = pickle.dumps(game)
             return jsonify( available=available,
@@ -117,11 +113,12 @@ def set_move():
                             cures=cures,
                             cubes_left=cubes_left,
                             can_build=can_build,
-                            can_cure=can_cure )
+                            can_cure=can_cure,
+                            can_take=can_take,
+                            can_give=can_give )
         else:
             can_build = player.can_build(new_pos, game.research_stations)
             can_cure = player.can_cure(game.research_stations)
-
             session['actions'] = actions
             session['game'] = pickle.dumps(game)
             return jsonify( available=available,
@@ -129,7 +126,9 @@ def set_move():
                             move=move,
                             discard=discard,
                             can_build=can_build,
-                            can_cure=can_cure )
+                            can_cure=can_cure,
+                            can_take=can_take,
+                            can_give=can_give )
 
 @movement.route('/_select_card_for_move')
 def select_move_card():
@@ -141,17 +140,14 @@ def select_move_card():
     origin = player.get_position()
     new_pos = request.args.get('city_id', 0, type=int)
 
-    available = []
-    player_id = player.get_id()
     cubes_left = copy(game.cubes_left)
     cures = copy(game.cures)
     action = 0
 
-    prev_avail = []
-    for city in player.can_move(game.research_stations, board):
-        prev_avail.append(str(city))
+    prev_avail, dispatch, origin, player_id = game.set_available(player)
     prev_build = player.can_build(origin, game.research_stations)
     prev_cure = player.can_cure(game.research_stations)
+    prev_take, prev_give = game.set_share()
     orig_cubes = game.cubes[new_pos]
     orig_rows = board.rows[new_pos]
 
@@ -161,25 +157,28 @@ def select_move_card():
     else:
         move = "fly"
 
-    action = { 'act': move, 'data': { 'role': player_id,
+    action = { 'act': move, 'data': { 'id': player_id,
                                       'origin': origin,
                                       'destination': new_pos,
-                                      'discard': discard,
+                                      'cards': discard,
                                       'available': prev_avail,
                                       'can_build': prev_build,
                                       'can_cure': prev_cure,
                                       'cubes': orig_cubes,
                                       'rows': orig_rows,
                                       'color_img': COLOR_IMG,
-                                      'card': CARDS[int(discard)] if discard != '' else     'none'
+                                      'card_data': CARDS[int(discard)] if discard != '' else 'none',
+                                      'give': prev_give,
+                                      'take': prev_take
                                       }}
     actions.append(action)
 
     player.move(new_pos, board, game.cures, game.cubes, game.cubes_left, game.quarantined)
     can_build = player.can_build(new_pos, game.research_stations)
     can_cure = player.can_cure(game.research_stations)
-    for city in player.can_move(game.research_stations, board):
-        available.append(str(city))
+    available, new_dispatch, origin, player_id = game.set_available(player)
+    can_take, can_give = game.set_share()
+
     if player.get_role() == MEDIC:
         session['actions'] = actions
         session['game'] = pickle.dumps(game)
@@ -189,14 +188,18 @@ def select_move_card():
                         cures=cures,
                         cubes_left=cubes_left,
                         can_build=can_build,
-                        can_cure=can_cure )
+                        can_cure=can_cure,
+                        can_take=can_take,
+                        can_give=can_give )
     else:
         session['actions'] = actions
         session['game'] = pickle.dumps(game)
         return jsonify( available=available,
                         player_id=player_id,
                         can_build=can_build,
-                        can_cure=can_cure )
+                        can_cure=can_cure,
+                        can_take=can_take,
+                        can_give=can_give )
 
 @movement.route('/_select_player')
 def select_player():
@@ -206,13 +209,8 @@ def select_player():
     selected = game.players[(game.active + index) % game.num_players]
     if player.get_role() == DISPATCHER:
         player.select(selected)
-    available = []
     position = selected.get_position()
-    for city in player.can_move(game.research_stations, game.board):
-        available.append(str(city))
-    for p in game.players:
-        if p != player.selected and p.get_position() != player.selected.get_position():
-            available.append(str(p.get_position()))
+    available, dispatch, origin, player_id = game.set_available(player)
     can_build = player.can_build(player.get_position(), game.research_stations)
     can_cure = player.can_cure(game.research_stations)
     session['game'] = pickle.dumps(game)

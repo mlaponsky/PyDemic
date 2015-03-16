@@ -1,10 +1,8 @@
-function create_cube(position, dims, color, image, row, num) {
-    var cube = $('<img/>');
-    var class_name = "city-"+position + " " + "cube-"+color + " " + "row-"+String(row);
-    cube.attr("class", class_name);
-    cube.attr("src", image);
+function set_cube_dimensions(cube, dims, row, num) {
     var menu_on = 0;
-    if ( $('#team-menu').hasClass('menu-open') ) {
+    if ( $('body').hasClass('menu-push-toright') ) {
+        menu_on = -1;
+    } else if ( $('body').hasClass('menu-push-toleft') ) {
         menu_on = 1;
     }
     cube.width(dims.width/2.2);
@@ -13,22 +11,21 @@ function create_cube(position, dims, color, image, row, num) {
     cube.offset({ left: cube_l, top: cube_t }).css('position', 'absolute');
     cube.css('z-index', 900);
     cube.css('pointer-events', 'none');
+}
+
+function create_cube(position, dims, color, image, row, num) {
+    var cube = $('<img/>');
+    var class_name = "city-"+position + " " + "cube-"+color + " " + "row-"+String(row);
+    cube.attr("class", class_name);
+    cube.attr("src", image);
+    set_cube_dimensions(cube, dims, row, num);
     cube.appendTo('#map');
 }
 
 function set_cube_position(position, dims, color, row, num) {
     var class_name = ".city-"+position+".cube-"+color+".row-"+String(row);
     var cube = $(class_name);
-    var menu_on = 0;
-    if ( $('#team-menu').hasClass('menu-open') ) {
-        menu_on = 1;
-    }
-    cube.width(dims.width/2.2);
-    cube_l = dims.left + dims.width/3 + (num)*dims.width/2.4 - left_offset + menu_on*menu_shift;
-    cube_t = dims.top + (row+1)*dims.height/2.2 -top_offset;
-    cube.offset({ left: cube_l, top: cube_t }).css('position', 'absolute');
-    cube.css('z-index', 900);
-    cube.css('pointer-events', 'none');
+    set_cube_dimensions(cube, dims, row, num);
 }
 
 function create_cube_row(position, dims, color, image, row, total) {
@@ -51,7 +48,7 @@ function add_cubes(position, dims, color, image, row, total) {
     }
 };
 
-function place_cubes(cubes, rows, images) {
+function init_cubes(cubes, rows, images) {
     positions = Object.keys(cubes);
     for (var i=0; i<positions.length; i++ ) {
         var cube_set = cubes[positions[i]];
@@ -85,8 +82,6 @@ function remove_cubes(city, color, num_cubes, cubes_left) {
     for (var i=0; i<to_remove.length; i++) {
         to_remove[i].remove();
     }    document.getElementById(color+"-cnt").getElementsByTagName('tspan')[0].textContent = String(cubes_left);
-    actions++;
-    $("#undo-action").prop('disabled', actions === 0);
 }
 
 function medic_with_cure(data, position) {
@@ -105,7 +100,8 @@ function treat(event) {
     $.getJSON( $SCRIPT_ROOT + '/_treat_disease').success( function(data) {
         if (typeof data.c !== 'undefined') {
             remove_cubes(city, data.c, data.num_cubes, data.cubes_left);
-            actions++;
+            ACTIONS++;
+            $("#undo-action").prop('disabled', ACTIONS === 0);
         } else {
             $(".city-"+city).css("border", "2px solid #FFFFF0");
             $(".city-"+city).css('-webkit-border-radius', 4);
@@ -137,7 +133,8 @@ function select_cube_color(event) {
     $.getJSON( $SCRIPT_ROOT + '/_select_color', { color: Number(color) }).success(
         function(data) {
             remove_cubes(city, color, data.num_cubes, data.cubes_left);
-            actions++;
+            ACTIONS++;
+            $("#undo-action").prop('disabled', ACTIONS === 0);
             $("."+class_array[0]).css("border", '')
             $("."+class_array[0]).css("fill", '')
             $("."+class_array[0]).off();

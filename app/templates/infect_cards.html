@@ -1,0 +1,8 @@
+<div class="menu menu-vertical menu-left" id="infect-menu">
+    <h3>INFECT DISCARD</h3>
+    <ul id="infect-discard">
+        {% for card in range(num_cities) %}
+        <li class="card" hidden><div class="{{ colors[card // 12] }}"></div> <p>{{ cards[card]['name'] }}</p> </li>
+        {% endfor %}
+    </ul>
+</div>

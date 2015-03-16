@@ -30,16 +30,15 @@ def remove_cubes():
         c = colors[0]
         starting_cubes = game.cubes[city][c]
         rows = copy(board.rows[city])
-        print(rows)
         player.treat(c, game.cures, game.cubes, game.cubes_left, board)
         cubes_removed = starting_cubes - game.cubes[city][c]
         cubes_left = game.cubes_left[c]
-        action = { 'act': "treat", 'data': { 'city': str(city),
+        action = { 'act': "treat", 'data': { 'origin': str(city),
                                              'color': str(c),
-                                             'num_cubes': starting_cubes,
+                                             'cubes': starting_cubes,
                                              'removed': cubes_removed,
                                              'rows': rows,
-                                             'image': COLOR_IMG[c] }}
+                                             'color_img': COLOR_IMG }}
         actions.append(action)
         session['actions'] = actions
         session['game'] = pickle.dumps(game)
@@ -60,12 +59,12 @@ def get_treatment_color():
     player.treat(color, game.cures, game.cubes, game.cubes_left, board)
     cubes_removed = starting_cubes - game.cubes[city][color]
     cubes_left = game.cubes_left[color]
-    action = { 'act': "treat",  'data': { 'city': str(city),
+    action = { 'act': "treat",  'data': { 'origin': str(city),
                                           'color': str(color),
-                                          'num_cubes': starting_cubes,
+                                          'cubes': starting_cubes,
                                           'removed': cubes_removed,
                                           'rows': rows,
-                                          'image': COLOR_IMG[color] }}
+                                          'color_img': COLOR_IMG }}
     actions.append(action)
     session['actions'] = actions
     session['game'] = pickle.dumps(game)

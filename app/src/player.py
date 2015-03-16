@@ -58,7 +58,8 @@ class Player:
             can_charter = [ city for city in range(NUM_CITIES) ]
             can_charter.remove(self.position)
             for n in neighbors:
-                can_charter.remove(n)
+                if n in can_charter:
+                    can_charter.remove(n)
         return can_charter
 
     def move(self, new_pos, board, cures, cubes, cubes_left, quarantined):
@@ -73,7 +74,6 @@ class Player:
         if card in self.hand:
             self.hand.remove(card)
             deck.add_to_discard(card)
-            print(deck.discard)
 
     def has_card(self, card):
         return card in self.hand
@@ -84,21 +84,21 @@ class Player:
         return ""
 
     def can_take(self, card, source):
-        if target.get_role() == RESEARCHER:
-            return ( source.has_card(card) and self.position == source.get_position() )
-        return (source.has_card(card) and self.position == source.get_position() and card == self.position)
+        if source.get_role() == RESEARCHER:
+            return ( source.has_card(card) and self.position == source.get_position() and card//CITIES_PER_COLOR != EVENT)
+        return (source.has_card(card) and self.position == source.get_position() and card == self.position and card//CITIES_PER_COLOR != EVENT)
 
     def can_give(self, card, target):
-        return (self.has_card(card) and self.position == target.get_position() and card == self.position)
+        return (self.has_card(card) and self.position == target.get_position() and card == self.position and card//CITIES_PER_COLOR != EVENT)
 
     def give_card(self, card, target):
         if card in self.hand:
-            self.discard(card)
+            self.hand.remove(card)
             target.add_card(card)
 
     def take_card(self, card, donor):
         if donor.has_card(card):
-            donor.discard(card)
+            donor.hand.remove(card)
             self.add_card(card)
 
     # Treatment
@@ -125,9 +125,19 @@ class Player:
                     count = hand_colors.count(color)
             return count >= needed
 
-    def make_cure(self, cards):
+    def get_cure_cards(self):
+        needed = 5 if self.role != SCIENTIST else 4
+        cure_color = -1
+        hand_colors = [ card // CITIES_PER_COLOR for card in self.hand ]
+        for color in COLORS:
+            if hand_colors.count(color) >= needed:
+                cure_color = color
+        cards = [ card for card in self.hand if card // CITIES_PER_COLOR == cure_color ]
+        return cards
+
+    def make_cure(self, cards, deck):
         for card in cards:
-            self.hand.remove(card)
+            self.discard(card, deck)
 
     # Research Stations
     def can_build(self, city, research_stations):
@@ -149,6 +159,7 @@ class ContingencyPlanner(Player):
         self.color = ROLES[role]['color']
         self.title = ROLES[role]['title_img']
         self.piece = ROLES[role]['piece_img']
+        self.selected = self
 
     def can_get_event(self):
         return self.event == None
@@ -208,7 +219,8 @@ class Dispatcher(Player):
             can_charter = [ city for city in range(NUM_CITIES) ]
             can_charter.remove(self.selected.get_position())
             for n in board.get_neighbors(self.selected.get_position()):
-                can_charter.remove(n)
+                if n in can_charter:
+                    can_charter.remove(n)
         return can_charter
 
     def can_move(self, research_stations, board):
@@ -230,6 +242,7 @@ class Medic(Player):
         self.color = ROLES[role]['color']
         self.title = ROLES[role]['title_img']
         self.piece = ROLES[role]['piece_img']
+        self.selected = self
 
     def move(self, new_pos, board, cures, cubes, cubes_left, quarantined):
         self.position = new_pos
@@ -255,6 +268,7 @@ class OperationsExpert(Player):
         self.color = ROLES[role]['color']
         self.title = ROLES[role]['title_img']
         self.piece = ROLES[role]['piece_img']
+        self.selected = self
 
     def fly_from_station(self, destination, card, research_stations):
         if self.position in research_stations:
@@ -272,7 +286,8 @@ class OperationsExpert(Player):
             can_charter = [ city for city in range(NUM_CITIES) ]
             can_charter.remove(self.position)
             for n in board.get_neighbors(self.position):
-                can_charter.remove(n)
+                if n in can_charter:
+                    can_charter.remove(n)
         return can_charter
 
     def can_build(self, city, research_stations):
@@ -291,6 +306,7 @@ class QuarantineSpecialist(Player):
         self.color = ROLES[role]['color']
         self.title = ROLES[role]['title_img']
         self.piece = ROLES[role]['piece_img']
+        self.selected = self
         for city in neighbors:
             quarantined.append(city)
         quarantined.append(self.position)
@@ -313,6 +329,7 @@ class Researcher(Player):
         self.color = ROLES[role]['color']
         self.title = ROLES[role]['title_img']
         self.piece = ROLES[role]['piece_img']
+        self.selected = self
 
     def can_give(self, card, target):
         return (self.has_card(card) and self.position == target.get_position())
@@ -328,6 +345,7 @@ class Scientist(Player):
         self.color = ROLES[role]['color']
         self.title = ROLES[role]['title_img']
         self.piece = ROLES[role]['piece_img']
+        self.selected = self
 
     def can_cure(self, research_stations):
         needed = 4

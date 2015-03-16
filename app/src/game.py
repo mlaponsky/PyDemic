@@ -46,6 +46,8 @@ class Game:
         self.player_cards = PlayerCards(self.players, self.num_epidemics)
         self.active = self.set_order()
 
+        self.players[self.active].hand.append(ATL)
+
     ## Manage game phase
     def get_phase(self):
         return self.phase
@@ -81,6 +83,45 @@ class Game:
                     highest_card = CARDS[card]['population']
                     first_player_index = self.players.index(player)
         return first_player_index
+
+    def dispatcher_availability(self, player, available):
+        dispatch = []
+        for p in self.players:
+            if player.selected != p and player.selected.get_position() != p.get_position():
+                available.append(str(p.get_position()))
+                dispatch.append(p.get_position())
+        return dispatch
+
+    def set_available(self, player):
+        dispatch = []
+        available = []
+        player_id = player.get_id()
+        if player_id == 'dispatcher':
+            player_id = player.selected.get_id()
+            origin = player.selected.get_position()
+            dispatch = self.dispatcher_availability(player, available)
+        else:
+            player_id = player.get_id()
+            origin = player.get_position()
+
+        for city in player.can_move(self.research_stations, self.board):
+            available.append(str(city))
+
+        return available, dispatch, origin, player_id
+
+    def set_share(self):
+        can_give = {}
+        can_take = {}
+        player = self.players[self.active]
+        team = self.players[self.active:] + self.players[:self.active]
+        for p in team[1:]:
+            can_take[p.get_id()] = []
+            can_give[p.get_id()] = []
+            for card in p.hand:
+                can_take[p.get_id()].append(player.can_take(card, p))
+            for card in player.hand:
+                can_give[p.get_id()].append(player.can_give(card, p))
+        return can_take, can_give
 
     ## The procedures for adding cubes.
     '''
@@ -131,9 +172,22 @@ class Game:
         self.reset_outbreaks()
         self.infect_cards.recombine_decks()
 
+    def remove_cubes(self, color, number, city):
+        game.cubes_left[color] += number;
+        game.cubes[city][color] -= number
+        if game.cubes[city][color] == 0:
+            board.delete_row(city, color)
+
     # Handles all functions relating to research stations.
     def check_num_stations(self):
         return len(self.research_stations)
+
+    def is_eradicated(self, color):
+        eradicated = True
+        for city in range(NUM_CITIES):
+            if self.cubes[city][color] != 0:
+                return False
+        return True
 
 # Event card handling
     def play_airlift(self, player, target, new_pos):

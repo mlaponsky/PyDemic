@@ -5,8 +5,11 @@
         <li>
             <ul class="team-player">
                 <li id="{{ player.get_id() }}" class="role">{{ player.get_role() }}</li>
-                {% for card in player.hand %}
-                <li class="card"><div class="{{ colors[card // 12] }}"></div> <p>{{ cards[card]['name'] }}</p> </li>
+                {% for card in range(cards|length) %}
+                <li id="{{ player.get_id() }}-card-{{ card }}" class="card">
+                    <div class="{{ colors[card // 12] }}"></div>
+                    <p>{{ cards[card]['name'] }}</p>
+                </li>
                 {% endfor %}
             </ul>
         </li>

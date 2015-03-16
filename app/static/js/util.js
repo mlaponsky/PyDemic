@@ -5,7 +5,9 @@ function init_cities() {
     }
 }
 
-function set_cities(cities, position) {
+function set_cities(cities) {
+    $(".available").off().attr('class', 'unavailable');
+    $(".selectable").off().attr('class', 'unavailable');
     for (var i=0; i<cities.length; i++) {
         $("#"+cities[i]).attr("class", "available");
         $("#"+cities[i]).off().on("click", execute_move);
@@ -64,9 +66,18 @@ function set_selectable_players(active) {
     }
 }
 
+function set_giveable(card) {
+    $("#card-"+card).attr('class', 'pl-card giveable');
+    $("#card-"+card).children('div').off().on('click', give_card);
+}
+
+function set_takeable(card, role) {
+    $("#"+role+"-card-"+card).off().on('click', take_card).attr('class', 'card takeable');
+}
+
 function select_player(event) {
     var target = $(event.target);
-    var select = target.parent().parent().index() + 1
+    var select = target.parent().parent().index();
     $.getJSON( $SCRIPT_ROOT + '/_select_player', { index: select }).success(
         function(data) {
             if ($(".chosen").length !== 0) {
@@ -74,9 +85,11 @@ function select_player(event) {
             }
             $(".available").attr('class', 'unavailable');
             $(".treatable").attr('class', 'unavailable');
-            set_cities(data.available, data.position);
+            set_cities(data.available);
             target.attr('class', 'role chosen');
-            escape_select_player();
+            $('#build-station').prop('disabled', true);
+            $('#make-cure').prop('disabled', true);
+            escape_select_player(target);
         }
     ).error(function(error){console.log(error)});
 }
@@ -86,22 +99,29 @@ function deselect_player() {
     $.getJSON( $SCRIPT_ROOT + '/_select_player', { index: 0 }).success(
         function(data) {
             $(".available").attr('class', 'unavailable');
-            set_cities(data.available, data.position);
+            set_cities(data.available);
             set_treatable(data.position);
             $('#build-station').prop('disabled', !data.can_build);
-            $('#can-cure').prop('disabled', !data.can_cure);
+            $('#make-cure').prop('disabled', !data.can_cure);
             $('.role').attr('class', 'role choosable');
             $('.role').off().on('click', select_player );
         }
     )
 }
 
-function escape_select_player() {
+function buttons_on() {
+    $('#build-station').off().on('click', build_station);
+    $('#make-cure').off().on('click', make_cure);
+    $('#undo-action').off().on('click', undo);
+}
+
+function escape_select_player(target) {
     if ( $(".chosen").length !== 0 ) {
         $('html').keyup( function( e ) {
             if (e.keyCode === 27) { deselect_player() };
         });
         $('#name').off().on('click', deselect_player);
+        target.off().on('click', deselect_player);
     }
 }
 
@@ -109,8 +129,7 @@ function escape_card_select(objects) {
     $(".holding").attr("class", "available");
     $(".selected").attr("class", "available");
     $(".available").off().on("click", execute_move);
-    objects.css("border", '');
-    objects.off();
+    objects.off().attr('class', 'up');
     $('html').off();
 }
 
@@ -125,9 +144,19 @@ function escape_cube_select(objects, city) {
     $('html').off();
 }
 
-function escape_station_select(available, city) {
+function escpae_station_select(available, city) {
     $(".holding").attr("class", "unavailable");
-    set_cities(available, city);
+    set_cities(available);
     set_treatable(city);
+    buttons_on();
     $("#build-station").attr('class', 'action');
+    $('html').off()
+}
+
+function escape_cure_select() {
+    $(".pl-card").children('div').attr('class', 'up').off();
+    $(".pl-card").children('div');
+    buttons_on();
+    $('#make-cure').attr('class', 'action');
+    $('html').off();
 }

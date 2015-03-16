@@ -23,7 +23,7 @@
 	margin: 0;
 }
 
-#player {
+.active-player {
 	list-style: none;
 	width: 100%;
 	height: 100%;
@@ -33,7 +33,7 @@
 	overflow: auto;
 }
 
-#player > * {
+.active-player > * {
 	display: inline-block;
 }
 
@@ -59,4 +59,16 @@
 .pl-card > div {
 	height: 100%;
 	width: 100%;
+}
+
+.down {
+	border: 4px solid #fffff0;
+}
+
+.up {
+	border: none;
+}
+
+.giveable:hover {
+	border: 4px solid #fffff0;
 }

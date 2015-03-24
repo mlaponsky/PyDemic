@@ -24,11 +24,22 @@
         <form action="" method="post" name="setup">
             {{form.hidden_tag()}}
             <div id="char-box">
-                {{ form.char0(class_="char-select") }}
-                {{ form.char1(class_="char-select") }}
-                {{ form.char2(class_="char-select") }}
-                {{ form.char3(class_="char-select") }}
-
+                <div id="char0-box" class="role-box">
+                    <img id="char0-info" class="role-info" src="../static/img/roles/random_info.svg">
+                    {{ form.char0(class_="char-select") }}
+                </div>
+                <div id="char1-box" class="role-box">
+                    <img id="char1-info" class="role-info" src="../static/img/roles/random_info.svg">
+                    {{ form.char1(class_="char-select") }}
+                </div>
+                <div id="char2-box" class="role-box">
+                    <img id="char2-info" class="role-info" src="../static/img/roles/random_info.svg">
+                    {{ form.char2(class_="char-select") }}
+                </div>
+                <div id="char3-box" class="role-box">
+                    <img id="char3-info" class="role-info" src="../static/img/roles/none_info.svg">
+                    {{ form.char3(class_="char-select") }}
+                </div>
             </div>
             {{ form.difficulty }}
             <input type="submit" value="Play">

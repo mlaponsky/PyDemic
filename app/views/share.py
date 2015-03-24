@@ -52,8 +52,10 @@ def select_recipient():
 
     player = game.players[game.active]
     card = request.args.get('card', -1, type=int)
-    index = request.args.get('selected', -1, type=int)
-    recipient = game.players[(game.active + index) % game.num_players]
+    r_id = request.args.get('selected', '', type=str)
+    for p in game.players:
+        if p.get_id() == r_id:
+            recipient = p
     prev_avail, dispatch, origin, player_id = game.set_available(player)
 
     action = { 'act': 'give', 'data': { 'card': str(card),
@@ -68,6 +70,7 @@ def select_recipient():
     session['actions'] = actions
     return jsonify( card=str(card),
                     recipient=recipient.get_id(),
+                    recipients=[r.get_id() for r in game.players[game.active+1:] + game.players[:game.active]],
                     available=available )
 
 @share.route('/_take')
@@ -88,7 +91,6 @@ def take():
                                         'taker': player.get_id(),
                                         'giver': source.get_id(),
                                         'available': prev_avail }}
-    print(prev_avail)
     actions.append(action)
 
     player.take_card(card, source)

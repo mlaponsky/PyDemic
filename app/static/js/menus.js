@@ -6,7 +6,7 @@ var team_menu = $( '#team-menu' ),
 	player_button = $( '#player-button' ),
 	body = $( 'body' );
 
-function team_on() {
+function team_toggle() {
 	team_button.toggleClass( 'active' );
 	body.toggleClass( 'menu-push-toleft' );
 	if ( infect_button.attr('class') === 'active' ) {
@@ -21,7 +21,7 @@ function team_on() {
 	team_menu.toggleClass( 'menu-open' );
 }
 
-function infect_on() {
+function infect_toggle() {
 	infect_button.toggleClass( 'active' );
 	if ( player_button.attr('class') === 'active' ) {
 		player_button.toggleClass( 'active' );
@@ -37,7 +37,7 @@ function infect_on() {
 	infect_menu.toggleClass( 'menu-open' );
 }
 
-function player_on() {
+function player_toggle() {
 	player_button.toggleClass( 'active' );
 	if ( team_button.attr('class') === 'active' ) {
 		team_button.toggleClass( 'active' );
@@ -54,13 +54,13 @@ function player_on() {
 }
 
 	team_button.on('click', function() {
-		team_on();
+		team_toggle();
 	});
 
 	infect_button.on( 'click', function() {
-		infect_on();
+		infect_toggle();
 	});
 
 	player_button.on( 'click', function() {
-		player_on();
+		player_toggle();
 	});

@@ -119,6 +119,7 @@
 .role {
 	font-size: 0.8vw;
 	padding: 5% 0 5% 10%;
+	border: 4px transparent solid;
 }
 
 .card {
@@ -144,22 +145,6 @@
 }
 
 /* Roles Styling */
-#medic {
-	background-color: #ff9900;
-}
-
-#qs {
-	background-color: #194719;
-}
-
-#oe {
-	background-color: #248f24;
-}
-
-#scientist {
-	background-color: #888888;
-}
-
 #cp {
 	background-color: #29a3a3;
 }
@@ -168,10 +153,25 @@
 	background-color: #6b008f;
 }
 
+#medic {
+	background-color: #ff9900;
+}
+
+#oe {
+	background-color: #248f24;
+}
+
+#qs {
+	background-color: #194719;
+}
+
 #researcher {
 	background-color: #663300;
 }
 
+#scientist {
+	background-color: #888888;
+}
 
 /* Card Styling */
 .blue {

@@ -66,13 +66,33 @@ function set_selectable_players(active) {
     }
 }
 
-function set_giveable(card) {
-    $("#card-"+card).attr('class', 'pl-card giveable');
-    $("#card-"+card).children('div').off().on('click', give_card);
+function set_giveable(hand, can_give) {
+    console.log(can_give);
+    var roles = Object.keys(can_give);
+    $('.pl-card').children('div').off();
+    $('.pl-card').attr('class', 'pl-card');
+    for (var n=0; n<hand.length; n++) {
+        $("#card-"+String(hand[n])).show();
+        for (var m=0; m<roles.length; m++) {
+            if ( can_give[roles[m]][n] ) {
+                $("#card-"+String(hand[n])).attr('class', 'pl-card giveable');
+                $("#card-"+String(hand[n])).children('div').off().on('click', give_card);
+            }
+        }
+    }
 }
 
-function set_takeable(card, role) {
-    $("#"+role+"-card-"+card).off().on('click', take_card).attr('class', 'card takeable');
+function set_takeable(team_hands, can_take) {
+    var roles = Object.keys(can_take);
+    $('.card').off().attr('class', 'card').hide();
+    for (var p=0; p<team_hands.length; p++) {
+        for (var n=0; n<team_hands[p].length; n++) {
+            $("#"+roles[p]+"-card-"+String(team_hands[p][n])).show();
+            if ( can_take[roles[p]][n]) {
+                $("#"+roles[p]+"-card-"+String(team_hands[p][n])).off().on('click', take_card).attr('class', 'card takeable');
+            }
+        }
+    }
 }
 
 function select_player(event) {
@@ -110,9 +130,15 @@ function deselect_player() {
 }
 
 function buttons_on() {
-    $('#build-station').off().on('click', build_station);
-    $('#make-cure').off().on('click', make_cure);
-    $('#undo-action').off().on('click', undo);
+    $('#build-station').attr('class', 'action').off().on('click', build_station);
+    $('#make-cure').attr('class', 'action').off().on('click', make_cure);
+    $('#undo-action').attr('class', 'action').off().on('click', undo);
+}
+
+function buttons_off() {
+    $('#build-station').attr('class', 'paused').off();
+    $('#make-cure').attr('class', 'paused').off();
+    $('#undo-action').attr('class', 'paused').off();
 }
 
 function escape_select_player(target) {
@@ -121,6 +147,7 @@ function escape_select_player(target) {
             if (e.keyCode === 27) { deselect_player() };
         });
         $('#name').off().on('click', deselect_player);
+        buttons_on();
         target.off().on('click', deselect_player);
     }
 }
@@ -129,7 +156,9 @@ function escape_card_select(objects) {
     $(".holding").attr("class", "available");
     $(".selected").attr("class", "available");
     $(".available").off().on("click", execute_move);
-    objects.off().attr('class', 'up');
+    objects.children('div').off();
+    objects.attr('class', 'pl-card');
+    buttons_on();
     $('html').off();
 }
 
@@ -141,6 +170,7 @@ function escape_cube_select(objects, city) {
     objects.css("border", '');
     objects.off();
     objects.css("pointer-events", "none");
+    buttons_on();
     $('html').off();
 }
 
@@ -158,5 +188,22 @@ function escape_cure_select() {
     $(".pl-card").children('div');
     buttons_on();
     $('#make-cure').attr('class', 'action');
+    $('html').off();
+}
+
+function escape_give_select(card, data) {
+    buttons_on();
+    $('.available').off().on('click', execute_move);
+    card.attr('class', 'pl-card giveable');
+    card.children('div').off().on('click', give_card);
+    if ( !body.hasClass('selecting') ) {
+        team_toggle();
+    } else {
+        body.removeClass('selecting');
+    }
+    for (var i=0; i<data.recipients.length; i++) {
+        $("#"+data.recipients[i]).parent().parent().attr('class', '');
+        $("#"+data.recipients[i]).off();
+    }
     $('html').off();
 }

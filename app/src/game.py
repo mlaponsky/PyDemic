@@ -114,14 +114,16 @@ class Game:
         can_take = {}
         player = self.players[self.active]
         team = self.players[self.active:] + self.players[:self.active]
+        team_hands = []
         for p in team[1:]:
             can_take[p.get_id()] = []
             can_give[p.get_id()] = []
+            team_hands.append(p.hand)
             for card in p.hand:
                 can_take[p.get_id()].append(player.can_take(card, p))
             for card in player.hand:
                 can_give[p.get_id()].append(player.can_give(card, p))
-        return can_take, can_give
+        return can_take, can_give, team_hands
 
     ## The procedures for adding cubes.
     '''

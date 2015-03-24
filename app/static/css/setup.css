@@ -1,20 +1,36 @@
 body {
     background-color: #222222;
+    overflow: auto;
 }
 
 #char-box {
     width: 80%;
     position: absolute;
-    top: 50%;
+    bottom: 30%;
     left: 10%;
+}
+
+.role-box {
+    width: 23.5%;
+    padding: 0.5%;
+    display: inline-block;
+    overflow: auto;
+}
+
+.role-info {
+    width: 95%;
+    display: block;
+    margin-left: 2.5%;
+    margin-right: 2.5%;
+    margin-bottom: 5%;
 }
 
 .char-select {
     border: 2px solid #fffff0;
     border-radius: 15px;
-    width: 24%;
+    width: 100%;
     font-size: 16pt;
-    padding: 0.5%;
+    padding: 2%;
     background-color: #555555;
     color: #fffff0;
 }
@@ -30,7 +46,7 @@ body {
 #difficulty {
     position: absolute;
     left: 42.5%;
-    top: 60%;
+    top: 70%;
     border: 2px solid #fffff0;
     border-radius: 15px;
     width: 15%;
@@ -46,7 +62,7 @@ input {
     width: 8%;
     padding: 0.5%;
     position: absolute;
-    top: 70%;
+    top: 80%;
     left: 46%%;
     border: 2px solid #fffff0;
     border-radius: 15px;

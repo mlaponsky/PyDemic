@@ -18,6 +18,7 @@ def set_move():
     board = game.board
     origin = player.get_position()
     new_pos = request.args.get('id', 0, type=int)
+    is_airlift = request.args.get('airlift', 0, type=int)
     discard = ""
     cures = copy(game.cures)
     move = ""
@@ -31,14 +32,18 @@ def set_move():
     can_fly_direct = player.can_fly_direct(board)
 
     prev_avail, dispatch, origin, player_id = game.set_available(player)
-    prev_take, prev_give = game.set_share()
+    prev_hand = player.hand
+    prev_take, prev_give, prev_hands = game.set_share()
     prev_build = player.can_build(origin, game.research_stations)
     prev_cure = player.can_cure(game.research_stations)
     orig_cubes = copy(game.cubes[new_pos])
     orig_rows = copy(board.rows[new_pos])
 
-
-    if new_pos in player.can_drive(board):
+    if is_airlift == 1:
+        player.move(new_pos, board, game.cures, game.cubes, game.cubes_left, game.quarantined)
+        player.discard(AIRLIFT)
+        move = "airlift"
+    elif new_pos in player.can_drive(board):
         player.move(new_pos, board, game.cures, game.cubes, game.cubes_left, game.quarantined)
         move="drive"
     elif new_pos in dispatch:
@@ -47,18 +52,8 @@ def set_move():
     elif new_pos in player.can_shuttle(game.research_stations):
         player.move(new_pos, board, game.cures, game.cubes, game.cubes_left, game.quarantined)
         move = "shuttle"
-    elif new_pos in can_fly_direct and new_pos not in can_charter:
-        player.discard(new_pos, game.player_cards)
-        player.move(new_pos, board, game.cures, game.cubes, game.cubes_left, game.quarantined)
-        discard = str(new_pos)
-        move = "fly"
-    elif new_pos in can_charter and new_pos not in can_fly_direct and player.get_role() != OE:
-        player.discard(origin, game.player_cards)
-        discard = origin
-        player.move(new_pos, board, game.cures, game.cubes, game.cubes_left, game.quarantined)
-        move = "charter"
-    elif new_pos in can_charter and player.get_role() == OE:
-        if player.get_position() in game.research_stations:
+    elif player.get_role() == OE:
+        if new_pos in player.can_station_fly(game.research_stations, board):
             for card in player.hand:
                 if card in range(NUM_CITIES):
                     selectable.append( str(card) )
@@ -66,12 +61,18 @@ def set_move():
                 player.discard( int(selectable[0]), game.player_cards )
                 discard = selectable[0]
                 player.move(new_pos, board, game.cures, game.cubes, game.cubes_left, game.quarantined)
-                move = "charter"
-        else:
-            player.discard(origin, game.player_cards)
-            player.move(new_pos, board, game.cures, game.cubes, game.cubes_left, game.quarantined)
-            discard = str(origin)
-            move = "charter"
+                move = "station-fly"
+    elif new_pos in can_fly_direct and new_pos not in can_charter:
+        player.discard(new_pos, game.player_cards)
+        player.move(new_pos, board, game.cures, game.cubes, game.cubes_left, game.quarantined)
+        discard = str(new_pos)
+        move = "fly"
+    elif new_pos in can_charter and new_pos not in can_fly_direct:
+        player.discard(origin, game.player_cards)
+        discard = origin
+        player.move(new_pos, board, game.cures, game.cubes, game.cubes_left, game.quarantined)
+        move = "charter"
+
     elif new_pos in can_charter and new_pos in can_fly_direct:
         selectable.append( str(new_pos) )
         selectable.append( str(origin) )
@@ -95,11 +96,13 @@ def set_move():
                                           'rows': orig_rows,
                                           'color_img': COLOR_IMG,
                                           'card_data': CARDS[int(discard)] if discard != '' else 'none',
+                                          'hand': prev_hand,
+                                          'team_hands': prev_hands,
                                           'give': prev_give,
                                           'take': prev_take }}
         actions.append(action)
         available, new_dispatch, origin, player_id = game.set_available(player)
-        can_take, can_give = game.set_share()
+        can_take, can_give, team_hands = game.set_share()
         if player.get_role() == MEDIC:
             cubes_left = copy(game.cubes_left)
             can_build = player.can_build(new_pos, game.research_stations)
@@ -113,6 +116,8 @@ def set_move():
                             cures=cures,
                             cubes_left=cubes_left,
                             can_build=can_build,
+                            hand=player.hand,
+                            team_hands=team_hands,
                             can_cure=can_cure,
                             can_take=can_take,
                             can_give=can_give )
@@ -127,6 +132,8 @@ def set_move():
                             discard=discard,
                             can_build=can_build,
                             can_cure=can_cure,
+                            hand=player.hand,
+                            team_hands=team_hands,
                             can_take=can_take,
                             can_give=can_give )
 
@@ -147,15 +154,19 @@ def select_move_card():
     prev_avail, dispatch, origin, player_id = game.set_available(player)
     prev_build = player.can_build(origin, game.research_stations)
     prev_cure = player.can_cure(game.research_stations)
-    prev_take, prev_give = game.set_share()
+    prev_hand = player.hand
+    prev_take, prev_give, prev_hands = game.set_share()
     orig_cubes = game.cubes[new_pos]
     orig_rows = board.rows[new_pos]
 
     player.discard(discard, game.player_cards)
     if discard == origin:
         move = "charter"
-    else:
+    elif discard == new_pos:
         move = "fly"
+    elif player.get_role() == OE:
+        player.has_stationed = True
+        move = "station-fly"
 
     action = { 'act': move, 'data': { 'id': player_id,
                                       'origin': origin,
@@ -168,6 +179,8 @@ def select_move_card():
                                       'rows': orig_rows,
                                       'color_img': COLOR_IMG,
                                       'card_data': CARDS[int(discard)] if discard != '' else 'none',
+                                      'hand': prev_hand,
+                                      'team_hands': prev_hands,
                                       'give': prev_give,
                                       'take': prev_take
                                       }}
@@ -177,7 +190,7 @@ def select_move_card():
     can_build = player.can_build(new_pos, game.research_stations)
     can_cure = player.can_cure(game.research_stations)
     available, new_dispatch, origin, player_id = game.set_available(player)
-    can_take, can_give = game.set_share()
+    can_take, can_give, team_hands = game.set_share()
 
     if player.get_role() == MEDIC:
         session['actions'] = actions
@@ -189,6 +202,8 @@ def select_move_card():
                         cubes_left=cubes_left,
                         can_build=can_build,
                         can_cure=can_cure,
+                        hand=player.hand,
+                        team_hands=team_hands,
                         can_take=can_take,
                         can_give=can_give )
     else:
@@ -198,6 +213,8 @@ def select_move_card():
                         player_id=player_id,
                         can_build=can_build,
                         can_cure=can_cure,
+                        hand=player.hand,
+                        team_hands=team_hands,
                         can_take=can_take,
                         can_give=can_give )
 
@@ -207,12 +224,13 @@ def select_player():
     index = request.args.get('index', 0, type=int)
     player = game.players[game.active]
     selected = game.players[(game.active + index) % game.num_players]
-    if player.get_role() == DISPATCHER:
-        player.select(selected)
+    player.selected = selected
     position = selected.get_position()
     available, dispatch, origin, player_id = game.set_available(player)
     can_build = player.can_build(player.get_position(), game.research_stations)
     can_cure = player.can_cure(game.research_stations)
+    if player.get_role() != DISPATCHER:
+        player.selected = player
     session['game'] = pickle.dumps(game)
     return jsonify( available=available,
                     position=position,

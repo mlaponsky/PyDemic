@@ -55,7 +55,6 @@ def set_game():
     positions = []
 
     team = game.players[game.active:] + game.players[:game.active]
-    team_hands = []
     if game.players[game.active].get_role() == DISPATCHER:
         game.players[game.active].select(game.players[game.active])
         for p in team:
@@ -65,9 +64,8 @@ def set_game():
         pieces.append(ROLES[p.get_role()]['piece_img'])
         roles.append(p.get_id())
         positions.append(str(p.get_position()))
-        team_hands.append(p.hand)
 
-    can_take, can_give = game.set_share()
+    can_take, can_give, team_hands = game.set_share()
 
     research_stations = copy(game.research_stations)
     can_build = player.can_build( player.get_position(), research_stations)

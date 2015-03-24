@@ -191,6 +191,20 @@ a:hover {
 	color: #666666;
 }
 
+.paused {
+	width: 5%;
+	height: 4.5%;
+	border-top-left-radius: 22% 50%;
+	border-top-right-radius: 22% 50%;
+	border-bottom-left-radius: 22% 50%;
+	border-bottom-right-radius: 22% 50%;
+	padding: 0.3%;
+	font-size: 0.75vw;
+	border: 2px solid #666666;
+	background: #333333;
+	color: #666666;
+}
+
 #cures {
 	border: 2px solid #fffff0;
 	border-bottom-left-radius: 12% 28%;
@@ -222,7 +236,7 @@ a:hover {
 #infect-rate {
 	position: absolute;
 	left: 60%;
-	top: 65%;
+	top: 70%;
 	width: 15%;
 }
 

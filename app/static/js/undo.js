@@ -3,7 +3,9 @@ function undo() {
         if ( (data.result['act'] === "drive") || (data.result['act'] === "shuttle") || (data.result['act'] === "dispatch") ) {
             undo_move(data.result['data']);
             ACTIONS--;
-        } else if ((data.result['act'] === "charter") || (data.result['act'] === "fly")) {
+        } else if ((data.result['act'] === "charter") ||
+                   (data.result['act'] === "fly") ||
+                   (data.result['act'] === "station-fly")) {
             undo_move(data.result['data']);
             undo_discard(data.result['data']['cards']);
             ACTIONS--;
@@ -18,6 +20,9 @@ function undo() {
             ACTIONS--;
         } else if (data.result['act'] === "take") {
             undo_take(data.result['data']);
+            ACTIONS--;
+        } else if (data.result['act'] === "give") {
+            undo_give(data.result['data']);
             ACTIONS--;
         }
         $('#undo-action').prop('disabled', ACTIONS === 0);
@@ -67,6 +72,8 @@ function undo_move(data) {
     if ( $('#'+data['id']).length === 0 ) {
         set_treatable(data['origin'])
     }
+    set_giveable(data['hand'], data['give']);
+    set_takeable(data['team_hands'], data['take']);
     $("#build-station").prop('disabled', !data['can_build']);
     $("#make-cure").prop('disabled', !data['can_cure']);
 }
@@ -124,6 +131,11 @@ function undo_cure(data) {
 function undo_take(data) {
     $('#'+data['giver']+'-card-'+data['card']).on('click', take_card).attr('class', 'card takeable').show();
     $('#card-'+data['card']).off().hide().attr('class', 'pl-card');
-    console.log(data['available']);
+    set_cities(data['available']);
+}
+
+function undo_give(data) {
+    $('#'+data['taker']+'-card-'+data['card']).off().attr('class', 'card').hide();
+    $('#card-'+data['card']).off().on('click', give_card).attr('class', 'pl-card giveable').show();
     set_cities(data['available']);
 }

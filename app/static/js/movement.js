@@ -22,6 +22,8 @@ function move(new_pos, data) {
             break;
         }
     }
+    set_giveable(data.hand, data.can_give);
+    set_takeable(data.team_hands, data.can_take);
     $(".available").off();
     $(".available").attr("class", "unavailable");
     ACTIONS++;
@@ -45,8 +47,8 @@ function move(new_pos, data) {
 }
 
 function execute_move(event) {
-    var city = event.target;
-    var new_pos = city.getAttribute("id");
+    var city = $(event.target);
+    var new_pos = city.attr("id");
     $.getJSON($SCRIPT_ROOT + '/_move', { id: Number(new_pos) }).success(function(data) {
         if (typeof data.available !== 'undefined') {
             move(new_pos, data);
@@ -57,35 +59,37 @@ function execute_move(event) {
             }
         } else {
             // If there are multiple ways to move to new_pos
-            city.setAttribute("class", "selected");
+            city.attr("class", "selected");
             var selectable = data.selectable;
+            buttons_off();
             for (var i=0; i<selectable.length; i++) {
                 var card = $('#card-'+selectable[i]);
-                card.children('div').attr('class', 'down');
+                card.attr('class', 'pl-card down');
                 card.children('div').off().on('click', function(e) { select_discard(e) });
             }
             $(".action").off();
             $(".available").off();
             $(".available").attr("class", "unavailable holding");
             $('html').off().on( 'click', function( e ) {
-                if ($( e.target ).attr('class') !== 'down') {
-                    escape_card_select( $('.down') ) }} );
+                if ($( e.target ).parent().attr('class') !== 'down') {
+                    escape_card_select( $('.pl-card.down') ) }} );
             $('html').keyup( function( e ) {
-                if (e.keyCode === 27) { escape_card_select( $('.down') ) };
+                if (e.keyCode === 27) { escape_card_select( $('.pl-card.down') ) };
             });
         }
     }).error(function(error){console.log(error);});
 };
 
 function select_discard(event) {
-    var image = event.target;
-    var card_obj = image.parentNode;
-    var card_id = card_obj.getAttribute('id');
+    var image = $(event.target);
+    var card_obj = image.parent();
+    var card_id = card_obj.attr('id');
     var card_id_array = card_id.split('-');
     var card = card_id_array[1];
     var city_id = $(".selected").attr("id");
 
     $.getJSON($SCRIPT_ROOT+'/_select_card_for_move', { card: Number(card), city_id: Number(city_id) }).success(function (data) {
+                escape_card_select( $('.pl-card.down') );
                 move(city_id, data);
                 discard(card);
                 buttons_on();

@@ -18,12 +18,17 @@ def undo_action():
     player = game.players[game.active]
     action = actions.pop(-1)
     data = action['data']
+    print(action['act'])
 
     if action['act'] == "drive" or action['act'] == "shuttle":
         undo_move(data, player, game)
-    elif action['act'] == "charter" or action['act'] == "fly":
+    elif action['act'] == "charter" or action['act'] == "fly" or action['act'] == "airlift":
         undo_move(data, player, game)
         undo_discard(data, player, game)
+    elif action['act'] == "station-fly":
+        undo_move(data, player, game)
+        undo_discard(data, player, game)
+        player.has_chartered = False
     elif action['act'] == "build":
         undo_station(data, player, game)
     elif action['act'] == "treat":
@@ -32,6 +37,8 @@ def undo_action():
         undo_cure(data, player, game)
     elif action['act'] == "take":
         undo_take(data, game)
+    elif action['act'] == "give":
+        undo_give(data, game)
 
     session['actions'] = actions
     session['game'] = pickle.dumps(game)
@@ -89,3 +96,11 @@ def undo_take(data, game):
         elif p.get_id() == data['giver']:
             giver = p
     giver.take_card(int(data['card']), taker)
+
+def undo_give(data, game):
+    for p in game.players:
+        if p.get_id() == data['taker']:
+            taker = p
+        elif p.get_id() == data['giver']:
+            giver = p
+    taker.give_card(int(data['card']), giver)

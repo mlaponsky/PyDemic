@@ -1,3 +1,16 @@
+var CARDS = [
+    'ATLANTA', 'CHICAGO', 'ESSEN', 'LONDON', 'MADRID', 'MILAN', 'MONTREAL', 'NEW YORK', 'PARIS', 'St. PETERSBURG', 'SAN FRANCISCO', 'WASHINTON',
+
+    'BOGOT\u00C1', 'BUENOS AIRES', 'JOHANNESBURG', 'KHARTOUM', 'KINSHASA', 'LAGOS', 'LIMA', 'LOS ANGELES', 'MEXICO CITY', 'MIAMI', 'SANTIAGO', 'S\u00C3O PAULO',
+
+    'ALGIERS', 'BAGHDAD', 'CAIRO', 'CHENNAI', 'DELHI', 'ISTANBUL', 'KARACHI', 'KOLKATA', 'MOSCOW', 'MUMBAI', 'RIYADH', 'TEHRAN',
+
+    'BANGKOK', 'BEIJING', 'HO CHI MINH CITY', 'HONG KONG', 'JAKARTA', 'MANILA', 'OSAKA', 'SEOUL', 'SHANGHAI', 'SYDNEY', 'TAIPEI', 'TOKYO',
+
+    'AIRLIFT', 'FORECAST', 'GOVERNMENT GRANT', 'ONE QUIET NIGHT', 'RESILIENT POPULATION', 'EPIDEMIC'
+];
+
+
 var ACTIONS = 0;
 function initial_load() {
     $.getJSON($SCRIPT_ROOT + '/_load').success(function(data) {
@@ -32,34 +45,19 @@ function initial_load() {
         for (var k=0; k<data.cards.length; k++ ) {
             $("#card-"+String(k)).children('div').css('background', "url("+data.cards[k]['player_card']+") no-repeat center center");
             $("#card-"+String(k)).children('div').css('background-size', 'contain');
-            $("#card-"+String(k)).children('div').attr('class', 'up')
+            $("#card-"+String(k)).attr('class', 'pl-card up')
             $("#card-"+String(k)).hide();
         }
 
-        for (var n=0; n<hand.length; n++) {
-            $("#card-"+String(hand[n])).show();
-            for (var m=1; m<data.roles.length; m++) {
-                if ( data.can_give[data.roles[m]][n] ) {
-                    set_giveable(String(data.hand[n]));
-                }
-            }
-        }
+        set_giveable(data.hand, data.can_give);
+        set_takeable(data.team_hands, data.can_take);
 
-        $('.card').hide();
-        for (var p=1; p<data.team_hands.length; p++) {
-            for (var n=0; n<data.team_hands[p].length; n++) {
-                $("#"+data.roles[p]+"-card-"+String(data.team_hands[p][n])).show();
-                if ( data.can_take[data.roles[p]][n]) {
-                    set_takeable(String(data.team_hands[p][n]), data.roles[p]);
-                }
-            }
-        }
         $(".players li:first").hide();
 
         buttons_on();
         $('#build-station').prop('disabled', !can_build);
         $('#make-cure').prop('disabled', !can_cure);
-        $('#undo-action').prop('disabled', (ACTIONS === 0))
+        $('#undo-action').prop('disabled', ACTIONS === 0)
 
         for (var j=0; j<pieces.length; j++) {
             var player = $('<img/>');

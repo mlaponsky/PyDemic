@@ -38,20 +38,73 @@ function undo_discard(card) {
     $("#pl-discard-"+card).hide();
 }
 
+function give(card, data) {
+    card.attr('class', 'pl-card').hide();
+    card.children('div').off();
+    $('#'+data.recipient+'-card-'+data.card).on('click', take_card).attr('class', 'card takeable').show();
+    set_cities(data.available);
+    ACTIONS++;
+    $('#undo-action').prop('disabled', ACTIONS===0);
+}
+
 function give_card(event) {
     var card = $(event.target).parent();
     var card_id = card.attr('id').split('-')[1];
     $.getJSON( $SCRIPT_ROOT + '/_give_card', { card: Number(card_id) }).success(
         function(data) {
             if (typeof data.available !== 'undefined') {
-                card.off().attr('class', 'pl-card').hide();
-                $('#'+data.recipient+'-card-'+data.card).attr('class', 'card takeable').show();
-                set_cities(data.available);
-                ACTIONS++;
-                $('#undo-action').prop('disabled', ACTIONS===0);
+                $('.available').off();
+                buttons_off();
+                if (!body.hasClass('menu-push-toleft')) {
+                    team_toggle();
+                    setTimeout( function() {
+                        give(card, data);
+                        setTimeout( function() {
+                            team_toggle();
+                            buttons_on();
+                        }, 1500);
+                    }, 200);
+                } else {
+                    give(card, data);
+                    buttons_on();
+                }
+            } else {
+                $('.available').off();
+                buttons_off();
+                card.attr('class', 'pl-card down');
+                card.children('div').off();
+                if (!body.hasClass('menu-push-toleft')) {
+                    team_toggle();
+                } else {
+                    body.addClass('selecting');
+                }
+                for (var i=0; i<data.recipients.length; i++) {
+                    $("#"+data.recipients[i]).parent().parent().attr('class', 'can-give');
+                    $("#"+data.recipients[i]).off().on('click', select_recipient);
+                }
+                $('html').off().on( 'click', function(e) {
+                    if ( $(e.target).parent().parent().attr('class') !== 'can-give' || $(e.target).parent().attr('class') === 'down') {
+                        escape_give_select(card, data);
+                    }
+                });
+                $('html').keyup( function( e ) {
+                    if (e.keyCode === 27) { escape_give_select(card, data) };
+                });
             }
         }
     )
+}
+
+function select_recipient(event) {
+    var recip = $(event.target).attr('id');
+    var card_id = $('.down').attr('id').split('-')[1];
+    $.getJSON( $SCRIPT_ROOT + '/_select_recipient', { card: card_id, selected: recip }).success(
+        function(data) {
+            var card = $('#card-'+data.card);
+            escape_give_select(card, data);
+            give(card, data);
+            card.children('div').off();
+        }).error(function(error) {console.log(errors)} );
 }
 
 function take_card(event) {
@@ -61,9 +114,10 @@ function take_card(event) {
     $.getJSON( $SCRIPT_ROOT + '/_take', { card: Number(card_id),
                                           id: source_id}).success( function(data) {
             card.off().attr('class', 'card').hide();
-            $('#card-'+card_id).show().attr('class', 'pl-card giveable');
+            $('#card-'+card_id).on('click', give_card).show().attr('class', 'pl-card giveable');
             set_cities(data.available);
             ACTIONS++;
+            buttons_on();
             $('#undo-action').prop('disabled', ACTIONS===0);
         })
 }

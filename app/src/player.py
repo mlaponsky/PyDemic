@@ -63,7 +63,10 @@ class Player:
         return can_charter
 
     def move(self, new_pos, board, cures, cubes, cubes_left, quarantined):
-        self.position = new_pos
+        if self.selected == self:
+            self.position = new_pos
+        else:
+            self.selected.move(new_pos, board, cures, cubes, cubes_left, quarantined)
 
     # Hand management
     def add_card(self, card):
@@ -189,6 +192,8 @@ class Dispatcher(Player):
 
     def select(self, selected):
         self.selected = selected
+        if self.selected.get_role() == OE:
+            self.selected.has_stationed = True
 
     def can_drive(self, board):
         if self.selected == self:
@@ -222,15 +227,6 @@ class Dispatcher(Player):
                 if n in can_charter:
                     can_charter.remove(n)
         return can_charter
-
-    def can_move(self, research_stations, board):
-        return self.can_drive(board) + self.can_shuttle(research_stations) + self.can_fly_direct(board) + self.can_charter(research_stations, board)
-
-    def move(self, new_pos, board, cures, cubes, cubes_left, quarantined):
-        if self.selected == self:
-            self.position = new_pos
-        else:
-            self.selected.move(new_pos, board, cures, cubes, cubes_left, quarantined)
 
 class Medic(Player):
     def __init__(self):
@@ -269,26 +265,36 @@ class OperationsExpert(Player):
         self.title = ROLES[role]['title_img']
         self.piece = ROLES[role]['piece_img']
         self.selected = self
+        self.has_stationed = False
 
     def fly_from_station(self, destination, card, research_stations):
         if self.position in research_stations:
             self.discard(card)
             self.position = destination
+            self.has_stationed = True
 
-    def can_charter(self, research_stations, board):
-        can_charter = []
+    def can_station_fly(self, research_stations, board):
+        can_station = []
         cities_in_hand = False
+
         for card in self.hand:
             if card in range(NUM_CITIES):
                 cities_in_hand = True;
                 break;
-        if self.position in self.hand or (self.position in research_stations and cities_in_hand):
-            can_charter = [ city for city in range(NUM_CITIES) ]
-            can_charter.remove(self.position)
+
+        if self.position in research_stations and not self.has_stationed:
+            can_station = [ city for city in range(NUM_CITIES) ]
+            can_station.remove(self.position)
             for n in board.get_neighbors(self.position):
-                if n in can_charter:
-                    can_charter.remove(n)
-        return can_charter
+                if n in can_station:
+                    can_station.remove(n)
+        return can_station
+
+    def can_move(self, research_stations, board):
+        if not self.has_stationed:
+            return self.can_drive(board) + self.can_shuttle(research_stations) + self.can_fly_direct(board) + self.can_charter(research_stations, board) + self.can_station_fly(research_stations, board)
+        else:
+            return self.can_drive(board) + self.can_shuttle(research_stations) + self.can_fly_direct(board) + self.can_charter(research_stations, board)
 
     def can_build(self, city, research_stations):
         return (self.position == city and city not in research_stations)

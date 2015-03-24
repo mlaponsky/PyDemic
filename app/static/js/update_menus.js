@@ -1,4 +1,23 @@
 function update_char_menus() {
+    if (this.value === "Contingency Planner") {
+        $('#'+$(this).attr('id')+"-info").attr('src', '../static/img/roles/cp_info.svg');
+    } else if (this.value === "Dispatcher") {
+        $('#'+$(this).attr('id')+"-info").attr('src', '../static/img/roles/dispatcher_info.svg');
+    } else if (this.value === "Medic") {
+        $('#'+$(this).attr('id')+"-info").attr('src', '../static/img/roles/medic_info.svg');
+    } else if (this.value === "Operations Expert") {
+        $('#'+$(this).attr('id')+"-info").attr('src', '../static/img/roles/oe_info.svg');
+    } else if (this.value === "Quarantine Specialist") {
+        $('#'+$(this).attr('id')+"-info").attr('src', '../static/img/roles/qs_info.svg');
+    } else if (this.value === "Researcher") {
+        $('#'+$(this).attr('id')+"-info").attr('src', '../static/img/roles/researcher_info.svg');
+    } else if (this.value === "Scientist") {
+        $('#'+$(this).attr('id')+"-info").attr('src', '../static/img/roles/scientist_info.svg');
+    } else if (this.value === "random") {
+        $('#'+$(this).attr('id')+"-info").attr('src', '../static/img/roles/random_info.svg');
+    } else if (this.value === "none") {
+        $('#'+$(this).attr('id')+"-info").attr('src', '../static/img/roles/none_info.svg');
+    }
     var lists = document.getElementsByClassName('char-select');
     for (var n=0; n<lists.length; n++) {
         for (var m=0; m<lists[n].options.length; m++) {

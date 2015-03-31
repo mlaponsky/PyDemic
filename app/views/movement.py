@@ -23,7 +23,6 @@ def set_move():
     cures = copy(game.cures)
     move = ""
 
-
     selectable = []
 
     # neighbors = game.board.get_neighbors(origin)
@@ -43,6 +42,7 @@ def set_move():
         player.move(new_pos, board, game.cures, game.cubes, game.cubes_left, game.quarantined)
         discard = str(AIRLIFT)
         player.discard(AIRLIFT, game.player_cards)
+        print(player.hand)
         move = "airlift"
     elif new_pos in player.can_drive(board):
         player.move(new_pos, board, game.cures, game.cubes, game.cubes_left, game.quarantined)
@@ -104,6 +104,9 @@ def set_move():
         actions.append(action)
         available, new_dispatch, origin, player_id = game.set_available(player)
         can_take, can_give, team_hands = game.set_share()
+
+        if is_airlift == 1 or player.get_role() != DISPATCHER:
+            player.selected = player
         if player.get_role() == MEDIC:
             cubes_left = copy(game.cubes_left)
             can_build = player.can_build(new_pos, game.research_stations)
@@ -193,6 +196,8 @@ def select_move_card():
     available, new_dispatch, origin, player_id = game.set_available(player)
     can_take, can_give, team_hands = game.set_share()
 
+    if player.get_role() != DISPATCHER:
+        player.selected = player
     if player.get_role() == MEDIC:
         session['actions'] = actions
         session['game'] = pickle.dumps(game)
@@ -230,8 +235,6 @@ def select_player():
     available, dispatch, origin, player_id = game.set_available(player)
     can_build = player.can_build(player.get_position(), game.research_stations)
     can_cure = player.can_cure(game.research_stations)
-    if player.get_role() != DISPATCHER:
-        player.selected = player
     session['game'] = pickle.dumps(game)
     return jsonify( available=available,
                     position=position,

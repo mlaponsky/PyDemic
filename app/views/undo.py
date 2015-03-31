@@ -19,7 +19,7 @@ def undo_action():
     action = actions.pop(-1)
     data = action['data']
 
-    if action['act'] == "drive" or action['act'] == "shuttle":
+    if action['act'] == "drive" or action['act'] == "shuttle" or action['act'] == "dispatch":
         undo_move(data, player, game)
     elif action['act'] == "charter" or action['act'] == "fly" or action['act'] == "airlift":
         undo_move(data, player, game)
@@ -44,16 +44,19 @@ def undo_action():
     return jsonify(result=action)
 
 def undo_move(data, player, game):
-    if player.get_id() == 'dispatcher':
+    print(player.get_id(), data['id'])
+    if player.get_id() != data['id']:
         for p in game.players:
             if p.get_id() == data['id']:
                 p.position = data['origin']
-                game.quarantined = game.board.get_neighbors(p.get_position())
-                game.quarantined.append(p.get_position())
+                if data['id'] == 'qs':
+                    game.quarantined = game.board.get_neighbors(p.get_position())
+                    game.quarantined.append(p.get_position())
     else:
         player.position = data['origin']
-        game.quarantined = game.board.get_neighbors(player.get_position())
-        game.quarantined.append(player.get_position())
+        if data['id'] == 'qs':
+            game.quarantined = game.board.get_neighbors(player.get_position())
+            game.quarantined.append(player.get_position())
 
     for color in COLORS:
         number = data['cubes'][color]

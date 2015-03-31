@@ -150,6 +150,11 @@ class Player:
         self.discard(city, deck)
         research_stations.append(city)
 
+    def select(self, selected):
+        self.selected = selected
+        if self.selected.get_role() == OE:
+            self.selected.has_stationed = True
+
 # Role subclasses; contain special implementations of actions
 class ContingencyPlanner(Player):
     def __init__(self):
@@ -189,11 +194,6 @@ class Dispatcher(Player):
         self.title = ROLES[role]['title_img']
         self.piece = ROLES[role]['piece_img']
         self.selected = self
-
-    def select(self, selected):
-        self.selected = selected
-        if self.selected.get_role() == OE:
-            self.selected.has_stationed = True
 
     def can_drive(self, board):
         if self.selected == self:
@@ -241,13 +241,16 @@ class Medic(Player):
         self.selected = self
 
     def move(self, new_pos, board, cures, cubes, cubes_left, quarantined):
-        self.position = new_pos
-        for color in COLORS:
-            if cures[color]:
-                cubes_left[color] += cubes[self.position][color]
-                cubes[self.position][color] = 0
-                board.delete_row(self.position, color)
-
+        if self.selected == self:
+            self.position = new_pos
+            for color in COLORS:
+                if cures[color]:
+                    cubes_left[color] += cubes[self.position][color]
+                    cubes[self.position][color] = 0
+                    board.delete_row(self.position, color)
+        else:
+            self.selected.move(new_pos, board, cures, cubes, cubes_left, quarantined)
+    
     def treat(self, color, cures, cubes, cubes_left, board):
         if not cures[color]:
             cubes_left[color] += cubes[self.position][color]

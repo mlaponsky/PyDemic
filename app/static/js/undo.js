@@ -75,11 +75,9 @@ function undo_move(data) {
 
 function undo_station(data) {
     var city = Number(data['origin']);
-    $('#station-'+data['origin']).hide();
-    $('#station-'+data['origin']).attr('class', 'unbuilt');
+    $('#station-'+data['origin']).attr('class', 'unbuilt').hide();
     if ( data['removed'] !== 'none' ) {
-        $('#station-'+data['removed']).show();
-        $('#station-'+data['removed']).attr('class', 'built');
+        $('#station-'+data['removed']).attr('class', 'built').show();
     }
     if ( data['cards'] !== 'none') {
         undo_discard(data['discard']);

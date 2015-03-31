@@ -55,8 +55,8 @@ def set_game():
     positions = []
 
     team = game.players[game.active:] + game.players[:game.active]
+    game.players[game.active].selected = game.players[game.active]
     if game.players[game.active].get_role() == DISPATCHER:
-        game.players[game.active].select(game.players[game.active])
         for p in team:
             if p != game.players[game.active] and p.get_position() != game.players[game.active].get_position():
                 available.append(p.get_position())

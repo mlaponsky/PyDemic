@@ -75,6 +75,7 @@ function set_giveable(hand, can_give) {
             $("#card-"+String(hand[n])).off().on('click', select_airlift).attr('class', 'pl-card giveable');
         }
     }
+    console.log($('#card-48'));
 }
 
 function set_takeable(team_hands, can_take) {

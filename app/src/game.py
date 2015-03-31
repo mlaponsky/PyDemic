@@ -95,18 +95,17 @@ class Game:
     def set_available(self, player):
         dispatch = []
         available = []
-        player_id = player.get_id()
-        if player_id == 'dispatcher':
-            player_id = player.selected.get_id()
-            origin = player.selected.get_position()
-            dispatch = self.dispatcher_availability(player, available)
-        else:
-            player_id = player.get_id()
-            origin = player.get_position()
+        selected = player.selected
+        player_id = player.selected.get_id()
+        origin = player.selected.get_position()
 
+        if player.get_id() == 'dispatcher':
+            player.selected = player
+            dispatch = self.dispatcher_availability(player, available)
         for city in player.can_move(self.research_stations, self.board):
             available.append(str(city))
 
+        player.selected = selected
         return available, dispatch, origin, player_id
 
     def set_share(self):

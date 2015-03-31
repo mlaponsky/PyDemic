@@ -51,7 +51,6 @@ function initial_load() {
 
         set_giveable(data.hand, data.can_give);
         set_takeable(data.team_hands, data.can_take);
-        $('.pl-card').on('click', function() { console.log('Can click list elements.')})
         $(".players li:first").hide();
 
         buttons_on();

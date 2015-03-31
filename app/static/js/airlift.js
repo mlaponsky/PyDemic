@@ -69,7 +69,7 @@ function airlift_select_self(event) {
                 escape_airlift_player(data.position)
             });
             $('.down').off().on('click', function(data) {
-                    escape_airlift_player(data.position);
+                escape_airlift_player(data.position);
             });
             $('html').keyup( function( e ) {
                 if (e.keyCode === 27) { escape_airlift_player(data.position) };

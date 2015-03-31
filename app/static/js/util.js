@@ -8,6 +8,7 @@ function init_cities() {
 function set_cities(cities) {
     $(".available").off().attr('class', 'unavailable');
     $(".selectable").off().attr('class', 'unavailable');
+    $(".selected").off().attr('class', 'unavailable');
     for (var i=0; i<cities.length; i++) {
         $("#"+cities[i]).attr("class", "available");
         $("#"+cities[i]).off().on("click", execute_move);

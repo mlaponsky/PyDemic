@@ -1,6 +1,6 @@
 function select_airlift() {
     $('.giveable').off().attr('class', 'pl-card holding');
-    $('.takeable').off().attr('class', 'card marked');
+    $('.takeable').off().attr('class', 'card holding');
     $(this).off().attr('class', 'pl-card down');
     buttons_off();
     $('.role').attr('class', 'role choosable').off().on('click', airlift_select_player);
@@ -80,7 +80,7 @@ function airlift_select_self(event) {
 
 function escape_airlift_select() {
     if ($('.down').length !== 0 ) {
-        $('.holding').attr('class', 'pl-card giveable');
+        $('.pl-card.holding').attr('class', 'pl-card giveable');
         $('.giveable').off().on('click', give_card);
         $('.card.holding').off().on('click', take_card).attr('class', 'card takeable');
         $('.down').attr('class', 'pl-card giveable');

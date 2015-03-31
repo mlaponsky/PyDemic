@@ -1,7 +1,7 @@
 function select_gg() {
     $(this).off().on('click', escape_gg).attr('class', 'pl-card down');
     $('.giveable').off().attr('class', 'pl-card holding');
-    $('.takeable').off().attr('class', 'card marked');
+    $('.takeable').off().attr('class', 'card holding');
     buttons_off();
     for (var i=0; i<48; i++) {
         if ( $('#station-'+String(i)).attr('class') === 'built' ) {
@@ -28,7 +28,7 @@ function escape_gg() {
     $.getJSON( $SCRIPT_ROOT + '/_escape_gg').success(
         function(data) {
             if ($('.down').length !== 0 ) {
-                $('.holding').attr('class', 'pl-card giveable');
+                $('.pl-cardholding').attr('class', 'pl-card giveable');
                 $('.giveable').off().on('click', give_card);
                 $('.card.holding').off().on('click', take_card).attr('class', 'card takeable');
                 $('.down').attr('class', 'pl-card giveable');

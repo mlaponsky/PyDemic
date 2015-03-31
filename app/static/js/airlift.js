@@ -85,6 +85,7 @@ function escape_airlift_select() {
         $('.card.holding').off().on('click', take_card).attr('class', 'card takeable');
         $('.down').attr('class', 'pl-card giveable');
         $('#card-48').off().on('click', select_airlift);
+        $('#card-50').off().on('click', select_gg);
 
         $('#name').off().attr('class', 'self-unchooseable');
         $('.role').off().attr('class', 'role');

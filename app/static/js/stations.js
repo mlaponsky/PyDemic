@@ -41,7 +41,7 @@ function select_station(event) {
                                                     position: position}).success(
         function(data) {
             $("#station-"+to_remove).hide().attr('class', 'unbuilt');
-            $("#station-"+data.position).show().attr('class', 'built');
+            $("#station-"+String(data.station)).show().attr('class', 'built');
             ACTIONS++;
             if (data.discard !== '-1') {
                 discard(data.discard);
@@ -50,6 +50,8 @@ function select_station(event) {
             set_treatable(data.position);
             $('#build-station').attr('class', 'action').prop('disabled', true);
             $("#undo-action").prop('disabled', ACTIONS === 0);
+            buttons_on();
+            $('html').off();
         }
     ).error(function(error){console.log(error);});
 }
@@ -59,9 +61,9 @@ function build_station() {
     if ( $(this).attr('id') !== 'build-station' ) {
         position = Number($(this).attr('id'));
     }
-    $.getJSON( $SCRIPT_ROOT + '/_build_station', { position:  position}).success( function(data) {
+    $.getJSON( $SCRIPT_ROOT + '/_build_station', { position:  position }).success( function(data) {
         if (data.num_stations < 6) {
-            $("#station-"+data.position).show().attr('class', 'built');
+            $("#station-"+String(data.station)).show().attr('class', 'built');
             ACTIONS++
             if ( data.discard !== '-1' ) {
                 discard(data.discard);
@@ -71,17 +73,19 @@ function build_station() {
             set_treatable(data.position);
             $("#build-station").attr('class', 'action').prop('disabled', true);
             $("#undo-action").prop('disabled', ACTIONS === 0);
+            buttons_on();
         } else {
-            $('.action').off();
+            buttons_off();
             $("#build-station").attr('class', 'action activated');
-            $("#"+data.position).off().attr('class', 'building');
-            $(".available").off().attr('class', 'unavailable holding');
+            $("#"+String(data.station)).off().attr('class', 'building');
+            $(".selectable").off().attr('class', 'unavailable');
+            $(".available").off().attr('class', 'unavailable marked');
             var ids = $('.built');
             for (var i=0; i<ids.length; i++) {
                 var true_id = $(ids[i]).attr('id').split('-')[1];
                 $('#'+true_id).off().on('click',
                                          select_station).attr('class',
-                                                              'selectable holding');
+                                                              'selectable marked');
             }
             $('html').off().on('click', function(e) {
                 if ( $(e.target).attr('id') !== 'build-station' ||
@@ -96,4 +100,21 @@ function build_station() {
             });
         }
     }).error(function(error){console.log(error);});
+}
+
+function escape_station_select(available, city) {
+    $(".marked").attr("class", "unavailable");
+    set_cities(available);
+    set_treatable(city);
+    buttons_on();
+    if ($('.down').length !== 0 ) {
+        $('.holding').attr('class', 'pl-card giveable');
+        $('.giveable').off().on('click', give_card);
+        $('.card.holding').off().on('click', take_card).attr('class', 'card takeable');
+        $('.down').attr('class', 'pl-card giveable');
+        $('#card-48').off().on('click', select_airlift);
+        $('#card-50').off().on('click', select_gg);
+    }
+    $("#build-station").attr('class', 'action');
+    $('html').off()
 }

@@ -146,8 +146,8 @@ class Player:
     def can_build(self, city, research_stations):
         return (self.position == city and city in self.hand and city not in research_stations)
 
-    def build_station(self, city, research_stations, deck):
-        self.discard(city, deck)
+    def build_station(self, city, discard, research_stations, deck):
+        self.discard(discard, deck)
         research_stations.append(city)
 
     def select(self, selected):
@@ -250,7 +250,7 @@ class Medic(Player):
                     board.delete_row(self.position, color)
         else:
             self.selected.move(new_pos, board, cures, cubes, cubes_left, quarantined)
-    
+
     def treat(self, color, cures, cubes, cubes_left, board):
         if not cures[color]:
             cubes_left[color] += cubes[self.position][color]
@@ -302,8 +302,10 @@ class OperationsExpert(Player):
     def can_build(self, city, research_stations):
         return (self.position == city and city not in research_stations)
 
-    def build_station(self, city, research_stations, deck):
+    def build_station(self, city, discard, research_stations, deck):
         research_stations.append(city)
+        if discard == GG:
+            self.discard(discard, deck)
 
 class QuarantineSpecialist(Player):
     def __init__(self, quarantined, neighbors):

@@ -74,8 +74,8 @@ def undo_station(data, player, game):
     if data['removed'] != 'none':
         game.research_stations.append(int(data['removed']))
     if data['discard'] != '-1':
-        game.player_cards.remove_from_discard(int(data['origin']))
-        player.add_card(int(data['origin']))
+        game.player_cards.remove_from_discard(int(data['discard']))
+        player.add_card(int(data['discard']))
 
 def undo_treatment(data, game):
     game.cubes_left[int(data['color'])] -= data['removed']

@@ -46,7 +46,7 @@ class Game:
         self.player_cards = PlayerCards(self.players, self.num_epidemics)
         self.active = self.set_order()
 
-        self.players[self.active].hand.append(AIRLIFT)
+        self.players[self.active].hand.append(GG)
 
     ## Manage game phase
     def get_phase(self):
@@ -102,6 +102,7 @@ class Game:
         if player.get_id() == 'dispatcher':
             player.selected = player
             dispatch = self.dispatcher_availability(player, available)
+        print(self.research_stations)
         for city in player.can_move(self.research_stations, self.board):
             available.append(str(city))
 

@@ -83,7 +83,11 @@ function undo_station(data) {
         undo_discard(data['discard']);
     }
     set_cities(data['available']);
-    $("#build-station").prop('disabled', false);
+    if (data['discard'] !== '50') {
+        $("#build-station").prop('disabled', false);
+    } else {
+        $('#card-50').off().on('click', select_gg).attr('class', 'pl-card giveable');
+    }
     if ( data['removed'] === 'none' ) {
         var stations_left = Number(document.getElementById("research-cnt").getElementsByTagName('tspan')[0].textContent)
 

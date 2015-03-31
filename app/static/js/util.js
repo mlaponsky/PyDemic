@@ -71,9 +71,8 @@ function set_giveable(hand, can_give) {
                 $("#card-"+String(hand[n])).off().on('click', give_card).attr('class', 'pl-card giveable');
             }
         }
-        if (hand[n] === 48) {
-            $("#card-"+String(hand[n])).off().on('click', select_airlift).attr('class', 'pl-card giveable');
-        }
+        $("#card-48").off().on('click', select_airlift).attr('class', 'pl-card giveable');
+        $("#card-50").off().on('click', select_gg).attr('class', 'pl-card giveable');
     }
     console.log($('#card-48'));
 }
@@ -173,15 +172,6 @@ function escape_cube_select(objects, city) {
     objects.css("pointer-events", "none");
     buttons_on();
     $('html').off();
-}
-
-function escpae_station_select(available, city) {
-    $(".holding").attr("class", "unavailable");
-    set_cities(available);
-    set_treatable(city);
-    buttons_on();
-    $("#build-station").attr('class', 'action');
-    $('html').off()
 }
 
 function escape_cure_select() {

@@ -31,6 +31,8 @@ function fit() {
     });
 	left_offset = ($(window).width() - $('#map').outerWidth())/2;
 	top_offset = ($(window).height() - $('#map').outerHeight())/2;
+	console.log(top_offset);
+	console.log(left_offset);
 }
 
 $(window).load(function() {	sizeGame();

@@ -71,10 +71,9 @@ function set_giveable(hand, can_give) {
                 $("#card-"+String(hand[n])).off().on('click', give_card).attr('class', 'pl-card giveable');
             }
         }
-        $("#card-48").off().on('click', select_airlift).attr('class', 'pl-card giveable');
-        $("#card-50").off().on('click', select_gg).attr('class', 'pl-card giveable');
     }
-    console.log($('#card-48'));
+    $("#card-48").off().on('click', select_airlift).attr('class', 'pl-card giveable');
+    $("#card-50").off().on('click', select_gg).attr('class', 'pl-card giveable');
 }
 
 function set_takeable(team_hands, can_take) {

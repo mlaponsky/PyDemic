@@ -25,23 +25,17 @@ function set_treatable(position) {
     }
 }
 
-function set_position(player, position, dims) {
+function set_position(player, role, position, dims) {
     var city_w = dims.width;
     var city_h = dims.height;
     var city_l = dims.left;
     var city_t = dims.top;
+    var index = $('#'+role).parent().parent().index();
 
     player.width(5*city_w/8);
-    var player_l;
     var player_t = city_t - 0.57*city_h - top_offset;
+    var player_l = city_l + (index+1)*3*city_w/8 - left_offset;
 
-    for (var i=0; i<4; i++) {
-        if ( $("."+position+"-"+String(i)).length == 0 ) {
-            player_l = city_l + (i+1)*3*city_w/8 - left_offset;
-            player.attr("class", position+"-"+String(i));
-            break;
-        }
-    }
     player.offset({ left: player_l,
                     top: player_t }).css("position", "absolute");
 }
@@ -67,17 +61,17 @@ function set_selectable_players(active) {
 }
 
 function set_giveable(hand, can_give) {
-    console.log(can_give);
     var roles = Object.keys(can_give);
-    $('.pl-card').children('div').off();
-    $('.pl-card').attr('class', 'pl-card');
+    $('.pl-card').off().attr('class', 'pl-card');
     for (var n=0; n<hand.length; n++) {
         $("#card-"+String(hand[n])).show();
         for (var m=0; m<roles.length; m++) {
             if ( can_give[roles[m]][n] ) {
-                $("#card-"+String(hand[n])).attr('class', 'pl-card giveable');
-                $("#card-"+String(hand[n])).children('div').off().on('click', give_card);
+                $("#card-"+String(hand[n])).off().on('click', give_card).attr('class', 'pl-card giveable');
             }
+        }
+        if (hand[n] === 48) {
+            $("#card-"+String(hand[n])).off().on('click', select_airlift).attr('class', 'pl-card giveable');
         }
     }
 }
@@ -95,20 +89,25 @@ function set_takeable(team_hands, can_take) {
     }
 }
 
+function set_chosen_player(data, target) {
+    if ($(".chosen").length !== 0) {
+        $(".chosen").attr('class', 'role choosable');
+    }
+    $(".available").attr('class', 'unavailable');
+    $(".treatable").attr('class', 'unavailable');
+    set_cities(data.available);
+    target.attr('class', 'role chosen');
+    $('#build-station').prop('disabled', true);
+    $('#make-cure').prop('disabled', true);
+    $('#name').attr('class', 'self-chooseable')
+}
+
 function select_player(event) {
     var target = $(event.target);
     var select = target.parent().parent().index();
     $.getJSON( $SCRIPT_ROOT + '/_select_player', { index: select }).success(
         function(data) {
-            if ($(".chosen").length !== 0) {
-                $(".chosen").attr('class', 'role choosable');
-            }
-            $(".available").attr('class', 'unavailable');
-            $(".treatable").attr('class', 'unavailable');
-            set_cities(data.available);
-            target.attr('class', 'role chosen');
-            $('#build-station').prop('disabled', true);
-            $('#make-cure').prop('disabled', true);
+            set_chosen_player(data, target);
             escape_select_player(target);
         }
     ).error(function(error){console.log(error)});
@@ -125,8 +124,20 @@ function deselect_player() {
             $('#make-cure').prop('disabled', !data.can_cure);
             $('.role').attr('class', 'role choosable');
             $('.role').off().on('click', select_player );
+            $('.self-chooseable').attr('class', 'self-unchooseable');
         }
     )
+}
+
+function escape_select_player(target) {
+    if ( $(".chosen").length !== 0 ) {
+        $('html').keyup( function( e ) {
+            if (e.keyCode === 27) { deselect_player() };
+        });
+        $('#name').off().on('click', deselect_player);
+        buttons_on();
+        target.off().on('click', deselect_player);
+    }
 }
 
 function buttons_on() {
@@ -141,23 +152,11 @@ function buttons_off() {
     $('#undo-action').attr('class', 'paused').off();
 }
 
-function escape_select_player(target) {
-    if ( $(".chosen").length !== 0 ) {
-        $('html').keyup( function( e ) {
-            if (e.keyCode === 27) { deselect_player() };
-        });
-        $('#name').off().on('click', deselect_player);
-        buttons_on();
-        target.off().on('click', deselect_player);
-    }
-}
-
 function escape_card_select(objects) {
     $(".holding").attr("class", "available");
     $(".selected").attr("class", "available");
     $(".available").off().on("click", execute_move);
-    objects.children('div').off();
-    objects.attr('class', 'pl-card');
+    objects.off().attr('class', 'pl-card');
     buttons_on();
     $('html').off();
 }
@@ -185,25 +184,7 @@ function escpae_station_select(available, city) {
 
 function escape_cure_select() {
     $(".pl-card").children('div').attr('class', 'up').off();
-    $(".pl-card").children('div');
     buttons_on();
     $('#make-cure').attr('class', 'action');
-    $('html').off();
-}
-
-function escape_give_select(card, data) {
-    buttons_on();
-    $('.available').off().on('click', execute_move);
-    card.attr('class', 'pl-card giveable');
-    card.children('div').off().on('click', give_card);
-    if ( !body.hasClass('selecting') ) {
-        team_toggle();
-    } else {
-        body.removeClass('selecting');
-    }
-    for (var i=0; i<data.recipients.length; i++) {
-        $("#"+data.recipients[i]).parent().parent().attr('class', '');
-        $("#"+data.recipients[i]).off();
-    }
     $('html').off();
 }

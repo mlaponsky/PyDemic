@@ -18,7 +18,6 @@ def undo_action():
     player = game.players[game.active]
     action = actions.pop(-1)
     data = action['data']
-    print(action['act'])
 
     if action['act'] == "drive" or action['act'] == "shuttle":
         undo_move(data, player, game)
@@ -29,7 +28,7 @@ def undo_action():
         undo_move(data, player, game)
         undo_discard(data, player, game)
         player.has_chartered = False
-    elif action['act'] == "build":
+    elif action['act'] == "build" or action['act'] == "gg":
         undo_station(data, player, game)
     elif action['act'] == "treat":
         undo_treatment(data, game)
@@ -71,7 +70,7 @@ def undo_station(data, player, game):
     game.research_stations.remove(int(data['origin']))
     if data['removed'] != 'none':
         game.research_stations.append(int(data['removed']))
-    if data['cards'] != 'none':
+    if data['discard'] != '-1':
         game.player_cards.remove_from_discard(int(data['origin']))
         player.add_card(int(data['origin']))
 

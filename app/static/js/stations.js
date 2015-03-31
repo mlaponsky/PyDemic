@@ -34,29 +34,37 @@ function set_stations(num_cities, rs) {
 }
 
 function select_station(event) {
-    var city = event.target;
-    var to_remove = city.getAttribute("id");
-    $.getJSON( $SCRIPT_ROOT + '/_select_station', { id: Number(to_remove) }, function(data) {
-        $("#station-"+to_remove).hide().attr('class', 'unbuilt');
-        $("#station-"+String(data.position)).show().attr('class', 'built');
-        ACTIONS++;
-        if (data.discard) {
-            $("#card-"+String(data.position)).hide();
+    var city = $(event.target);
+    var to_remove = city.attr("id");
+    var position = Number($('.building').attr('id'));
+    $.getJSON( $SCRIPT_ROOT + '/_select_station', { id: Number(to_remove),
+                                                    position: position}).success(
+        function(data) {
+            $("#station-"+to_remove).hide().attr('class', 'unbuilt');
+            $("#station-"+data.position).show().attr('class', 'built');
+            ACTIONS++;
+            if (data.discard !== '-1') {
+                discard(data.discard);
+            }
+            set_cities(data.available);
+            set_treatable(data.position);
+            $('#build-station').attr('class', 'action').prop('disabled', true);
+            $("#undo-action").prop('disabled', ACTIONS === 0);
         }
-        set_cities(data.available);
-        set_treatable(String(data.position));
-        $('#build-station').attr('class', 'action').prop('disabled', true);
-        $("#undo-action").prop('disabled', ACTIONS === 0);
-    })
+    ).error(function(error){console.log(error);});
 }
 
 function build_station() {
-    $.getJSON( $SCRIPT_ROOT + '/_build_station').success( function(data) {
+    var position;
+    if ( $(this).attr('id') !== 'build-station' ) {
+        position = Number($(this).attr('id'));
+    }
+    $.getJSON( $SCRIPT_ROOT + '/_build_station', { position:  position}).success( function(data) {
         if (data.num_stations < 6) {
-            $("#station-"+String(data.position)).show().attr('class', 'built');
+            $("#station-"+data.position).show().attr('class', 'built');
             ACTIONS++
-            if ( data.discard ) {
-                $("#card-"+String(data.position)).hide();
+            if ( data.discard !== '-1' ) {
+                discard(data.discard);
             }
             document.getElementById("research-cnt").getElementsByTagName('tspan')[0].textContent = String(6-data.num_stations-1);
             set_cities(data.available);
@@ -66,7 +74,7 @@ function build_station() {
         } else {
             $('.action').off();
             $("#build-station").attr('class', 'action activated');
-            $("#"+String(data.position)).off().attr('class', 'building');
+            $("#"+data.position)).off().attr('class', 'building');
             $(".available").off().attr('class', 'unavailable holding');
             var ids = $('.built');
             for (var i=0; i<ids.length; i++) {

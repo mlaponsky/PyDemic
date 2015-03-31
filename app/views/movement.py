@@ -32,7 +32,7 @@ def set_move():
     can_fly_direct = player.can_fly_direct(board)
 
     prev_avail, dispatch, origin, player_id = game.set_available(player)
-    prev_hand = player.hand
+    prev_hand = copy(player.hand)
     prev_take, prev_give, prev_hands = game.set_share()
     prev_build = player.can_build(origin, game.research_stations)
     prev_cure = player.can_cure(game.research_stations)
@@ -41,7 +41,8 @@ def set_move():
 
     if is_airlift == 1:
         player.move(new_pos, board, game.cures, game.cubes, game.cubes_left, game.quarantined)
-        player.discard(AIRLIFT)
+        discard = str(AIRLIFT)
+        player.discard(AIRLIFT, game.player_cards)
         move = "airlift"
     elif new_pos in player.can_drive(board):
         player.move(new_pos, board, game.cures, game.cubes, game.cubes_left, game.quarantined)
@@ -154,7 +155,7 @@ def select_move_card():
     prev_avail, dispatch, origin, player_id = game.set_available(player)
     prev_build = player.can_build(origin, game.research_stations)
     prev_cure = player.can_cure(game.research_stations)
-    prev_hand = player.hand
+    prev_hand = copy(player.hand)
     prev_take, prev_give, prev_hands = game.set_share()
     orig_cubes = game.cubes[new_pos]
     orig_rows = board.rows[new_pos]

@@ -17,15 +17,24 @@ def select_station():
     player = game.players[game.active]
     position = player.get_position()
     to_remove = request.args.get('id', 0, type=int)
-    discard = (player.get_role() != OE)
-
+    position = request.args.get('position', -1, type=int)
     prev_avail, dispatch, origin, player_id = game.set_available(player)
 
-    action = { 'act': "build", 'data': { 'origin': str(position),
-                                        'removed': str(to_remove),
-                                        'cards': str(position) if discard else 'none',
-                                        'card_data': CARDS[position],
-                                        'available': prev_avail }}
+    if position != -1:
+        discard = GG
+        action = { 'act': "gg", 'data': { 'origin': str(position),
+                                          'discard': str(GG),
+                                          'removed': str(to_remove),
+                                          'card_data': CARDS[discard],
+                                          'available': prev_avail } }
+    else:
+        discard = player.get_position() if player.get_role() != OE else -1
+        position = player.get_position()
+        action = { 'act': "build", 'data': { 'origin': str(position),
+                                             'discard': str(discard),
+                                             'removed': str(to_remove),
+                                             'card_data': CARDS[discard],
+                                             'available': prev_avail } }
     actions.append(action)
 
     game.research_stations.remove(to_remove)
@@ -44,18 +53,23 @@ def build_station():
     game = pickle.loads(session['game'])
     actions = session['actions']
     player = game.players[game.active]
-    position = player.get_position()
     num_stations = len(game.research_stations)
-    discard = (player.get_role() != OE)
-
     prev_avail, dispatch, origin, player_id = game.set_available(player)
 
+    position = request.args.get('position', -1, type=int)
+    if position != -1:
+        discard = GG
+    else:
+        position = player.get_position()
+        discard = player.get_position() if player.get_role() != OE else -1
+
     if num_stations < MAX_STATIONS:
-        action = { 'act': "build", 'data': { 'origin': str(position),
-                                            'removed': 'none',
-                                            'cards': str(position) if discard else 'none',
-                                            'card_data': CARDS[position],
-                                            'available': prev_avail }}
+        action = { 'act': "build" if position == -1 else 'gg',
+                   'data': { 'origin': str(position),
+                             'discard': str(discard),
+                             'removed': 'none',
+                             'card_data': CARDS[discard],
+                             'available': prev_avail }}
         actions.append(action)
         player.build_station(position, game.research_stations, game.player_cards)
 

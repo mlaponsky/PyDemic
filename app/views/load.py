@@ -59,7 +59,7 @@ def set_game():
         game.players[game.active].select(game.players[game.active])
         for p in team:
             if p != game.players[game.active] and p.get_position() != game.players[game.active].get_position():
-                available.append([].get_position())
+                available.append(p.get_position())
     for p in team:
         pieces.append(ROLES[p.get_role()]['piece_img'])
         roles.append(p.get_id())

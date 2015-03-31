@@ -27,20 +27,19 @@ function create_card(city, data) {
 }
 
 function discard(card) {
-    $("#card-"+card).children('div').attr('class', 'up');
+    $("#card-"+card).attr('class', 'pl-card');
     $("#card-"+card).hide();
     $("#pl-discard-"+card).show();
 }
 
 function undo_discard(card) {
     $('#card-'+card).show();
-    $("#card-"+card).children('div').attr('class', 'up');
+    $("#card-"+card).attr('class', 'pl-card');
     $("#pl-discard-"+card).hide();
 }
 
 function give(card, data) {
-    card.attr('class', 'pl-card').hide();
-    card.children('div').off();
+    card.off().attr('class', 'pl-card').hide();
     $('#'+data.recipient+'-card-'+data.card).on('click', take_card).attr('class', 'card takeable').show();
     set_cities(data.available);
     ACTIONS++;
@@ -50,7 +49,12 @@ function give(card, data) {
 function give_card(event) {
     var card = $(event.target).parent();
     var card_id = card.attr('id').split('-')[1];
-    $.getJSON( $SCRIPT_ROOT + '/_give_card', { card: Number(card_id) }).success(
+    var sel = $('.active-player').attr('id').split('-')[1];
+    if ( $('.role.chosen').length !== 0 ) {
+        sel = $('.chosen').attr('id');
+    }
+    $.getJSON( $SCRIPT_ROOT + '/_give_card', { card: Number(card_id),
+                                               recip: sel }).success(
         function(data) {
             if (typeof data.available !== 'undefined') {
                 $('.available').off();
@@ -71,8 +75,7 @@ function give_card(event) {
             } else {
                 $('.available').off();
                 buttons_off();
-                card.attr('class', 'pl-card down');
-                card.children('div').off();
+                card.off().attr('class', 'pl-card down');
                 if (!body.hasClass('menu-push-toleft')) {
                     team_toggle();
                 } else {
@@ -103,7 +106,7 @@ function select_recipient(event) {
             var card = $('#card-'+data.card);
             escape_give_select(card, data);
             give(card, data);
-            card.children('div').off();
+            card.off();
         }).error(function(error) {console.log(errors)} );
 }
 
@@ -120,4 +123,22 @@ function take_card(event) {
             buttons_on();
             $('#undo-action').prop('disabled', ACTIONS===0);
         })
+}
+
+function escape_give_select(card, data) {
+    buttons_on();
+    $('.available').off().on('click', execute_move);
+    card.off().on('click', give_card).attr('class', 'pl-card giveable');
+    if ( !body.hasClass('selecting') ) {
+        team_toggle();
+    } else {
+        body.removeClass('selecting');
+    }
+    $('.role').parent().parent().attr('class', '');
+    $('.role').off();
+
+    if ( $('#active-dispatcher').length !== 0 ) {
+        $('.role').off().on('click', select_player).attr('class', 'role choosable')
+    }
+    $('html').off();
 }

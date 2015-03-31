@@ -5,11 +5,13 @@ function undo() {
             ACTIONS--;
         } else if ((data.result['act'] === "charter") ||
                    (data.result['act'] === "fly") ||
-                   (data.result['act'] === "station-fly")) {
-            undo_move(data.result['data']);
+                   (data.result['act'] === "station-fly") ||
+                   (data.result['act'] === "airlift")) {
             undo_discard(data.result['data']['cards']);
+            undo_move(data.result['data']);
             ACTIONS--;
-        } else if (data.result['act'] === "build") {
+        } else if ( (data.result['act'] === "build") ||
+                    (data.result['act'] === "gg") ) {
             undo_station(data.result['data']);
             ACTIONS--;
         } else if (data.result['act'] === "treat") {
@@ -36,22 +38,15 @@ function undo_move(data) {
     var city_h = city_dims.height;
     var city_l = city_dims.left;
     var city_t = city_dims.top;
+    var index = $('#'+data['id']).parent().parent().index();
     var menu_on = 0;
     if ( $('body').hasClass('menu-push-toright') ) {
         menu_on = -1;
     } else if ( $('body').hasClass('menu-push-toleft') ) {
         menu_on = 1;
     }
-    var player_l;
     var player_t = city_t - 0.57*city_h;
-    // Find the first open player position
-    for (var j=0; j<4; j++) {
-        if ( $("."+String(data['origin'])+"-"+String(j)).length === 0 ) {
-            player_l = city_l + (j+1)*3*city_w/8;
-            $("#"+data['id']+"-piece").attr("class", String(data['origin'])+"-"+String(j));
-            break;
-        }
-    }
+    var player_l = city_l + (index+1)*3*city_w/8;
     for (var i=0; i<data['cubes'].length; i++) {
         if ($(".city-"+String(data['destination'])+".cube-"+String(i)).length !== data['cubes'][i]) {
             var cube_counter = document.getElementById(String(i)+"-cnt").getElementsByTagName('tspan')[0].textContent;
@@ -87,7 +82,7 @@ function undo_station(data) {
         $('#station-'+data['removed']).attr('class', 'built');
     }
     if ( data['cards'] !== 'none') {
-        undo_discard(data['cards']);
+        undo_discard(data['discard']);
     }
     set_cities(data['available']);
     $("#build-station").prop('disabled', false);

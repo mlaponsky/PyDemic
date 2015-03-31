@@ -5,6 +5,7 @@ function move(new_pos, data) {
     var city_h = city_dims.height;
     var city_l = city_dims.left;
     var city_t = city_dims.top;
+    var index = $('#'+data.player_id).parent().parent().index();
     var menu_on = 0;
     if ( $('body').hasClass('menu-push-toright') ) {
         menu_on = -1;
@@ -12,16 +13,9 @@ function move(new_pos, data) {
         menu_on = 1;
     }
 
-    var player_l;
     var player_t = city_t - 0.57*city_h - top_offset;
-    // Find the first open player position
-    for (var j=0; j<4; j++) {
-        if ( $("."+new_pos+"-"+String(j)).length === 0 ) {
-            player_l = city_l + (j+1)*3*city_w/8 - left_offset + menu_on*menu_shift;
-            $("#"+data.player_id+"-piece").attr("class", new_pos+"-"+String(j));
-            break;
-        }
-    }
+    var player_l = city_l + (index+1)*3*city_w/8 - left_offset + menu_on*menu_shift;
+
     set_giveable(data.hand, data.can_give);
     set_takeable(data.team_hands, data.can_take);
     $(".available").off();
@@ -49,13 +43,33 @@ function move(new_pos, data) {
 function execute_move(event) {
     var city = $(event.target);
     var new_pos = city.attr("id");
-    $.getJSON($SCRIPT_ROOT + '/_move', { id: Number(new_pos) }).success(function(data) {
+    var is_airlift = 0;
+    if ( $('#card-48').hasClass('down') ){
+        is_airlift = 1
+    };
+    $.getJSON($SCRIPT_ROOT + '/_move', { id: Number(new_pos),
+                                         airlift: is_airlift }).success(function(data) {
         if (typeof data.available !== 'undefined') {
             move(new_pos, data);
             if (data.move === "charter") {
                 discard(data.discard);
             } else if (data.move === "fly") {
                 discard(data.discard);
+            } else if (data.move === "airlift") {
+                discard(data.discard)
+            }
+            buttons_on();
+            if (is_airlift === 1) {
+                $('#name').off().attr('class', 'self-unchooseable');
+                $('.role').off().attr('class', 'role');
+                if ( $('#active-dispatcher').length !== 0 ) {
+                    $('.role').off().on('click', select_player).attr('class', 'role choosable')
+                }
+                if (!body.hasClass('selecting')) {
+                    team_toggle();
+                } else {
+                    body.removeClass('selecting');
+                }
             }
         } else {
             // If there are multiple ways to move to new_pos
@@ -64,8 +78,7 @@ function execute_move(event) {
             buttons_off();
             for (var i=0; i<selectable.length; i++) {
                 var card = $('#card-'+selectable[i]);
-                card.attr('class', 'pl-card down');
-                card.children('div').off().on('click', function(e) { select_discard(e) });
+                card.attr('class', 'pl-card down').off().on('click', function(e) { select_discard(e) });
             }
             $(".action").off();
             $(".available").off();

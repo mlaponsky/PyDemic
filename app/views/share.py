@@ -16,6 +16,7 @@ def give():
     actions = session['actions']
 
     card = request.args.get('card', -1, type=int)
+    recip = request.args.get('recip', '', type=str)
     player = game.players[game.active]
     team = game.players[game.active+1:] + game.players[:game.active]
 
@@ -24,7 +25,10 @@ def give():
         if player.can_give(card, t):
             recipients.append(t)
     prev_avail, dispatch, origin, player_id = game.set_available(player)
+    if recip != player.get_id():
+        recipients = [t for t in team if t.get_id() == recip]
     if len(recipients) == 1:
+
         action = { 'act': 'give', 'data': { 'card': str(card),
                                             'giver': player.get_id(),
                                             'taker': recipients[0].get_id(),

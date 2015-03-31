@@ -18,9 +18,9 @@ function make_cure() {
                 $('#undo-action').prop('disabled', ACTIONS === 0)
             } else {
                 $(".action").off();
-                $(".pl-card").children('div').off()
+                $(".pl-card").off()
                 for ( var i=0; i<data.cards.length; i++ ) {
-                    $("#card-"+data.cards[i]).children('div').off().on('click', { needed: data.needed }, select_keepers ).attr('class', 'down');
+                    $("#card-"+data.cards[i]).off().on('click', { needed: data.needed }, select_keepers ).attr('class', 'down');
                 }
                 $('#make-cure').attr('class', 'action activated');
                 $('html').off().on( 'click', function( e ) {

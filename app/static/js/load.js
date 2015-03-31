@@ -51,7 +51,7 @@ function initial_load() {
 
         set_giveable(data.hand, data.can_give);
         set_takeable(data.team_hands, data.can_take);
-
+        $('.pl-card').on('click', function() { console.log('Can click list elements.')})
         $(".players li:first").hide();
 
         buttons_on();
@@ -65,7 +65,7 @@ function initial_load() {
             player.attr('src', pieces[j]);
             var city = document.getElementById(positions[j]);
             var city_dims = city.getBoundingClientRect();
-            set_position(player, positions[j], city_dims);
+            set_position(player, roles[j], positions[j], city_dims);
             player.css('z-index', 1000-j);
             player.css('pointer-events', 'none');
             player.appendTo('#map');

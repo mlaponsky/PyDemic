@@ -1,6 +1,6 @@
 <div id="player-container">
     <ul id="active-{{ active_player.get_id() }}" class="active-player">
-        <li id="name">
+        <li id="name" class="self-unchooseable">
             <div class="pl-name"></div>
         </li>
         {% for card in range(cards|length) %}

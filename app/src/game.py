@@ -46,7 +46,7 @@ class Game:
         self.player_cards = PlayerCards(self.players, self.num_epidemics)
         self.active = self.set_order()
 
-        self.players[self.active].hand.append(ATL)
+        self.players[self.active].hand.append(AIRLIFT)
 
     ## Manage game phase
     def get_phase(self):
@@ -118,7 +118,7 @@ class Game:
         for p in team[1:]:
             can_take[p.get_id()] = []
             can_give[p.get_id()] = []
-            team_hands.append(p.hand)
+            team_hands.append(copy(p.hand))
             for card in p.hand:
                 can_take[p.get_id()].append(player.can_take(card, p))
             for card in player.hand:

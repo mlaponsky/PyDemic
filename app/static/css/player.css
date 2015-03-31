@@ -40,10 +40,27 @@
 #name {
 	height: 83%;
 	width: 5%;
-	margin-top: -1%;
+	padding-top: 1%;
 	padding-bottom: 1%;
 	padding-left: 0.5%;
 	padding-right: 0.5%;
+	margin-bottom: 0.1%;
+}
+
+.self-unchooseable {
+	border: 2px solid transparent;
+}
+
+.self-chooseable {
+	border: 2px solid transparent;
+}
+
+.self-chooseable:hover {
+	border: 2px solid #FFFFF0;
+}
+
+.self-chosen {
+	border: 2px solid #FFFFF0;
 }
 
 #name > div {

@@ -74,7 +74,7 @@ function build_station() {
         } else {
             $('.action').off();
             $("#build-station").attr('class', 'action activated');
-            $("#"+data.position)).off().attr('class', 'building');
+            $("#"+data.position).off().attr('class', 'building');
             $(".available").off().attr('class', 'unavailable holding');
             var ids = $('.built');
             for (var i=0; i<ids.length; i++) {

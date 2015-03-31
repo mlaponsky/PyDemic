@@ -48,6 +48,11 @@ function select_station(event) {
             }
             set_cities(data.available);
             set_treatable(data.position);
+            $('.holding').attr('class', 'pl-card giveable');
+            $('.giveable').off().on('click', give_card);
+            $('.card.holding').off().on('click', take_card).attr('class', 'card takeable');
+            $('.down').attr('class', 'pl-card giveable');
+            $('#card-48').off().on('click', select_airlift);
             $('#build-station').attr('class', 'action').prop('disabled', true);
             $("#undo-action").prop('disabled', ACTIONS === 0);
             buttons_on();
@@ -71,6 +76,11 @@ function build_station() {
             document.getElementById("research-cnt").getElementsByTagName('tspan')[0].textContent = String(6-data.num_stations-1);
             set_cities(data.available);
             set_treatable(data.position);
+            $('.holding').attr('class', 'pl-card giveable');
+            $('.giveable').off().on('click', give_card);
+            $('.card.holding').off().on('click', take_card).attr('class', 'card takeable');
+            $('.down').attr('class', 'pl-card giveable');
+            $('#card-48').off().on('click', select_airlift);
             $("#build-station").attr('class', 'action').prop('disabled', true);
             $("#undo-action").prop('disabled', ACTIONS === 0);
             buttons_on();

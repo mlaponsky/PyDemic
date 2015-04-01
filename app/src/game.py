@@ -102,7 +102,6 @@ class Game:
         if player.get_id() == 'dispatcher':
             player.selected = player
             dispatch = self.dispatcher_availability(player, available)
-        print(self.research_stations)
         for city in player.can_move(self.research_stations, self.board):
             available.append(str(city))
 

@@ -27,7 +27,7 @@ def undo_action():
     elif action['act'] == "station-fly":
         undo_move(data, player, game)
         undo_discard(data, player, game)
-        player.has_chartered = False
+        player.has_stationed = False
     elif action['act'] == "build" or action['act'] == "gg":
         undo_station(data, player, game)
     elif action['act'] == "treat":

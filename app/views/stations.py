@@ -17,7 +17,6 @@ def select_station():
     player = game.players[game.active]
     to_remove = request.args.get('id', 0, type=int)
     position = request.args.get('position', -1, type=int)
-    print(position)
     prev_avail, dispatch, origin, player_id = game.set_available(player)
 
     if position != -1:

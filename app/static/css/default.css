@@ -254,10 +254,10 @@ a:hover {
 	border-top-right-radius: 2.5% 50%;
 	border-bottom-left-radius: 2.5% 50%;
 	border-bottom-right-radius: 2.5% 50%;
-	padding-top: 0.2%;
+	padding-top: 0.4%;
 	padding-bottom: 0.2%;
 	padding-left: 1.5%;
-	font-size: 1vw;
+	font-size: 0.8vw;
 	color: #fffff0;
 	opacity: 0.75;
 }

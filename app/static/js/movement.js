@@ -51,12 +51,16 @@ function execute_move(event) {
                                          airlift: is_airlift }).success(function(data) {
         if (typeof data.available !== 'undefined') {
             move(new_pos, data);
+            $('#logger').html("Moved from "+CARDS[data.origin].bold()+" to "+CARDS[new_pos].bold()+".");
             if (data.move === "charter") {
                 discard(data.discard);
+                $('#logger').html($('#logger').html()+" Discarded "+CARDS[data.discard].bold()+".");
             } else if (data.move === "fly") {
                 discard(data.discard);
+                $('#logger').html($('#logger').html()+" Discarded "+CARDS[data.discard].bold()+".");
             } else if (data.move === "airlift") {
                 discard(data.discard)
+                $('#logger').html($('#logger').html()+" Discarded "+CARDS[data.discard].bold()+".");
             }
             buttons_on();
             if (is_airlift === 1) {
@@ -100,11 +104,16 @@ function select_discard(event) {
     var card_id_array = card_id.split('-');
     var card = card_id_array[1];
     var city_id = $(".selected").attr("id");
+    console.log(Number(city_id));
 
     $.getJSON($SCRIPT_ROOT+'/_select_card_for_move', { card: Number(card), city_id: Number(city_id) }).success(function (data) {
                 escape_card_select( $('.pl-card.down') );
                 move(city_id, data);
                 discard(card);
+                $('#logger').html("Moved from "+CARDS[data.origin].bold()+" to "+CARDS[Number(city_id)].bold()+". Discarded "+CARDS[Number(card)].bold()+".");
+                if (data.move === "station-fly") {
+                    $('#logger').html($('#logger').html()+" (Cannot use this ability again this turn.)");
+                }
                 buttons_on();
     }).error(function(error){console.log(error);});
 }

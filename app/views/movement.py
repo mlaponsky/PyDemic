@@ -42,7 +42,6 @@ def set_move():
         player.move(new_pos, board, game.cures, game.cubes, game.cubes_left, game.quarantined)
         discard = str(AIRLIFT)
         player.discard(AIRLIFT, game.player_cards)
-        print(player.hand)
         move = "airlift"
     elif new_pos in player.can_drive(board):
         player.move(new_pos, board, game.cures, game.cubes, game.cubes_left, game.quarantined)
@@ -53,16 +52,15 @@ def set_move():
     elif new_pos in player.can_shuttle(game.research_stations):
         player.move(new_pos, board, game.cures, game.cubes, game.cubes_left, game.quarantined)
         move = "shuttle"
-    elif player.get_role() == OE:
-        if new_pos in player.can_station_fly(game.research_stations, board):
-            for card in player.hand:
-                if card in range(NUM_CITIES):
-                    selectable.append( str(card) )
-            if len(selectable) == 1:
-                player.discard( int(selectable[0]), game.player_cards )
-                discard = selectable[0]
-                player.move(new_pos, board, game.cures, game.cubes, game.cubes_left, game.quarantined)
-                move = "station-fly"
+    elif player.get_role() == OE and new_pos in player.can_station_fly(game.research_stations, board):
+        for card in player.hand:
+            if card in range(NUM_CITIES):
+                selectable.append( str(card) )
+        if len(selectable) == 1:
+            player.discard( int(selectable[0]), game.player_cards )
+            discard = selectable[0]
+            player.move(new_pos, board, game.cures, game.cubes, game.cubes_left, game.quarantined)
+            move = "station-fly"
     elif new_pos in can_fly_direct and new_pos not in can_charter:
         player.discard(new_pos, game.player_cards)
         player.move(new_pos, board, game.cures, game.cubes, game.cubes_left, game.quarantined)
@@ -116,6 +114,7 @@ def set_move():
             return jsonify( available=available,
                             player_id=player_id,
                             move=move,
+                            origin=action['data']['origin'],
                             discard=discard,
                             cures=cures,
                             cubes_left=cubes_left,
@@ -133,6 +132,7 @@ def set_move():
             return jsonify( available=available,
                             player_id=player_id,
                             move=move,
+                            origin=action['data']['origin'],
                             discard=discard,
                             can_build=can_build,
                             can_cure=can_cure,
@@ -204,6 +204,7 @@ def select_move_card():
         return jsonify( available=available,
                         player_id=player_id,
                         move=move,
+                        origin=action['data']['origin'],
                         cures=cures,
                         cubes_left=cubes_left,
                         can_build=can_build,
@@ -215,8 +216,11 @@ def select_move_card():
     else:
         session['actions'] = actions
         session['game'] = pickle.dumps(game)
+        print(action['data']['origin'])
         return jsonify( available=available,
                         player_id=player_id,
+                        move=move,
+                        origin=action['data']['origin'],
                         can_build=can_build,
                         can_cure=can_cure,
                         hand=player.hand,

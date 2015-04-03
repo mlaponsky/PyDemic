@@ -40,8 +40,8 @@ function select_station(event) {
     $.getJSON( $SCRIPT_ROOT + '/_select_station', { id: Number(to_remove),
                                                     position: position}).success(
         function(data) {
-            $("#station-"+to_remove).hide().attr('class', 'unbuilt');
-            $("#station-"+String(data.station)).show().attr('class', 'built');
+            $("#station-"+to_remove).hide(200).attr('class', 'unbuilt');
+            $("#station-"+String(data.station)).show(200).attr('class', 'built');
             ACTIONS++;
             if (data.discard !== '-1') {
                 discard(data.discard);
@@ -52,7 +52,6 @@ function select_station(event) {
             $('.giveable').off().on('click', give_card);
             $('.card.holding').off().on('click', take_card).attr('class', 'card takeable');
             $('.down').attr('class', 'pl-card giveable');
-            $('#card-48').off().on('click', select_airlift);
             $('#build-station').attr('class', 'action').prop('disabled', true);
             $("#undo-action").prop('disabled', ACTIONS === 0);
             buttons_on();
@@ -68,7 +67,7 @@ function build_station() {
     }
     $.getJSON( $SCRIPT_ROOT + '/_build_station', { position:  position }).success( function(data) {
         if (data.num_stations < 6) {
-            $("#station-"+String(data.station)).show().attr('class', 'built');
+            $("#station-"+String(data.station)).show(200).attr('class', 'built');
             ACTIONS++
             if ( data.discard !== '-1' ) {
                 discard(data.discard);
@@ -76,11 +75,13 @@ function build_station() {
             document.getElementById("research-cnt").getElementsByTagName('tspan')[0].textContent = String(6-data.num_stations-1);
             set_cities(data.available);
             set_treatable(data.position);
-            $('.pl-card.holding').attr('class', 'pl-card giveable');
+            $('.pl-card.down').switchClass('down', 'giveable');
+            $('.card.down').switchClass('down', 'takeable');
+            $('.pl-card.holding').switchClass('holding', 'giveable');
             $('.giveable').off().on('click', give_card);
-            $('.card.holding').off().on('click', take_card).attr('class', 'card takeable');
-            $('.down').attr('class', 'pl-card giveable');
-            $('#card-48').off().on('click', select_airlift);
+            $('.card.holding').switchClass('holding', 'takeable');
+            $('.takeable').off().on('click', take_card);
+
             $("#build-station").attr('class', 'action').prop('disabled', true);
             $("#undo-action").prop('disabled', ACTIONS === 0);
             buttons_on();
@@ -118,12 +119,12 @@ function escape_station_select(available, city) {
     set_treatable(city);
     buttons_on();
     if ($('.down').length !== 0 ) {
-        $('.holding').attr('class', 'pl-card giveable');
+        $('.pl-card.down').switchClass('down', 'giveable');
+        $('.card.down').switchClass('down', 'takeable');
+        $('.pl-card.holding').switchClass('holding', 'giveable');
         $('.giveable').off().on('click', give_card);
-        $('.card.holding').off().on('click', take_card).attr('class', 'card takeable');
-        $('.down').attr('class', 'pl-card giveable');
-        $('#card-48').off().on('click', select_airlift);
-        $('#card-50').off().on('click', select_gg);
+        $('.card.holding').switchClass('holding', 'takeable');
+        $('.takeable').off().on('click', take_card);
     }
     $("#build-station").attr('class', 'action');
     $('html').off()

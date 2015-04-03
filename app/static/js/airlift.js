@@ -1,21 +1,17 @@
-function select_airlift() {
-    $('.giveable').off().attr('class', 'pl-card holding');
-    $('.takeable').off().attr('class', 'card holding');
-    $(this).off().attr('class', 'pl-card down');
+function select_airlift(target) {
+    target.off().addClass('down').removeClass('giveable takeable');
+    $('.giveable').off().switchClass('giveable', 'holding');
+    $('.takeable').off().switchClass('takeable', 'holding');
     buttons_off();
     $('.role').attr('class', 'role choosable').off().on('click', airlift_select_player);
     $('#name').attr('class', 'self-chooseable').off().on('click', airlift_select_self);
-    $(this).off().on('click', escape_airlift_select );
+    target.off().on('click', escape_airlift );
     $('html').keyup( function( e ) {
-        if (e.keyCode === 27) { escape_airlift_select() };
+        if (e.keyCode === 27) { escape_airlift() };
     });
-    for (var n=0; n<48; n++) {
-        if ( $('#'+String(n)).hasClass('available') ) {
-            $('#'+String(n)).off().attr('class',' unavailable marked');
-        } else {
-            $('#'+String(n)).off().attr('class', 'unavailable');
-        }
-    }
+    $('.available').off().attr('class', 'unavailable');
+    $('.treatable').off().attr('class', 'unavailable');
+
     if (!body.hasClass('menu-push-toleft')) {
         team_toggle();
     } else {
@@ -26,53 +22,55 @@ function select_airlift() {
 function airlift_select_player(event) {
     var target = $(event.target);
     var select = target.parent().parent().index();
-    $.getJSON( $SCRIPT_ROOT + '/_select_player', { index: select }).success(
+    var is_airlift = 0;
+    if ( $('.event-card').hasClass('down') ) {
+        is_airlift = 1;
+    }
+    $.getJSON( $SCRIPT_ROOT + '/_select_player', { index: select,
+                                                   airlift: is_airlift }).success(
         function(data) {
+            set_cities(data.available);
             target.attr('class', 'role chosen');
             $('#name').off().attr('class', 'self-unchooseable');
-            for (var n=0; n<48; n++) {
-                if ( $('#'+String(n)).hasClass('marked') ) {
-                    $('#'+String(n)).off().on('click', execute_move).attr('class', 'available marked');
-                } else {
-                    $('#'+String(n)).off().on('click', execute_move).attr('class', 'available');
-                }
-            }
             $('#'+String(data.position)).off().attr('class', 'selected');
             buttons_off();
             $('.chosen').off().on('click', function(data) {
-                    escape_airlift_player(data.position);
+                    escape_airlift();
             });
             $('.down').off().on('click', function(data) {
-                    escape_airlift_player(data.position);
+                    escape_airlift();
             });
             $('html').keyup( function( e ) {
-                if (e.keyCode === 27) { escape_airlift_player(data.position) };
+                if (e.keyCode === 27) { escape_airlift() };
             });
         }
     ).error(function(error){console.log(error)});
 }
 
 function airlift_select_self(event) {
-    $.getJSON( $SCRIPT_ROOT + '/_select_player', { index: 0 }).success(
+    var is_airlift = 0;
+    if ( $('.event-card').hasClass('down') ) {
+        is_airlift = 1;
+    }
+    $.getJSON( $SCRIPT_ROOT + '/_select_player', { index: 0,
+                                                   airlift: is_airlift }).success(
         function(data) {
+            set_cities(data.available);
             $('.role').off().attr('class', 'role');
             $('#name').attr('class', 'self-chosen');
-            for (var n=0; n<48; n++) {
-                if ( $('#'+String(n)).hasClass('marked') ) {
-                    $('#'+String(n)).off().on('click', execute_move).attr('class', 'available marked');
-                } else {
-                    $('#'+String(n)).off().on('click', execute_move).attr('class', 'available');
-                }
+            if ( $('#'+String(data.position)).attr('class') === 'unavailable marked_t' ) {
+                $('#'+String(data.position)).off().attr('class', 'selected marked_t');
+            } else {
+                $('#'+String(data.position)).off().attr('class', 'selected');
             }
-            $('#'+String(data.position)).off().attr('class', 'selected');
             $('#name').off().on('click', function(data) {
-                escape_airlift_player(data.position)
+                escape_airlift()
             });
             $('.down').off().on('click', function(data) {
-                escape_airlift_player(data.position);
+                escape_airlift();
             });
             $('html').keyup( function( e ) {
-                if (e.keyCode === 27) { escape_airlift_player(data.position) };
+                if (e.keyCode === 27) { escape_airlift() };
             });
         }
     ).error(function(error){console.log(error)});
@@ -80,12 +78,7 @@ function airlift_select_self(event) {
 
 function escape_airlift_select() {
     if ($('.down').length !== 0 ) {
-        $('.pl-card.holding').attr('class', 'pl-card giveable');
-        $('.giveable').off().on('click', give_card);
-        $('.card.holding').off().on('click', take_card).attr('class', 'card takeable');
-        $('.down').attr('class', 'pl-card giveable');
-        $('#card-48').off().on('click', select_airlift);
-        $('#card-50').off().on('click', select_gg);
+        escape_cards();
 
         $('#name').off().attr('class', 'self-unchooseable');
         $('.role').off().attr('class', 'role');
@@ -102,18 +95,11 @@ function escape_airlift_select() {
     }
 }
 
-function escape_airlift_player(position) {
-    $.getJSON( $SCRIPT_ROOT + '/_select_player', { index: 0 }).success(
-        function() {
-            for (var n=0; n<48; n++) {
-                if ( $('#'+String(n)).hasClass('marked') ) {
-                    $('#'+String(n)).off().on('click', execute_move).attr('class', 'available');
-                } else {
-                    $('#'+String(n)).off().attr('class', 'unavailable');
-                }
-            }
-            set_treatable(String(position));
+function escape_airlift() {
+    $.getJSON( $SCRIPT_ROOT + '/_select_player', { index: 0, airlift: 0 }).success(
+        function(data) {
+            set_cities(data.available);
+            set_treatable(data.position);
             escape_airlift_select();
-        }
-    ).error(function(error){console.log(error)});
+        }).error(function(error){console.log(error)});
 }

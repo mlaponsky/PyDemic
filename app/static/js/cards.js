@@ -28,19 +28,28 @@ function create_card(city, data) {
 
 function discard(card) {
     $("#card-"+card).attr('class', 'pl-card');
-    $("#card-"+card).hide();
-    $("#pl-discard-"+card).show();
+    $("#card-"+card).hide(200);
+    $("#pl-discard-"+card).show(200);
 }
 
 function undo_discard(card) {
-    $('#card-'+card).show();
+    $('#card-'+card).show(200);
     $("#card-"+card).attr('class', 'pl-card');
-    $("#pl-discard-"+card).hide();
+    $("#pl-discard-"+card).hide(200);
+}
+
+function escape_cards() {
+    $('.pl-card.down').switchClass('down', 'giveable');
+    $('.card.down').switchClass('down', 'takeable');
+    $('.pl-card.holding').switchClass('holding', 'giveable');
+    $('.giveable').off().on('click', give_card);
+    $('.card.holding').switchClass('holding', 'takeable');
+    $('.takeable').off().on('click', take_card);
 }
 
 function give(card, data) {
-    card.off().attr('class', 'pl-card').hide();
-    $('#'+data.recipient+'-card-'+data.card).on('click', take_card).attr('class', 'card takeable').show();
+    card.off().attr('class', 'pl-card').hide(200);
+    $('#'+data.recipient+'-card-'+data.card).on('click', take_card).addClass('takeable').show(200);
     set_cities(data.available);
     ACTIONS++;
     $('#undo-action').prop('disabled', ACTIONS===0);
@@ -53,49 +62,57 @@ function give_card(event) {
     if ( $('.role.chosen').length !== 0 ) {
         sel = $('.chosen').attr('id');
     }
-    $.getJSON( $SCRIPT_ROOT + '/_give_card', { card: Number(card_id),
-                                               recip: sel }).success(
-        function(data) {
-            if (typeof data.available !== 'undefined') {
-                $('.available').off();
-                buttons_off();
-                if (!body.hasClass('menu-push-toleft')) {
-                    team_toggle();
-                    setTimeout( function() {
-                        give(card, data);
+    if (card_id === '48') {
+        select_airlift(card);
+    } else if (card_id === '49') {
+        select_forecast(card);
+    } else if (card_id === '50') {
+        select_gg(card);
+    } else {
+        $.getJSON( $SCRIPT_ROOT + '/_give_card', { card: Number(card_id),
+                                                   recip: sel }).success(
+            function(data) {
+                if (typeof data.available !== 'undefined') {
+                    $('.available').off();
+                    buttons_off();
+                    if (!body.hasClass('menu-push-toleft')) {
+                        team_toggle();
                         setTimeout( function() {
-                            team_toggle();
-                            buttons_on();
-                        }, 1500);
-                    }, 200);
-                } else {
-                    give(card, data);
-                    buttons_on();
-                }
-            } else {
-                $('.available').off();
-                buttons_off();
-                card.off().attr('class', 'pl-card down');
-                if (!body.hasClass('menu-push-toleft')) {
-                    team_toggle();
-                } else {
-                    body.addClass('selecting');
-                }
-                for (var i=0; i<data.recipients.length; i++) {
-                    $("#"+data.recipients[i]).parent().parent().attr('class', 'can-give');
-                    $("#"+data.recipients[i]).off().on('click', select_recipient);
-                }
-                $('html').off().on( 'click', function(e) {
-                    if ( $(e.target).parent().parent().attr('class') !== 'can-give' || $(e.target).parent().attr('class') === 'down') {
-                        escape_give_select(card, data);
+                            give(card, data);
+                            setTimeout( function() {
+                                team_toggle();
+                                buttons_on();
+                            }, 1500);
+                        }, 200);
+                    } else {
+                        give(card, data);
+                        buttons_on();
                     }
-                });
-                $('html').keyup( function( e ) {
-                    if (e.keyCode === 27) { escape_give_select(card, data) };
-                });
-            }
-        }
-    )
+                } else {
+                    $('.available').off();
+                    buttons_off();
+                    card.off().attr('class', 'pl-card down');
+                    if (!body.hasClass('menu-push-toleft')) {
+                        team_toggle();
+                    } else {
+                        body.addClass('selecting');
+                    }
+                    for (var i=0; i<data.recipients.length; i++) {
+                        $("#"+data.recipients[i]).parent().parent().attr('class', 'can-give');
+                        $("#"+data.recipients[i]).off().on('click', select_recipient);
+                    }
+                    $('html').off().on( 'click', function(e) {
+                        if ( $(e.target).parent().parent().attr('class') !== 'can-give' || $(e.target).parent().attr('class') === 'down') {
+                            escape_give_select(card, data);
+                        }
+                    });
+                    $('html').keyup( function( e ) {
+                        if (e.keyCode === 27) { escape_give_select(card, data) };
+                    });
+                }
+            }).error(function(error) {console.log(errors)} );
+
+    }
 }
 
 function select_recipient(event) {
@@ -114,21 +131,30 @@ function take_card(event) {
     var card = $(event.target).parent();
     var source_id = card.attr('id').split('-')[0]
     var card_id = card.attr('id').split('-')[2];
-    $.getJSON( $SCRIPT_ROOT + '/_take', { card: Number(card_id),
-                                          id: source_id}).success( function(data) {
-            card.off().attr('class', 'card').hide();
-            $('#card-'+card_id).on('click', give_card).show().attr('class', 'pl-card giveable');
-            set_cities(data.available);
-            ACTIONS++;
-            buttons_on();
-            $('#undo-action').prop('disabled', ACTIONS===0);
-        })
+    if (card_id === '48') {
+        select_airlift(card);
+    } else if (card_id === '49') {
+        select_forecast(card);
+    } else if (card_id === '50') {
+        select_gg(card);
+    } else {
+        $.getJSON( $SCRIPT_ROOT + '/_take', { card: Number(card_id),
+                                              id: source_id}).success(
+            function(data) {
+                card.off().attr('class', 'card').hide(200);
+                $('#card-'+card_id).on('click', give_card).show(200).addClass('giveable');
+                set_cities(data.available);
+                ACTIONS++;
+                buttons_on();
+                $('#undo-action').prop('disabled', ACTIONS===0);
+            }).error(function(error) {console.log(errors)} );
+    }
 }
 
 function escape_give_select(card, data) {
     buttons_on();
     $('.available').off().on('click', execute_move);
-    card.off().on('click', give_card).attr('class', 'pl-card giveable');
+    card.off().on('click', give_card).addClass('giveable');
     if ( !body.hasClass('selecting') ) {
         team_toggle();
     } else {

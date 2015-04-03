@@ -46,7 +46,7 @@ class Game:
         self.player_cards = PlayerCards(self.players, self.num_epidemics)
         self.active = self.set_order()
 
-        self.players[self.active].hand.append(GG)
+        self.players[self.active].hand.append(FORECAST)
 
     ## Manage game phase
     def get_phase(self):

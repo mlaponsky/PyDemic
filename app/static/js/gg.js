@@ -1,13 +1,12 @@
-function select_gg() {
-    $(this).off().on('click', escape_gg).attr('class', 'pl-card down');
-    $('.giveable').off().attr('class', 'pl-card holding');
-    $('.takeable').off().attr('class', 'card holding');
+function select_gg(target) {
+    target.off().on('click', escape_gg).addClass('down').removeClass('giveable takeable');
+    $('.giveable').off().switchClass('giveable', 'holding');
+    $('.takeable').off().switchClass('takeable', 'holding');
     buttons_off();
     for (var i=0; i<48; i++) {
         if ( $('#station-'+String(i)).attr('class') === 'built' ) {
             if ( $('#'+String(i)).attr('class') === 'available' ) {
                 $('#'+String(i)).off().attr('class', 'unavailable marked');
-                console.log('Available');
             } else {
                 $('#'+String(i)).off().attr('class', 'unavailable');
             }
@@ -28,12 +27,8 @@ function escape_gg() {
     $.getJSON( $SCRIPT_ROOT + '/_escape_gg').success(
         function(data) {
             if ($('.down').length !== 0 ) {
-                $('.pl-cardholding').attr('class', 'pl-card giveable');
-                $('.giveable').off().on('click', give_card);
-                $('.card.holding').off().on('click', take_card).attr('class', 'card takeable');
-                $('.down').attr('class', 'pl-card giveable');
-                $('#card-48').off().on('click', select_airlift);
-                $('#card-50').off().on('click', select_gg);
+                switch_cards();
+
                 $('.marked').off().on('click', execute_move).attr('class', 'available');
                 $('.selectable').off().attr('class', 'unavailable');
                 set_treatable(String(data.position));

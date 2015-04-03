@@ -69,6 +69,7 @@ function undo_move(data) {
     }
     set_giveable(data['hand'], data['give']);
     set_takeable(data['team_hands'], data['take']);
+    $('#logger').html("(UNDO) Return "+ROLES[data['id']].bold()+" to "+CARDS[data['origin']].bold()+".");
     $("#build-station").prop('disabled', !data['can_build']);
     $("#make-cure").prop('disabled', !data['can_cure']);
 }
@@ -126,13 +127,13 @@ function undo_cure(data) {
 }
 
 function undo_take(data) {
-    $('#'+data['giver']+'-card-'+data['card']).on('click', take_card).attr('class', 'card takeable').show();
-    $('#card-'+data['card']).off().hide().attr('class', 'pl-card');
+    $('#'+data['giver']+'-card-'+data['card']).on('click', take_card).attr('class', 'card takeable').show(200);
+    $('#card-'+data['card']).off().hide(200).attr('class', 'pl-card');
     set_cities(data['available']);
 }
 
 function undo_give(data) {
-    $('#'+data['taker']+'-card-'+data['card']).off().attr('class', 'card').hide();
-    $('#card-'+data['card']).off().on('click', give_card).attr('class', 'pl-card giveable').show();
+    $('#'+data['taker']+'-card-'+data['card']).off().attr('class', 'card').hide(200);
+    $('#card-'+data['card']).off().on('click', give_card).attr('class', 'pl-card giveable').show(200);
     set_cities(data['available']);
 }

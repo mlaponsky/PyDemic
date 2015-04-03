@@ -35,6 +35,7 @@
 		<script charset="utf-8" src="static/js/stations.js"></script>
 		<script charset="utf-8" src="static/js/cards.js"></script>
 		<script charset="utf-8" src="static/js/airlift.js"></script>
+		<script charset="utf-8" src="static/js/forecast.js"></script>
 		<script charset="utf-8" src="static/js/gg.js"></script>
 		<script charset="utf-8" src="static/js/undo.js"></script>
 		<script charset="utf-8" src="static/js/load.js"></script>
@@ -91,6 +92,16 @@
 				<div id="logger">
 					This is the actions log.
 				</div>
+				<button hidden='true' id="finish">DONE</button>
+				<ul hidden='true' id="forecast">
+					FORECAST
+					{% for card in game.infect_cards.deck[:6] %}
+					<li id="forecast-{{card}}">
+						<div class="{{ colors[card // 12] }}"></div>
+	                    <p>{{ cards[card]['name'] }}</p>
+					</li>
+					{% endfor %}
+				</ul>
 			</div>
 
 		</div>

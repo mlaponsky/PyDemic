@@ -22,7 +22,7 @@ class Deck:
         return self.deck.pop(index)
 
     def add_to_discard(self, name):
-        self.discard.insert(0, name)
+        self.discard.append(name)
 
     def add_to_graveyard(self, name):
         self.graveyard.append(name)

@@ -216,7 +216,6 @@ def select_move_card():
     else:
         session['actions'] = actions
         session['game'] = pickle.dumps(game)
-        print(action['data']['origin'])
         return jsonify( available=available,
                         player_id=player_id,
                         move=move,
@@ -232,11 +231,18 @@ def select_move_card():
 def select_player():
     game = pickle.loads(session['game'])
     index = request.args.get('index', 0, type=int)
+    is_airlift = request.args.get('airlift', 0, type=int)
     player = game.players[game.active]
     selected = game.players[(game.active + index) % game.num_players]
     player.selected = selected
     position = selected.get_position()
-    available, dispatch, origin, player_id = game.set_available(player)
+    if is_airlift == 1:
+        available = []
+        for city in range(NUM_CITIES):
+            if city != position:
+                available.append(str(city))
+    else:
+        available, dispatch, origin, player_id = game.set_available(player)
     can_build = player.can_build(player.get_position(), game.research_stations)
     can_cure = player.can_cure(game.research_stations)
     session['game'] = pickle.dumps(game)

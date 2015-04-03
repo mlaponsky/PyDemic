@@ -10,6 +10,14 @@ var CARDS = [
     'AIRLIFT', 'FORECAST', 'GOVERNMENT GRANT', 'ONE QUIET NIGHT', 'RESILIENT POPULATION', 'EPIDEMIC'
 ];
 
+var ROLES = { 'cp': "CONTINGENCY PLANNER",
+              'dispatcher': "DISPATCHER",
+              'medic': "MEDIC",
+              'oe': "OPERATIONS EXPERT",
+              'qs': "QUARANTINE SPECIALST",
+              'researcher': "RESEARCHER",
+              'scientist': "SCIENTIST" };
+
 
 var ACTIONS = 0;
 function initial_load() {
@@ -29,19 +37,7 @@ function initial_load() {
         actions = data.actions;
         ACTIONS = actions.length;
 
-        init_cubes(cubes, rows, images);
-        init_cities();
-        set_cities(available);
-        set_treatable(positions[0])
         set_stations(48, rs);
-        set_selectable_players(roles[0]);
-
-        for (var i=0; i<cures.length; i++) {
-            set_cure(String(i), cures[i]);
-        }
-
-        $('.pl-name').css('background', "url("+data.role_img+") no-repeat center center");
-
         for (var k=0; k<data.cards.length; k++ ) {
             $("#card-"+String(k)).children('div').css('background', "url("+data.cards[k]['player_card']+") no-repeat center center");
             $("#card-"+String(k)).children('div').css('background-size', 'contain');
@@ -52,6 +48,19 @@ function initial_load() {
         set_giveable(data.hand, data.can_give);
         set_takeable(data.team_hands, data.can_take);
         $(".players li:first").hide();
+        init_cubes(cubes, rows, images);
+        init_cities();
+        set_cities(available);
+        set_treatable(positions[0])
+        set_selectable_players(roles[0]);
+
+        for (var i=0; i<cures.length; i++) {
+            set_cure(String(i), cures[i]);
+        }
+
+        $('#forecast').sortable().disableSelection();
+
+        $('.pl-name').css('background', "url("+data.role_img+") no-repeat center center");
 
         buttons_on();
         $('#build-station').prop('disabled', !can_build);
@@ -69,8 +78,15 @@ function initial_load() {
             player.css('pointer-events', 'none');
             player.appendTo('#map');
         }
-
         $('.menu-left li').hide();
+        for ( var i=0; i<data.player_discard.length; i++ ) {
+            var card = data.player_discard[i];
+            $('#pl-discard-'+String(card)).show();
+        }
+        for ( var j=0; j<data.infect_discard.length; j++) {
+            var card = data.infect_discard[j];
+            $('#infect-discard-'+String(card)).show();
+        }
 
     }).error(function(error){console.log(error);});
 };

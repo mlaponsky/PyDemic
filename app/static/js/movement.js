@@ -51,16 +51,23 @@ function execute_move(event) {
                                          airlift: is_airlift }).success(function(data) {
         if (typeof data.available !== 'undefined') {
             move(new_pos, data);
-            $('#logger').html("Moved from "+CARDS[data.origin].bold()+" to "+CARDS[new_pos].bold()+".");
-            if (data.move === "charter") {
+            if (data.move === "drive") {
+                $('#logger').html("Drove from "+CARDS[data.origin].bold()+" to "+CARDS[new_pos].bold()+".");
+            } else if (data.move === "charter") {
                 discard(data.discard);
-                $('#logger').html($('#logger').html()+" Discarded "+CARDS[data.discard].bold()+".");
+                $('#logger').html("Flew from "+CARDS[data.origin].bold()+" to "+CARDS[new_pos].bold()+". Discarded "+CARDS[data.discard].bold()+".");
             } else if (data.move === "fly") {
                 discard(data.discard);
-                $('#logger').html($('#logger').html()+" Discarded "+CARDS[data.discard].bold()+".");
+                $('#logger').html("Flew from "+CARDS[data.origin].bold()+" to "+CARDS[new_pos].bold()+". Discarded "+CARDS[data.discard].bold()+".");
             } else if (data.move === "airlift") {
                 discard(data.discard)
-                $('#logger').html($('#logger').html()+" Discarded "+CARDS[data.discard].bold()+".");
+                $('#logger').html("Airlifted "+ROLES[data.player_id]+" from "+CARDS[data.origin].bold()+" to "+CARDS[new_pos].bold()+".");
+            } else if (data.move === "dispatch") {
+                $('#logger').html("Dispatched "+ROLES[data.player_id]+" from "+CARDS[data.origin].bold()+" to "+CARDS[new_pos].bold()+".");
+            } else if (data.move === "station-fly") {
+                $('#logger').html("Flew from "+CARDS[data.origin].bold()+" to "+CARDS[new_pos].bold()+". Discarded "+CARDS[data.discard].bold()+". (Cannot use this ability again this turn.)");
+            } else if (data.move === "shuttle") {
+                $('#logger').html("Shuttled from "+CARDS[data.origin].bold()+" to "+CARDS[new_pos].bold()+".");
             }
             buttons_on();
             if (is_airlift === 1) {
@@ -82,11 +89,14 @@ function execute_move(event) {
             buttons_off();
             for (var i=0; i<selectable.length; i++) {
                 var card = $('#card-'+selectable[i]);
-                card.attr('class', 'pl-card down').off().on('click', function(e) { select_discard(e) });
+                if (card.hasClass('giveable') ) {
+                    card.switchClass('giveable', 'holding');
+                }
+                card.addClass('down').off().on('click', function(e) { select_discard(e) });
             }
             $(".action").off();
             $(".available").off();
-            $(".available").attr("class", "unavailable holding");
+            $(".available").attr("class", "unavailable marked");
             $('html').off().on( 'click', function( e ) {
                 if ($( e.target ).parent().attr('class') !== 'down') {
                     escape_card_select( $('.pl-card.down') ) }} );
@@ -104,13 +114,12 @@ function select_discard(event) {
     var card_id_array = card_id.split('-');
     var card = card_id_array[1];
     var city_id = $(".selected").attr("id");
-    console.log(Number(city_id));
 
     $.getJSON($SCRIPT_ROOT+'/_select_card_for_move', { card: Number(card), city_id: Number(city_id) }).success(function (data) {
                 escape_card_select( $('.pl-card.down') );
                 move(city_id, data);
                 discard(card);
-                $('#logger').html("Moved from "+CARDS[data.origin].bold()+" to "+CARDS[Number(city_id)].bold()+". Discarded "+CARDS[Number(card)].bold()+".");
+                $('#logger').html("Flew from "+CARDS[data.origin].bold()+" to "+CARDS[Number(city_id)].bold()+". Discarded "+CARDS[Number(card)].bold()+".");
                 if (data.move === "station-fly") {
                     $('#logger').html($('#logger').html()+" (Cannot use this ability again this turn.)");
                 }

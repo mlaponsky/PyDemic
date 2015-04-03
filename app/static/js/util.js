@@ -10,8 +10,7 @@ function set_cities(cities) {
     $(".selectable").off().attr('class', 'unavailable');
     $(".selected").off().attr('class', 'unavailable');
     for (var i=0; i<cities.length; i++) {
-        $("#"+cities[i]).attr("class", "available");
-        $("#"+cities[i]).off().on("click", execute_move);
+        $("#"+cities[i]).attr('class', 'available').off().on("click", execute_move);
     }
     $(".unavailable").off('click');
 }
@@ -67,13 +66,14 @@ function set_giveable(hand, can_give) {
     for (var n=0; n<hand.length; n++) {
         $("#card-"+String(hand[n])).show();
         for (var m=0; m<roles.length; m++) {
-            if ( can_give[roles[m]][n] ) {
-                $("#card-"+String(hand[n])).off().on('click', give_card).attr('class', 'pl-card giveable');
+            if ( can_give[roles[m]][n] || hand[n] > 47 ) {
+                $("#card-"+String(hand[n])).off().on('click', give_card).addClass('giveable');
+            }
+            if (hand[n] > 47) {
+                $("#card-"+String(hand[n])).addClass('event-card');
             }
         }
     }
-    $("#card-48").off().on('click', select_airlift).attr('class', 'pl-card giveable');
-    $("#card-50").off().on('click', select_gg).attr('class', 'pl-card giveable');
 }
 
 function set_takeable(team_hands, can_take) {
@@ -82,8 +82,11 @@ function set_takeable(team_hands, can_take) {
     for (var p=0; p<team_hands.length; p++) {
         for (var n=0; n<team_hands[p].length; n++) {
             $("#"+roles[p]+"-card-"+String(team_hands[p][n])).show();
-            if ( can_take[roles[p]][n]) {
-                $("#"+roles[p]+"-card-"+String(team_hands[p][n])).off().on('click', take_card).attr('class', 'card takeable');
+            if ( can_take[roles[p]][n] || team_hands[p][n] > 47 ) {
+                $("#"+roles[p]+"-card-"+String(team_hands[p][n])).off().on('click', take_card).addClass('takeable');
+            }
+            if ( team_hands[p][n] > 47 ) {
+                $("#"+roles[p]+"-card-"+String(team_hands[p][n])).addClass('event-card');
             }
         }
     }
@@ -115,9 +118,9 @@ function select_player(event) {
 
 function deselect_player() {
     var target = $(event.target);
-    $.getJSON( $SCRIPT_ROOT + '/_select_player', { index: 0 }).success(
+    $.getJSON( $SCRIPT_ROOT + '/_select_player', { index: 0,
+                                                   airlift: 1 }).success(
         function(data) {
-            $(".available").attr('class', 'unavailable');
             set_cities(data.available);
             set_treatable(data.position);
             $('#build-station').prop('disabled', !data.can_build);
@@ -153,10 +156,11 @@ function buttons_off() {
 }
 
 function escape_card_select(objects) {
-    $(".holding").attr("class", "available");
+    $(".marked").attr("class", "available");
     $(".selected").attr("class", "available");
     $(".available").off().on("click", execute_move);
-    objects.off().attr('class', 'pl-card');
+    objects.off().removeClass('down')
+    $('.holding').switchClass('holding', 'giveable');
     buttons_on();
     $('html').off();
 }

@@ -5,7 +5,8 @@ function set_cube_dimensions(cube, dims, row, num) {
     } else if ( $('body').hasClass('menu-push-toleft') ) {
         menu_on = 1;
     }
-    cube.width(dims.width/2.2);
+    cube.width(0)
+    cube.stop().animate( {width: dims.width/2.2}, 300 );
     cube_l = dims.left + dims.width/3 + (num)*dims.width/2.4 - left_offset + menu_on*menu_shift;
     cube_t = dims.top + (row+1)*dims.height/2.2 - top_offset;
     cube.offset({ left: cube_l, top: cube_t }).css('position', 'absolute');

@@ -9,3 +9,23 @@ import pickle
 from copy import copy
 
 events = Blueprint('events', __name__)
+
+@events.route('/_execute_forecast')
+def forecast():
+    game = pickle.loads(session['game'])
+    player = game.players[game.active]
+    infect = game.infect_cards.get_deck()
+    print(infect[:6])
+    card0 = request.args.get('card0', infect[0], type=int)
+    card1 = request.args.get('card1', infect[1], type=int)
+    card2 = request.args.get('card2', infect[2], type=int)
+    card3 = request.args.get('card3', infect[3], type=int)
+    card4 = request.args.get('card0', infect[4], type=int)
+    card5 = request.args.get('card0', infect[5], type=int)
+    forecast = [ card0, card1, card2, card3, card4, card5 ]
+    print(forecast)
+    infect = forecast+infect[6:]
+
+    player.discard(FORECAST, game.player_cards)
+    session['game'] = pickle.dumps(game)
+    return jsonify( player_id=player.get_id() )

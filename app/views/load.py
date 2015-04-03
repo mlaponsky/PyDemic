@@ -103,7 +103,9 @@ def set_game():
                     cards=CARDS,
                     forecast=game.infect_cards.deck[:6],
                     player_discard=game.player_cards.discard,
+                    player_grave=game.player_cards.graveyard,
                     infect_discard=game.infect_cards.discard,
+                    infect_grave=game.infect_cards.graveyard,
                     actions=actions )
 
 @load.route('/game')

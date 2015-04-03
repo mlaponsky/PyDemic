@@ -1,7 +1,7 @@
 function select_airlift(target) {
     target.off().addClass('down').removeClass('giveable takeable');
-    $('.giveable').off().switchClass('giveable', 'holding');
-    $('.takeable').off().switchClass('takeable', 'holding');
+    $('.giveable').off().removeClass('giveable').addClass('holding');
+    $('.takeable').off().removeClass('takeable').addClass('holding');
     buttons_off();
     $('.role').attr('class', 'role choosable').off().on('click', airlift_select_player);
     $('#name').attr('class', 'self-chooseable').off().on('click', airlift_select_self);
@@ -78,8 +78,6 @@ function airlift_select_self(event) {
 
 function escape_airlift_select() {
     if ($('.down').length !== 0 ) {
-        escape_cards();
-
         $('#name').off().attr('class', 'self-unchooseable');
         $('.role').off().attr('class', 'role');
         if ( $('#active-dispatcher').length !== 0 ) {
@@ -92,6 +90,7 @@ function escape_airlift_select() {
         }
         buttons_on();
         $('html').off();
+        escape_cards();
     }
 }
 

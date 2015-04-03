@@ -22,7 +22,7 @@ def forecast():
     card4 = request.args.get('card0', infect[4], type=int)
     card5 = request.args.get('card0', infect[5], type=int)
     forecast = [ card0, card1, card2, card3, card4, card5 ]
-    infect = forecast+infect[6:]
+    game.infect_cards.deck = forecast+infect[6:]
 
     player.discard(FORECAST, game.player_cards)
 
@@ -30,3 +30,19 @@ def forecast():
     session['game'] = pickle.dumps(game)
     return jsonify( available=available,
                     position=origin )
+
+@events.route('/_execute_rp')
+def rp():
+    game = pickle.loads(session['game'])
+    actions = session['actions']
+
+    player = game.players[game.active]
+    player.discard(RP, game.player_cards);
+    card = request.args.get('remove', -1, type=int)
+    game.infect_cards.remove_from_discard(card)
+    game.infect_cards.add_to_graveyard(card)
+    action = { 'act': 'rp', 'data': { 'deleted': card } }
+    actions.append(action)
+    session['actions'] = actions
+    session['game'] = pickle.dumps(game)
+    return jsonify( deleted=card )

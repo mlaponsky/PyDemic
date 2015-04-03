@@ -118,8 +118,7 @@ function select_player(event) {
 
 function deselect_player() {
     var target = $(event.target);
-    $.getJSON( $SCRIPT_ROOT + '/_select_player', { index: 0,
-                                                   airlift: 1 }).success(
+    $.getJSON( $SCRIPT_ROOT + '/_select_player', { index: 0 }).success(
         function(data) {
             set_cities(data.available);
             set_treatable(data.position);
@@ -160,7 +159,7 @@ function escape_card_select(objects) {
     $(".selected").attr("class", "available");
     $(".available").off().on("click", execute_move);
     objects.off().removeClass('down')
-    $('.holding').switchClass('holding', 'giveable');
+    $('.holding').removeClass('holding').addClass('giveable');
     buttons_on();
     $('html').off();
 }

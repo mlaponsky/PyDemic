@@ -7,7 +7,7 @@ function undo() {
                    (data.result['act'] === "fly") ||
                    (data.result['act'] === "station-fly") ||
                    (data.result['act'] === "airlift")) {
-            undo_discard(data.result['data']['cards']);
+            undo_discard(data.result['data']['cards'], data['owner']);
             undo_move(data.result['data']);
             ACTIONS--;
         } else if ( (data.result['act'] === "build") ||
@@ -81,13 +81,11 @@ function undo_station(data) {
         $('#station-'+data['removed']).attr('class', 'built').show();
     }
     if ( data['cards'] !== 'none') {
-        undo_discard(data['discard']);
+        undo_discard(data['discard'], data['owner']);
     }
     set_cities(data['available']);
-    if (data['discard'] !== '50') {
+    if (data['discard'] !== '50' || data['hand'].indexOf(Number(data['origin'])) !== -1) {
         $("#build-station").prop('disabled', false);
-    } else {
-        $('#card-50').off().on('click', select_gg).attr('class', 'pl-card giveable');
     }
     if ( data['removed'] === 'none' ) {
         var stations_left = Number(document.getElementById("research-cnt").getElementsByTagName('tspan')[0].textContent)
@@ -110,7 +108,7 @@ function undo_treatment(data) {
 function undo_cure(data) {
     set_cure(String(data['color']), data['cured']);
     for ( var i=0; i<data['cards'].length; i++ ) {
-        undo_discard(data['cards'][i]);
+        undo_discard(data['cards'][i], data['id']);
     }
     var city = document.getElementById(String(data['origin']));
     var dims = city.getBoundingClientRect();
@@ -137,3 +135,7 @@ function undo_give(data) {
     $('#card-'+data['card']).off().on('click', give_card).attr('class', 'pl-card giveable').show(200);
     set_cities(data['available']);
 }
+
+// function undo_rp(data) {
+//     $('#infect-discard-'+String(data['deleted'])).off().attr('class', 'card');
+// }

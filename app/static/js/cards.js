@@ -27,24 +27,31 @@ function create_card(city, data) {
 }
 
 function discard(card) {
-    $("#card-"+card).attr('class', 'pl-card');
-    $("#card-"+card).hide(200);
+    if ( $('.event-card').hasClass('down') ) {
+        $('.down').removeClass('.down').hide(200);
+    } else {
+        $("#card-"+card).attr('class', 'pl-card').hide(200);
+    }
     $("#pl-discard-"+card).show(200);
 }
 
-function undo_discard(card) {
-    $('#card-'+card).show(200);
-    $("#card-"+card).attr('class', 'pl-card');
+function undo_discard(card, owner) {
+    if ($('.active-player').attr('id').split('-')[1] !== owner) {
+        $('#'+owner+"-card-"+card).show(200);
+    } else {
+        $('#card-'+card).show(200);
+    }
     $("#pl-discard-"+card).hide(200);
 }
 
 function escape_cards() {
-    $('.pl-card.down').switchClass('down', 'giveable');
-    $('.card.down').switchClass('down', 'takeable');
-    $('.pl-card.holding').switchClass('holding', 'giveable');
+    $('.pl-card.down').off().removeClass('down').addClass('giveable');
+    $('.card.down').off().removeClass('down').addClass('takeable');
+    $('.pl-card.holding').removeClass('holding').addClass('giveable');
+    $('.card.holding').removeClass('holding').addClass('takeable');
     $('.giveable').off().on('click', give_card);
-    $('.card.holding').switchClass('holding', 'takeable');
     $('.takeable').off().on('click', take_card);
+    $('.role.holding').off().on('click', select_player).removeClass('holding').addClass('choosable');
 }
 
 function give(card, data) {
@@ -68,6 +75,8 @@ function give_card(event) {
         select_forecast(card);
     } else if (card_id === '50') {
         select_gg(card);
+    } else if (card_id === '52') {
+        select_rp(card);
     } else {
         $.getJSON( $SCRIPT_ROOT + '/_give_card', { card: Number(card_id),
                                                    recip: sel }).success(
@@ -137,6 +146,8 @@ function take_card(event) {
         select_forecast(card);
     } else if (card_id === '50') {
         select_gg(card);
+    } else if (card_id === '52') {
+        select_rp(card);
     } else {
         $.getJSON( $SCRIPT_ROOT + '/_take', { card: Number(card_id),
                                               id: source_id}).success(

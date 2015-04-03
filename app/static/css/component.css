@@ -122,10 +122,19 @@
 	border: 4px transparent solid;
 }
 
-.card {
+.card, .graveyard {
 	position: relative;
 	display: block;
 	margin-left: 10%;
+}
+
+.card > div, .graveyard > div {
+	height: 100%;
+	width: 8%;
+	position: absolute;
+	left: 0;
+	top: 0;
+	border: 1px solid #fffff0;
 }
 
 .card > p {
@@ -135,13 +144,22 @@
 	cursor: default;
 }
 
-.card > div {
-	height: 100%;
-	width: 8%;
-	position: absolute;
-	left: 0;
-	top: 0;
-	border: 1px solid #fffff0;
+.graveyard > p {
+	color: #cccccc;
+	font-size: 0.8vw;
+	padding-left: 12%;
+	text-overflow: ellipsis;
+	cursor: default;
+	text-decoration: line-through;
+}
+
+.card.down > div {
+	border: 3px solid #fffff0;
+}
+
+.card.down > p {
+	font-weight: bold;
+    font-size: 0.85vw;
 }
 
 /* Roles Styling */

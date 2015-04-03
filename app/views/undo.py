@@ -22,8 +22,11 @@ def undo_action():
     if action['act'] == "drive" or action['act'] == "shuttle" or action['act'] == "dispatch":
         undo_move(data, player, game)
     elif action['act'] == "charter" or action['act'] == "fly" or action['act'] == "airlift":
+        for p in game.players:
+            if p.get_id() == data['owner']:
+                owner = p
         undo_move(data, player, game)
-        undo_discard(data, player, game)
+        undo_discard(data, owner, game)
     elif action['act'] == "station-fly":
         undo_move(data, player, game)
         undo_discard(data, player, game)
@@ -38,6 +41,9 @@ def undo_action():
         undo_take(data, game)
     elif action['act'] == "give":
         undo_give(data, game)
+    elif action['act'] == "rp":
+        undo_rp(data, game)
+
 
     session['actions'] = actions
     session['game'] = pickle.dumps(game)
@@ -75,7 +81,10 @@ def undo_station(data, player, game):
         game.research_stations.append(int(data['removed']))
     if data['discard'] != '-1':
         game.player_cards.remove_from_discard(int(data['discard']))
-        player.add_card(int(data['discard']))
+        for p in game.players:
+            if p.get_id() == data['owner']:
+                owner = p
+        owner.add_card(int(data['discard']))
 
 def undo_treatment(data, game):
     game.cubes_left[int(data['color'])] -= data['removed']
@@ -106,3 +115,9 @@ def undo_give(data, game):
         elif p.get_id() == data['giver']:
             giver = p
     taker.give_card(int(data['card']), giver)
+
+# def undo_rp(data, game):
+#     game.infect_cards.graveyard.remove(data['deleted'])
+#     game.infect_card.add_to_discard(data['deleted'])
+#     game.player_cards.remove_from_discard(RP)
+#     game.players[game.ac]

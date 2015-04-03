@@ -17,12 +17,16 @@ def select_station():
     player = game.players[game.active]
     to_remove = request.args.get('id', 0, type=int)
     position = request.args.get('position', -1, type=int)
+    index = request.args.get('index', 0, type=int)
+    owner = game.players[(game.active + index) % game.num_players]
     prev_avail, dispatch, origin, player_id = game.set_available(player)
 
     if position != -1:
         discard = GG
         action = { 'act': "gg", 'data': { 'origin': str(position),
                                           'discard': str(GG),
+                                          'hand': player.hand,
+                                          'owner': owner.get_id(),
                                           'removed': str(to_remove),
                                           'card_data': CARDS[discard],
                                           'available': prev_avail } }
@@ -31,13 +35,15 @@ def select_station():
         position = player.get_position()
         action = { 'act': "build", 'data': { 'origin': str(player.get_position()),
                                              'discard': str(discard),
+                                             'hand': player.hand,
+                                             'owner': owner.get_id(),
                                              'removed': str(to_remove),
                                              'card_data': CARDS[discard],
                                              'available': prev_avail } }
     actions.append(action)
 
     game.research_stations.remove(to_remove)
-    player.build_station(position, discard, game.research_stations, game.player_cards)
+    owner.build_station(position, discard, game.research_stations, game.player_cards)
 
     available, new_dispatch, origin, player_id = game.set_available(player)
 
@@ -46,6 +52,7 @@ def select_station():
     return jsonify( position=player.get_position(),
                     station=position,
                     discard=discard,
+                    owner=owner.get_id(),
                     available=available )
 
 @stations.route('/_build_station')
@@ -62,17 +69,20 @@ def build_station():
     else:
         position = player.get_position()
         discard = player.get_position() if player.get_role() != OE else -1
+    index = request.args.get('index', 0, type=int)
+    owner = game.players[(game.active + index) % game.num_players]
 
     if num_stations < MAX_STATIONS:
         action = { 'act': "build" if position == -1 else 'gg',
                    'data': { 'origin': str(position),
                              'discard': str(discard),
+                             'hand': player.hand,
                              'removed': 'none',
+                             'owner': owner.get_id(),
                              'card_data': CARDS[discard],
                              'available': prev_avail }}
         actions.append(action)
-        player.build_station(position, discard, game.research_stations, game.player_cards)
-
+        owner.build_station(position, discard, game.research_stations, game.player_cards)
     available, new_dispatch, origin, player_id = game.set_available(player)
     session['actions'] = actions
     session['game'] = pickle.dumps(game)

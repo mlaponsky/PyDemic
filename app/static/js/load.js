@@ -41,7 +41,7 @@ function initial_load() {
         for (var k=0; k<data.cards.length; k++ ) {
             $("#card-"+String(k)).children('div').css('background', "url("+data.cards[k]['player_card']+") no-repeat center center");
             $("#card-"+String(k)).children('div').css('background-size', 'contain');
-            $("#card-"+String(k)).attr('class', 'pl-card up')
+            $("#card-"+String(k)).attr('class', 'pl-card')
             $("#card-"+String(k)).hide();
         }
 
@@ -83,9 +83,17 @@ function initial_load() {
             var card = data.player_discard[i];
             $('#pl-discard-'+String(card)).show();
         }
+        for ( var i=0; i<data.player_grave.length; i++ ) {
+            var card = data.player_grave[i];
+            $('#pl-discard-'+String(card)).attr('class', 'graveyard').show();
+        }
         for ( var j=0; j<data.infect_discard.length; j++) {
             var card = data.infect_discard[j];
             $('#infect-discard-'+String(card)).show();
+        }
+        for ( var j=0; j<data.infect_grave.length; j++) {
+            var card = data.infect_grave[j];
+            $('#infect-discard-'+String(card)).attr('class', 'graveyard').show();
         }
 
     }).error(function(error){console.log(error);});

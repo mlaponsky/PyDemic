@@ -19,6 +19,8 @@ def set_move():
     origin = player.get_position()
     new_pos = request.args.get('id', 0, type=int)
     is_airlift = request.args.get('airlift', 0, type=int)
+    index = request.args.get('index', 0, type=int)
+    owner = game.players[(game.active + index) % game.num_players ]
     discard = ""
     cures = copy(game.cures)
     move = ""
@@ -41,7 +43,7 @@ def set_move():
     if is_airlift == 1:
         player.move(new_pos, board, game.cures, game.cubes, game.cubes_left, game.quarantined)
         discard = str(AIRLIFT)
-        player.discard(AIRLIFT, game.player_cards)
+        owner.discard(AIRLIFT, game.player_cards)
         move = "airlift"
     elif new_pos in player.can_drive(board):
         player.move(new_pos, board, game.cures, game.cubes, game.cubes_left, game.quarantined)
@@ -88,6 +90,7 @@ def set_move():
                                           'origin': origin,
                                           'destination': new_pos,
                                           'cards': discard,
+                                          'owner': owner.get_id(),
                                           'available': prev_avail,
                                           'can_build': prev_build,
                                           'can_cure': prev_cure,

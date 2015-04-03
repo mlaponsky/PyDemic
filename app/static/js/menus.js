@@ -25,7 +25,7 @@ function infect_toggle() {
 	infect_button.toggleClass( 'active' );
 	if ( player_button.attr('class') === 'active' ) {
 		player_button.toggleClass( 'active' );
-		player_menu.toggleClass( 'menu-open' );
+		player_menu.toggleClass( 'menu-open' ).removeClass('selecting');
 	} else if (team_button.attr('class') === 'active') {
 		team_button.toggleClass( 'active' );
 		team_menu.toggleClass( 'menu-open' );

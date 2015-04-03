@@ -44,13 +44,17 @@ function execute_move(event) {
     var city = $(event.target);
     var new_pos = city.attr("id");
     var is_airlift = 0;
-    if ( $('#card-48').hasClass('down') ){
+    var select = 0;
+    if ( $('.event-card').hasClass('down') ){
         is_airlift = 1
+        if ( $('.card.down').length !== 0 ) {
+            select  = $('.down').parent().parent().index();
+        }
     };
     $.getJSON($SCRIPT_ROOT + '/_move', { id: Number(new_pos),
-                                         airlift: is_airlift }).success(function(data) {
+                                         airlift: is_airlift,
+                                         index: select }).success(function(data) {
         if (typeof data.available !== 'undefined') {
-            move(new_pos, data);
             if (data.move === "drive") {
                 $('#logger').html("Drove from "+CARDS[data.origin].bold()+" to "+CARDS[new_pos].bold()+".");
             } else if (data.move === "charter") {
@@ -69,6 +73,7 @@ function execute_move(event) {
             } else if (data.move === "shuttle") {
                 $('#logger').html("Shuttled from "+CARDS[data.origin].bold()+" to "+CARDS[new_pos].bold()+".");
             }
+            move(new_pos, data);
             buttons_on();
             if (is_airlift === 1) {
                 $('#name').off().attr('class', 'self-unchooseable');
@@ -90,7 +95,7 @@ function execute_move(event) {
             for (var i=0; i<selectable.length; i++) {
                 var card = $('#card-'+selectable[i]);
                 if (card.hasClass('giveable') ) {
-                    card.switchClass('giveable', 'holding');
+                    card.removeClass('giveable').addClass('holding');
                 }
                 card.addClass('down').off().on('click', function(e) { select_discard(e) });
             }

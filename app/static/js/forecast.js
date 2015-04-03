@@ -3,8 +3,9 @@ function select_forecast(target) {
     $('.giveable').off().switchClass('giveable', 'holding');
     $('.takeable').off().switchClass('takeable', 'holding');
     buttons_off();
-    $('.available').off().attr('class', 'unavailable marked');
+    $('.available').off().attr('class', 'unavailable');
     $('.treatable').off().attr('class', 'unavailable');
+    $('.role.choosable').off().switchClass('choosable', 'marked');
     $('#forecast').show(200);
     $('#next-phase').off().on('click', execute_forecast).prop('disabled', false);
     $('#logger').html("Rearrange the top six cards of the Infection Deck (top card drawn first). Click 'NEXT' when finished.");
@@ -28,5 +29,11 @@ function execute_forecast() {
             discard('49');
             $('#forecast').hide(200);
             $('#logger').html('Played <b>FORECAST</b>.');
+            $('.pl-card.holding').off().on('click', give_card).switchClass('holding', 'giveable');
+            $('.card.holding').off().on('click', take_card).switchClass('holding', 'takeable');
+            $('.role.marked').off().on('click', select_player).switchClass('marked', 'choosable');
+            buttons_on()
+            set_cities(data.available);
+            set_treatable(data.position);
         }).error( function(error) {console.log(error) });
 }

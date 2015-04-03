@@ -23,9 +23,11 @@ def forecast():
     card4 = request.args.get('card0', infect[4], type=int)
     card5 = request.args.get('card0', infect[5], type=int)
     forecast = [ card0, card1, card2, card3, card4, card5 ]
-    print(forecast)
     infect = forecast+infect[6:]
 
     player.discard(FORECAST, game.player_cards)
+
+    available, dispatch, origin, player_id = game.set_available()
     session['game'] = pickle.dumps(game)
-    return jsonify( player_id=player.get_id() )
+    return jsonify( available=available,
+                    position=origin )

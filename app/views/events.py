@@ -15,7 +15,6 @@ def forecast():
     game = pickle.loads(session['game'])
     player = game.players[game.active]
     infect = game.infect_cards.get_deck()
-    print(infect[:6])
     card0 = request.args.get('card0', infect[0], type=int)
     card1 = request.args.get('card1', infect[1], type=int)
     card2 = request.args.get('card2', infect[2], type=int)
@@ -27,7 +26,7 @@ def forecast():
 
     player.discard(FORECAST, game.player_cards)
 
-    available, dispatch, origin, player_id = game.set_available()
+    available, dispatch, origin, player_id = game.set_available(player)
     session['game'] = pickle.dumps(game)
     return jsonify( available=available,
                     position=origin )

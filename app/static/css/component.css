@@ -99,13 +99,13 @@
 	border: 4px transparent solid;
 }
 
-.card, .graveyard {
+.card, .pl-discard, .infect-discard, .graveyard {
 	position: relative;
 	display: block;
 	margin-left: 10%;
 }
 
-.card > div, .graveyard > div {
+.card > div, .pl-discard > div, .infect-discard > div, .graveyard > div {
 	height: 100%;
 	width: 8%;
 	position: absolute;
@@ -114,7 +114,7 @@
 	border: 1px solid #fffff0;
 }
 
-.card > p {
+.card > p, .pl-discard > p, .infect-discard > p {
 	font-size: 0.8vw;
 	padding-left: 12%;
 	text-overflow: ellipsis;

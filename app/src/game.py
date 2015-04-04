@@ -9,7 +9,8 @@ from random import shuffle
 class Game:
     def __init__(self, roles, epidemics):
         self.lose = False
-        self.phase = 0
+        self.day = 0
+        self.phase = 4
         self.active_player = None
 
         self.num_outbreaks = 0
@@ -46,7 +47,6 @@ class Game:
         self.player_cards = PlayerCards(self.players, self.num_epidemics)
         self.active = self.set_order()
 
-        self.infect_cards.add_to_discard(ATL)
         for p in self.players:
             print(p.hand)
     ## Manage game phase

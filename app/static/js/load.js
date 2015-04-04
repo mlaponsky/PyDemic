@@ -44,7 +44,7 @@ function initial_load() {
             $("#card-"+String(k)).children('div').css('background', "url("+data.cards[k]['player_card']+") no-repeat center center");
             $("#card-"+String(k)).children('div').css('background-size', 'contain');
             $("#card-"+String(k)).attr('class', 'pl-card')
-            $("#card-"+String(k)).hide();
+            $("#card-"+String(k)).css('pointer-events', 'none').hide();
         }
 
         set_giveable(data.hand, data.can_give);
@@ -92,6 +92,7 @@ function initial_load() {
         for ( var j=0; j<data.infect_discard.length; j++) {
             var card = data.infect_discard[j];
             $('#infect-discard-'+String(card)).show();
+            console.log($('#infect-discard-'+String(card)).attr('class'));
         }
         for ( var j=0; j<data.infect_grave.length; j++) {
             var card = data.infect_grave[j];

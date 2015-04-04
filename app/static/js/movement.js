@@ -55,7 +55,6 @@ function execute_move(event) {
                                          airlift: is_airlift,
                                          index: select }).success(function(data) {
         if (typeof data.available !== 'undefined') {
-            move(new_pos, data);
             if (data.move === "drive") {
                 $('#logger').html("Drove from "+CARDS[data.origin].bold()+" to "+CARDS[new_pos].bold()+".");
             } else if (data.move === "charter") {
@@ -74,6 +73,7 @@ function execute_move(event) {
             } else if (data.move === "shuttle") {
                 $('#logger').html("Shuttled from "+CARDS[data.origin].bold()+" to "+CARDS[new_pos].bold()+".");
             }
+            move(new_pos, data);
             buttons_on();
             if (is_airlift === 1) {
                 $('#name').off().attr('class', 'self-unchooseable');
@@ -122,12 +122,12 @@ function select_discard(event) {
 
     $.getJSON($SCRIPT_ROOT+'/_select_card_for_move', { card: Number(card), city_id: Number(city_id) }).success(function (data) {
                 escape_card_select( $('.pl-card.down') );
-                move(city_id, data);
                 $('#logger').html("Flew from "+CARDS[data.origin].bold()+" to "+CARDS[Number(city_id)].bold()+".")
                 discard(card);
                 if (data.move === "station-fly") {
                     $('#logger').html($('#logger').html()+" (Cannot use this ability again this turn.)");
                 }
+                move(city_id, data);
                 buttons_on();
     }).error(function(error){console.log(error);});
 }

@@ -92,3 +92,8 @@ class InfectCards(Deck):
         shuffle(self.discard)
         self.deck = self.discard + self.deck
         self.discard = []
+
+    def draw_card(self, index):
+        card = self.deck.pop(index)
+        self.discard.append(card)
+        return card

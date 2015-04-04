@@ -7,8 +7,8 @@ function undo() {
                    (data.result['act'] === "fly") ||
                    (data.result['act'] === "station-fly") ||
                    (data.result['act'] === "airlift")) {
-            undo_move(data.result['data']);
             undo_discard(data.result['data']['cards'], data.result['data']['owner']);
+            undo_move(data.result['data']);
             ACTIONS--;
         } else if ( (data.result['act'] === "build") ||
                     (data.result['act'] === "gg") ) {

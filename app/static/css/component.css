@@ -1,27 +1,4 @@
 /* General styles for all menus */
-#team-menu {
-	background: #222222;
-	position: fixed;
-	width: 12%;
-	height: 100%;
-	top: 0;
-	z-index: 1000;
-	border: 2px solid #fffff0;
-	border-top-left-radius: 10% 3%;
-	border-bottom-left-radius: 10% 3%;
-	border-right: none;
-	border-top: none;
-	border-bottom: none;
-}
-
-#team-menu h3 {
-	color: #FFFFF0;
-	font-size: 1.0em;
-	padding: 10%;
-	margin-bottom: -13%;
-	margin-top: -2%;
-	font-weight: 300;
-}
 
 /* Vertical menu that slides from the left or right */
 
@@ -145,7 +122,7 @@
 }
 
 .graveyard > p {
-	color: #cccccc;
+	color: #aaaaaa;
 	font-size: 0.8vw;
 	padding-left: 12%;
 	text-overflow: ellipsis;

@@ -146,6 +146,7 @@ function buttons_on() {
     $('#build-station').attr('class', 'action').off().on('click', build_station);
     $('#make-cure').attr('class', 'action').off().on('click', make_cure);
     $('#undo-action').attr('class', 'action').off().on('click', undo);
+    $('#next-phase').attr('class', 'action').off().on('click', advance);
 }
 
 function buttons_off() {
@@ -173,12 +174,5 @@ function escape_cube_select(objects, city) {
     objects.off();
     objects.css("pointer-events", "none");
     buttons_on();
-    $('html').off();
-}
-
-function escape_cure_select() {
-    $(".pl-card").children('div').attr('class', 'up').off();
-    buttons_on();
-    $('#make-cure').attr('class', 'action');
     $('html').off();
 }

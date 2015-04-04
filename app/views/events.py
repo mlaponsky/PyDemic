@@ -21,14 +21,17 @@ def forecast():
     card3 = request.args.get('card3', infect[3], type=int)
     card4 = request.args.get('card0', infect[4], type=int)
     card5 = request.args.get('card0', infect[5], type=int)
+    index = request.args.get('index', 0, type=int)
+    owner = game.players[(game.active + index) % game.num_players]
     forecast = [ card0, card1, card2, card3, card4, card5 ]
     game.infect_cards.deck = forecast+infect[6:]
 
-    player.discard(FORECAST, game.player_cards)
+    owner.discard(FORECAST, game.player_cards)
 
     available, dispatch, origin, player_id = game.set_available(player)
     session['game'] = pickle.dumps(game)
     return jsonify( available=available,
+                    owner=owner,
                     position=origin )
 
 @events.route('/_execute_rp')
@@ -37,11 +40,16 @@ def rp():
     actions = session['actions']
 
     player = game.players[game.active]
-    player.discard(RP, game.player_cards);
     card = request.args.get('remove', -1, type=int)
+    index = request.args.get('index', 0, type=int)
+    owner = game.players[(game.active + index) % game.num_players]
+
     game.infect_cards.remove_from_discard(card)
     game.infect_cards.add_to_graveyard(card)
-    action = { 'act': 'rp', 'data': { 'deleted': card } }
+    owner.discard(RP, game.player_cards)
+    
+    action = { 'act': 'rp', 'data': { 'owner': owner.get_id(),
+                                      'deleted': card } }
     actions.append(action)
     session['actions'] = actions
     session['game'] = pickle.dumps(game)

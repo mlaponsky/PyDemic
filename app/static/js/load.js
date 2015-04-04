@@ -18,6 +18,8 @@ var ROLES = { 'cp': "CONTINGENCY PLANNER",
               'researcher': "RESEARCHER",
               'scientist': "SCIENTIST" };
 
+var COLORS = ['BLUE', 'YELLOW', 'BLACK', 'RED', 'EVENT'];
+
 
 var ACTIONS = 0;
 function initial_load() {

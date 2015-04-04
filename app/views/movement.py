@@ -179,6 +179,7 @@ def select_move_card():
                                       'origin': origin,
                                       'destination': new_pos,
                                       'cards': discard,
+                                      'owner': player.get_id(),
                                       'available': prev_avail,
                                       'can_build': prev_build,
                                       'can_cure': prev_cure,
@@ -250,6 +251,7 @@ def select_player():
     can_cure = player.can_cure(game.research_stations)
     session['game'] = pickle.dumps(game)
     return jsonify( available=available,
+                    role=selected.get_id(),
                     position=position,
                     can_build=can_build,
                     can_cure=can_cure )

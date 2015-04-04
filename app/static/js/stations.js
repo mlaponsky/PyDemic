@@ -60,6 +60,7 @@ function select_station(event) {
             $("#undo-action").prop('disabled', ACTIONS === 0);
             buttons_on();
             $('html').off();
+            $('#logger').html('Build a station at '+CARDS[data.station].bold()+'. Discarded '+CARDS[Number(data.discard)].bold()+'. Removed station from '+CARDS[Number(to_remove)]+'.');
         }
     ).error(function(error){console.log(error);});
 }
@@ -95,6 +96,7 @@ function build_station() {
             }
             $("#undo-action").prop('disabled', ACTIONS === 0);
             buttons_on();
+            $('#logger').html('Build a station at '+CARDS[data.station].bold()+'. Discarded '+CARDS[Number(data.discard)].bold()+'.');
         } else {
             buttons_off();
             $("#build-station").attr('class', 'action activated');
@@ -108,6 +110,7 @@ function build_station() {
                                          select_station).attr('class',
                                                               'selectable marked');
             }
+            $('#logger').html('There are already 6 stations. Either cancel action or select a station to remove.');
             $('html').off().on('click', function(e) {
                 if ( $(e.target).attr('id') !== 'build-station' ||
                      $(e.target).attr('class') !== '.selectable' ) {
@@ -129,13 +132,14 @@ function escape_station_select(available, city) {
     set_treatable(city);
     buttons_on();
     if ($('.down').length !== 0 ) {
-        $('.pl-card.down').switchClass('down', 'giveable');
-        $('.card.down').switchClass('down', 'takeable');
-        $('.pl-card.holding').switchClass('holding', 'giveable');
+        $('.pl-card.down').removeClass('down').addClass('giveable');
+        $('.card.down').removeClass('down').addClass('takeable');
+        $('.pl-card.holding').removeClass('holding').addClass('giveable');
         $('.giveable').off().on('click', give_card);
-        $('.card.holding').switchClass('holding', 'takeable');
+        $('.card.holding').removeClass('holding').addClass('takeable');
         $('.takeable').off().on('click', take_card);
     }
     $("#build-station").attr('class', 'action');
     $('html').off()
+    $('#logger').html('Cancelled station construction.')
 }

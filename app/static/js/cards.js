@@ -33,6 +33,7 @@ function discard(card) {
         $("#card-"+card).attr('class', 'pl-card').hide(200);
     }
     $("#pl-discard-"+card).show(200);
+    $('#logger').html($('#logger').html()+' Discarded '+CARDS[Number(card)].bold()+'.');
 }
 
 function undo_discard(card, owner) {
@@ -42,6 +43,7 @@ function undo_discard(card, owner) {
         $('#card-'+card).show(200);
     }
     $("#pl-discard-"+card).hide(200);
+    $('#logger').html($('#logger').html()+' Returned '+CARDS[Number(card)].bold()+' to the '+ROLES[owner].bold()+"'s hand.");
 }
 
 function escape_cards() {
@@ -60,6 +62,8 @@ function give(card, data) {
     set_cities(data.available);
     ACTIONS++;
     $('#undo-action').prop('disabled', ACTIONS===0);
+    var giver = $('.active-player').attr('id').split('-')[1];
+    $('#logger').html('You gave '+CARDS[Number(data.card)].bold()+' to the '+ROLES[data.recipient].bold()+'.');
 }
 
 function give_card(event) {
@@ -101,6 +105,8 @@ function give_card(event) {
                     $('.available').off();
                     buttons_off();
                     card.off().attr('class', 'pl-card down');
+                    $('.giveable').removeClass('giveable').addClass('holding');
+                    $('.takeable').removeClass('takeable').addClass('holding');
                     if (!body.hasClass('menu-push-toleft')) {
                         team_toggle();
                     } else {
@@ -118,6 +124,7 @@ function give_card(event) {
                     $('html').keyup( function( e ) {
                         if (e.keyCode === 27) { escape_give_select(card, data) };
                     });
+                    $('#logger').html('Choose a recipient of the card.');
                 }
             }).error(function(error) {console.log(errors)} );
 
@@ -158,6 +165,8 @@ function take_card(event) {
                 ACTIONS++;
                 buttons_on();
                 $('#undo-action').prop('disabled', ACTIONS===0);
+                var taker = $('.active-player').attr('id').split('-')[1];
+                $('#logger').html('You took '+CARDS[Number(data.card)].bold()+ ' from the '+ROLES[data.source_id].bold()+'.');
             }).error(function(error) {console.log(errors)} );
     }
 }
@@ -165,7 +174,9 @@ function take_card(event) {
 function escape_give_select(card, data) {
     buttons_on();
     $('.available').off().on('click', execute_move);
-    card.off().on('click', give_card).addClass('giveable');
+    card.off().on('click', give_card).removeClass('down').addClass('giveable');
+    $('.pl-card.holding').off().on('click', give_card).removeClass('holding').addClass('giveable');
+    $('.card.holding').off().on('click', take_card).removeClass('holding').addClass('takeable');
     if ( !body.hasClass('selecting') ) {
         team_toggle();
     } else {
@@ -178,4 +189,5 @@ function escape_give_select(card, data) {
         $('.role').off().on('click', select_player).attr('class', 'role choosable')
     }
     $('html').off();
+    $('#logger').html('Cancelled card sharing.');
 }

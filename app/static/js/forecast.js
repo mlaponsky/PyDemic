@@ -18,16 +18,21 @@ function execute_forecast() {
     var card3 = $('#forecast li:nth-child(4)').attr('id').split('-')[1];
     var card4 = $('#forecast li:nth-child(5)').attr('id').split('-')[1];
     var card5 = $('#forecast li:nth-child(6)').attr('id').split('-')[1];
+    var select = 0;
+    if ( $('.card.down').length !== 0 ) {
+        select  = $('.down').parent().parent().index();
+    }
 
     $.getJSON( $SCRIPT_ROOT + '/_execute_forecast', { card0: Number(card0),
                                                       card1: Number(card1),
                                                       card2: Number(card2),
                                                       card3: Number(card3),
                                                       card4: Number(card4),
-                                                      card5: Number(card5) }).success(
+                                                      card5: Number(card5),
+                                                      index: select }).success(
         function(data) {
             escape_cards();
-            $('#forecast').hide(200);
+            discard('48');
             $('#logger').html('Played <b>FORECAST</b>.');
             buttons_on()
             set_cities(data.available);

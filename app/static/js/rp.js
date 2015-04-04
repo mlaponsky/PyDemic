@@ -15,16 +15,33 @@ function select_rp(target) {
         if (e.keyCode === 27) { escape_rp() };
     });
     $('#infect-discard li.card').off().on('click', execute_rp).attr('class', 'card takeable');
+    $('#logger').html('(Resilient Population) Choose one card in the Infection Discard pile to remove from the game.');
 }
 
 function execute_rp() {
     var card_id = $(this).attr('id').split('-')[2];
-    $.getJSON( $SCRIPT_ROOT + '/_execute_rp', { remove: Number(card_id) } ).success(
+    var select = 0;
+    if ( $('.card.down').length !== 0 ) {
+        select  = $('.down').parent().parent().index();
+    }
+    $.getJSON( $SCRIPT_ROOT + '/_execute_rp', { remove: Number(card_id),
+                                                index: select } ).success(
         function(data) {
-            discard('52')
+            discard('52');
             $('#infect-discard-'+String(data.deleted)).off().attr('class', 'graveyard');
             ACTIONS++;
-            escape_rp();
+            escape_cards();
+            $('.marked').off().on('click', execute_move).attr('class', 'available');
+            $('.marked-t').off().on('click', treat).attr('class', 'treatable');
+            if ( !body.hasClass('selecting') ) {
+                infect_toggle();
+            } else {
+                body.removeClass('selecting');
+            }
+            $('#undo-action').off().on('click', undo).prop('disabled', ACTIONS === 0);
+            buttons_on();
+            $('html').off();
+            $('#logger').html('Moved '+CARDS[data.deleted]+' from the Infection discard to the graveyard.');
         }
     )
 }
@@ -38,6 +55,8 @@ function escape_rp() {
     } else {
         body.removeClass('selecting');
     }
+    $('#undo-action').off().on('click', undo).prop('disabled', ACTIONS === 0);
     buttons_on();
     $('html').off();
+    $('#logger').html('Cancelled <b>RESILIENT POPULATION</b>.')
 }

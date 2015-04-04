@@ -82,7 +82,10 @@ function remove_cubes(city, color, num_cubes, cubes_left) {
     var to_remove = cubes.slice(cubes.length-num_cubes, cubes.length);
     for (var i=0; i<to_remove.length; i++) {
         to_remove[i].remove();
-    }    document.getElementById(color+"-cnt").getElementsByTagName('tspan')[0].textContent = String(cubes_left);
+    }
+    set_treatable(city);
+        document.getElementById(color+"-cnt").getElementsByTagName('tspan')[0].textContent = String(cubes_left);
+    $('#logger').html('Removed '+String(num_cubes)+' '+COLORS[color].bold()+' cube(s) from '+CARDS[Number(city)].bold()+' ('+String(cubes.length-num_cubes)+' remaining).');
 }
 
 function medic_with_cure(data, position) {

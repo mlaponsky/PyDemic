@@ -116,8 +116,11 @@ def undo_give(data, game):
             giver = p
     taker.give_card(int(data['card']), giver)
 
-# def undo_rp(data, game):
-#     game.infect_cards.graveyard.remove(data['deleted'])
-#     game.infect_card.add_to_discard(data['deleted'])
-#     game.player_cards.remove_from_discard(RP)
-#     game.players[game.ac]
+def undo_rp(data, game):
+    game.infect_cards.graveyard.remove(data['deleted'])
+    game.infect_cards.add_to_discard(data['deleted'])
+    game.player_cards.remove_from_discard(RP)
+    for p in game.players:
+        if p.get_id() == data['owner']:
+            owner = p
+    owner.add_card(RP)

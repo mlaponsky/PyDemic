@@ -1,6 +1,6 @@
 function select_gg(target) {
     target.off().on('click', escape_gg).addClass('down').removeClass('giveable takeable');
-board_off();
+    board_off();
 
     buttons_off();
     for (var i=0; i<48; i++) {

@@ -28,11 +28,13 @@ function execute_forecast() {
                                                       card5: Number(card5),
                                                       index: select }).success(
         function(data) {
-            board_on();
             discard('48');
             $('#logger').html('Played <b>FORECAST</b>.');
+            $('#next-phase').off().prop('disabled', true);
+            $('#forecast').hide(200);
             buttons_on()
             set_cities(data.available);
             set_treatable(data.position);
+            board_on();
         }).error( function(error) {console.log(error) });
 }

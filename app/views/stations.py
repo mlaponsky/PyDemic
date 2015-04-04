@@ -20,12 +20,12 @@ def select_station():
     index = request.args.get('index', 0, type=int)
     owner = game.players[(game.active + index) % game.num_players]
     prev_avail, dispatch, origin, player_id = game.set_available(player)
-
+    can_build = player.get_position() not in game.research_stations and (player.get_position() in player.hand or player.get_role == OE)
     if position != -1:
         discard = GG
         action = { 'act': "gg", 'data': { 'origin': str(position),
+                                          'can_build': can_build,
                                           'discard': str(GG),
-                                          'hand': player.hand,
                                           'owner': owner.get_id(),
                                           'removed': str(to_remove),
                                           'card_data': CARDS[discard],
@@ -34,8 +34,8 @@ def select_station():
         discard = player.get_position() if player.get_role() != OE else -1
         position = player.get_position()
         action = { 'act': "build", 'data': { 'origin': str(player.get_position()),
+                                             'can_build': can_build,
                                              'discard': str(discard),
-                                             'hand': player.hand,
                                              'owner': owner.get_id(),
                                              'removed': str(to_remove),
                                              'card_data': CARDS[discard],
@@ -52,6 +52,7 @@ def select_station():
     return jsonify( position=player.get_position(),
                     station=position,
                     discard=discard,
+                    can_build=can_build,
                     owner=owner.get_id(),
                     available=available )
 
@@ -63,6 +64,7 @@ def build_station():
     num_stations = len(game.research_stations)
     prev_avail, dispatch, origin, player_id = game.set_available(player)
 
+    can_build = player.get_position() not in game.research_stations and (player.get_position() in player.hand or player.get_role() == OE)
     position = request.args.get('position', -1, type=int)
     if position != -1:
         discard = GG
@@ -71,12 +73,12 @@ def build_station():
         discard = player.get_position() if player.get_role() != OE else -1
     index = request.args.get('index', 0, type=int)
     owner = game.players[(game.active + index) % game.num_players]
-
+    print(owner.get_role(), GG in owner.hand)
     if num_stations < MAX_STATIONS:
         action = { 'act': "build" if position == -1 else 'gg',
                    'data': { 'origin': str(position),
+                             'can_build': can_build,
                              'discard': str(discard),
-                             'hand': player.hand,
                              'removed': 'none',
                              'owner': owner.get_id(),
                              'card_data': CARDS[discard],
@@ -88,6 +90,7 @@ def build_station():
     session['game'] = pickle.dumps(game)
     return jsonify( position=player.get_position(),
                     station=position,
+                    can_build=can_build,
                     num_stations=num_stations,
                     discard=discard,
                     available=available )

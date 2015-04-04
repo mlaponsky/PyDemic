@@ -114,12 +114,9 @@ function treat(event) {
             $(".city-"+city).css("pointer-events", '');
             $(".city-"+city).off().on('click', function(e) { select_cube_color(e) });
 
-            $(".available").off().attr("class", "unavailable holding");
+            $(".available").off().attr("class", "unavailable marked");
             $(".treatable").off().attr("class", "treating");
-            $('.giveable').off().removeClass('giveable').addClass('holding');
-            $('.takeable').off().removeClass('takeable').addClass('holding');
-            $('.role.choosable').off().removeClass('choosable').addClass('holding');
-            $('.self-chooseable').off().removeClass('self-chooseable').addClass('holding');
+            board_off();
             $('html').on( 'click', function( e ) {
                 if ($( e.target ).closest($(".treating").length === 0 )) {
                     escape_cube_select( $(".city-"+city), city ) }} );
@@ -139,6 +136,8 @@ function select_cube_color(event) {
     $.getJSON( $SCRIPT_ROOT + '/_select_color', { color: Number(color) }).success(
         function(data) {
             remove_cubes(city, color, data.num_cubes, data.cubes_left);
+            board_on();
+            $('.marked').off().on('click', execute_move).attr('class', 'available');
             ACTIONS++;
             $("#undo-action").prop('disabled', ACTIONS === 0);
             $("."+class_array[0]).css("border", '')

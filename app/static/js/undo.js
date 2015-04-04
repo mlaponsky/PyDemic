@@ -80,16 +80,16 @@ function undo_move(data) {
 function undo_station(data) {
     var city = Number(data['origin']);
     $('#station-'+data['origin']).attr('class', 'unbuilt').hide();
-    $('#logger').html('(UNDO) Undid station construction at '+CARDS[city].bold()+'.');
+    $('#logger').html('(UNDO) Removed station from '+CARDS[city].bold()+'.');
     if ( data['removed'] !== 'none' ) {
         $('#station-'+data['removed']).attr('class', 'built').show();
         $('#logger').html($('#logger').html()+' Returned station to '+CARDS[Number(data['removed'])].bold()+'.')
     }
-    if ( data['cards'] !== 'none') {
+    if ( data['discard'] !== '-1') {
         undo_discard(data['discard'], data['owner']);
     }
     set_cities(data['available']);
-    if (data['discard'] !== '50' || data['hand'].indexOf(Number(data['origin'])) !== -1) {
+    if (data['discard'] !== '50' || data['can_build']) {
         $("#build-station").prop('disabled', false);
     }
     if ( data['removed'] === 'none' ) {
@@ -109,6 +109,7 @@ function undo_treatment(data) {
     var cubes_left = Number(document.getElementById(data['color']+"-cnt").getElementsByTagName('tspan')[0].textContent)
     document.getElementById(data['color']+"-cnt").getElementsByTagName('tspan')[0].textContent = cubes_left - data['removed'];
     set_treatable(data['origin']);
+    $('#logger').html('(UNDO) Returned '+String(data['removed'])+' '+COLORS[Number(data['color'])].bold()+' cube(s) to '+CARDS[Number(data['origin'])].bold()+'.');
 }
 
 function undo_cure(data) {

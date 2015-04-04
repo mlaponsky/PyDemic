@@ -46,9 +46,9 @@ class Game:
         self.player_cards = PlayerCards(self.players, self.num_epidemics)
         self.active = self.set_order()
 
-        self.players[0].hand.append(RP)
-
         self.infect_cards.add_to_discard(ATL)
+        for p in self.players:
+            print(p.hand)
     ## Manage game phase
     def get_phase(self):
         return self.phase

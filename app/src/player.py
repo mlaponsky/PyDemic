@@ -147,7 +147,8 @@ class Player:
         return (self.position == city and city in self.hand and city not in research_stations)
 
     def build_station(self, city, discard, research_stations, deck):
-        self.discard(discard, deck)
+        if (discard != -1):
+            self.discard(discard, deck)
         research_stations.append(city)
 
     def select(self, selected):

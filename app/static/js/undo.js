@@ -108,6 +108,7 @@ function undo_treatment(data) {
 
     var cubes_left = Number(document.getElementById(data['color']+"-cnt").getElementsByTagName('tspan')[0].textContent)
     document.getElementById(data['color']+"-cnt").getElementsByTagName('tspan')[0].textContent = cubes_left - data['removed'];
+    set_treatable(data['origin']);
 }
 
 function undo_cure(data) {

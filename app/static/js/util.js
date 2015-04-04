@@ -146,7 +146,7 @@ function buttons_on() {
     $('#build-station').attr('class', 'action').off().on('click', build_station);
     $('#make-cure').attr('class', 'action').off().on('click', make_cure);
     $('#undo-action').attr('class', 'action').off().on('click', undo);
-    $('#next-phase').attr('class', 'action').off().on('click', advance);
+    // $('#next-phase').attr('class', 'action').off().on('click', advance);
 }
 
 function buttons_off() {

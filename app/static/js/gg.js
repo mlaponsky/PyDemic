@@ -1,8 +1,7 @@
 function select_gg(target) {
     target.off().on('click', escape_gg).addClass('down').removeClass('giveable takeable');
-    $('.giveable').off().removeClass('giveable').addClass('holding');
-    $('.takeable').off().removeClass('takeable').addClass('holding');
-    $('.role.choosable').off().removeClass('choosable').addClass('holding')
+board_off();
+
     buttons_off();
     for (var i=0; i<48; i++) {
         if ( $('#station-'+String(i)).attr('class') === 'built' ) {
@@ -33,9 +32,7 @@ function escape_gg() {
                 set_treatable(String(data.position));
                 buttons_on();
                 $('html').off();
-                escape_cards();
-                reset_cards();
-                console.log($('#scientist-card-50').attr('class'));
+                board_on();
             }
         }
     ).error(function(error){console.log(error)});

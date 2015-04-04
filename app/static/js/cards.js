@@ -46,7 +46,14 @@ function undo_discard(card, owner) {
     $('#logger').html($('#logger').html()+' Returned '+CARDS[Number(card)].bold()+' to the '+ROLES[owner].bold()+"'s hand.");
 }
 
-function escape_cards() {
+function board_off() {
+    $('.giveable').off().removeClass('giveable').addClass('holding');
+    $('.takeable').off().removeClass('takeable').addClass('holding');
+    $('.role.choosable').off().removeClass('choosable').addClass('holding')
+    $('.self-chooseable').off().removeClass('self-chooseable').addClass('holding');
+}
+
+function board_on() {
     $('.pl-card.down').off().removeClass('down').addClass('giveable');
     $('.card.down').off().removeClass('down').addClass('takeable');
     $('.pl-card.holding').removeClass('holding').addClass('giveable');
@@ -54,6 +61,7 @@ function escape_cards() {
     $('.giveable').off().on('click', give_card);
     $('.takeable').off().on('click', take_card);
     $('.role.holding').off().on('click', select_player).removeClass('holding').addClass('choosable');
+    $('#name.holding').off().on('click', function() {console.log('Ya')}).removeClass('holding').addClass('self-chooseable');
 }
 
 function give(card, data) {

@@ -1,7 +1,6 @@
 function select_rp(target) {
     target.off().on('click', escape_rp).addClass('down').removeClass('giveable takeable');
-    $('.giveable').off().removeClass('giveable').addClass('holding');
-    $('.takeable').off().removeClass('takeable').addClass('holding');
+    board_off();
     buttons_off();
     $('.available').off().attr('class', 'unavailable marked');
     $('.treatable').off().attr('class', 'unavailable marked-t');
@@ -30,7 +29,7 @@ function execute_rp() {
             discard('52');
             $('#infect-discard-'+String(data.deleted)).off().attr('class', 'graveyard');
             ACTIONS++;
-            escape_cards();
+            board_on();
             $('.marked').off().on('click', execute_move).attr('class', 'available');
             $('.marked-t').off().on('click', treat).attr('class', 'treatable');
             if ( !body.hasClass('selecting') ) {
@@ -47,7 +46,7 @@ function execute_rp() {
 }
 
 function escape_rp() {
-    escape_cards();
+    board_on();
     $('.marked').off().on('click', execute_move).attr('class', 'available');
     $('.marked-t').off().on('click', treat).attr('class', 'treatable');
     if ( !body.hasClass('selecting') ) {

@@ -48,7 +48,7 @@ function select_station(event) {
             $("#station-"+to_remove).hide(200).attr('class', 'unbuilt');
             $("#station-"+String(data.station)).show(200).attr('class', 'built');
             ACTIONS++;
-            escape_cards();
+            board_on();
             if (data.discard !== '-1') {
                 discard(data.discard);
             }
@@ -89,7 +89,7 @@ function build_station() {
             document.getElementById("research-cnt").getElementsByTagName('tspan')[0].textContent = String(6-data.num_stations-1);
             set_cities(data.available);
             set_treatable(data.position);
-            escape_cards();
+            board_on();
 
             if ( data.discard !== '50' && String(data.station) !== data.position ) {
                 $("#build-station").attr('class', 'action').prop('disabled', true);

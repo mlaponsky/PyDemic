@@ -114,10 +114,12 @@ function treat(event) {
             $(".city-"+city).css("pointer-events", '');
             $(".city-"+city).off().on('click', function(e) { select_cube_color(e) });
 
-            $(".available").off();
-            $(".treatable").off();
-            $(".treatable").attr("class", "treating");
-            $(".available").attr("class", "unavailable holding");
+            $(".available").off().attr("class", "unavailable holding");
+            $(".treatable").off().attr("class", "treating");
+            $('.giveable').off().removeClass('giveable').addClass('holding');
+            $('.takeable').off().removeClass('takeable').addClass('holding');
+            $('.role.choosable').off().removeClass('choosable').addClass('holding');
+            $('.self-chooseable').off().removeClass('self-chooseable').addClass('holding');
             $('html').on( 'click', function( e ) {
                 if ($( e.target ).closest($(".treating").length === 0 )) {
                     escape_cube_select( $(".city-"+city), city ) }} );

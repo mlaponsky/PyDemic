@@ -1,8 +1,7 @@
 function select_airlift(target) {
     target.off().addClass('down').removeClass('giveable takeable');
-    $('.giveable').off().removeClass('giveable').addClass('holding');
-    $('.takeable').off().removeClass('takeable').addClass('holding');
     buttons_off();
+    board_off();
     $('.role').attr('class', 'role choosable').off().on('click', airlift_select_player);
     $('#name').attr('class', 'self-chooseable').off().on('click', airlift_select_self);
     target.off().on('click', escape_airlift );
@@ -93,7 +92,7 @@ function escape_airlift_select() {
         }
         buttons_on();
         $('html').off();
-        escape_cards();
+        board_on();
     }
 }
 

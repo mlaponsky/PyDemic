@@ -19,9 +19,7 @@ function make_cure() {
             } else {
                 buttons_off();
                 $('#logger').html('(CURE) Deselect which cards you wish to keep, then click NEXT.');
-                $(".giveable").off().removeClass('giveable').addClass('holding');
-                $('.takeable').off().removeClass('takeable').addClass('holding');
-                $('.role.choosable').off().removeClass('choosable').addClass('holding');
+                board_off();
                 $('.available').off().attr('class', 'unavailable marked');
                 $('.treatable').off().attr('class', 'unavailable marked-t');
                 for ( var i=0; i<data.cards.length; i++ ) {
@@ -92,7 +90,7 @@ function execute_cure() {
 
 
 function escape_cure_select() {
-    escape_cards();
+    board_on();
     $('.marked').off().on('click', execute_move).attr('class','available');
     $('.marked-t').off().on('click', treat).attr('class','treatable')
     buttons_on();

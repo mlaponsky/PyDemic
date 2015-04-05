@@ -1,8 +1,9 @@
 from flask import Flask
 from .src.session import *
+
 app = Flask(__name__)
 app.config.from_object('config')
-app.session_interface = RedisSessionInterface()
+redis_store = RedisSessionInterface(app)
 
 from .views.load import load
 from .views.movement import movement

@@ -35,7 +35,6 @@ def setup():
                                     form=form)
         game = Game(chosen, form.difficulty.data)
         actions = []
-        session.clear()
         session['game'] = pickle.dumps(game)
         session['actions'] = actions
         return redirect(url_for('load.start_game'))

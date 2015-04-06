@@ -1,5 +1,5 @@
 import pickle
-from flask_redis import Redis
+from redis import Redis
 from datetime import timedelta
 from uuid import uuid4
 from werkzeug.datastructures import CallbackDict
@@ -20,9 +20,9 @@ class RedisSessionInterface(SessionInterface):
     serializer = pickle
     session_class = RedisSession
 
-    def __init__(self, app, redis=None, prefix='game'):
+    def __init__(self, redis=None, prefix='game'):
         if redis is None:
-            redis = Redis(app)
+            redis = Redis()
         self.redis = redis
         self.prefix = prefix
 

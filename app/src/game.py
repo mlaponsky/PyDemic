@@ -5,6 +5,7 @@ from .board import Board
 from .deck import Deck, PlayerCards, InfectCards
 from .constants import *
 from random import shuffle
+from uuid import uuid4
 
 class Game:
     def __init__(self, roles, epidemics):
@@ -12,6 +13,7 @@ class Game:
         self.day = 0
         self.phase = 4
         self.active_player = None
+        self.id = uuid4()
 
         self.num_outbreaks = 0
         self.num_epidemics = 0
@@ -23,7 +25,7 @@ class Game:
         self.from_discard = []
 
         # cubes[city][color]
-        self.cubes = { }
+        self.cubes = {}
         for city in range(NUM_CITIES):
              self.cubes[city] = [0] * 4
         self.cubes_left = [NUM_CUBES] * 4

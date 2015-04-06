@@ -3,7 +3,7 @@ from .src.session import *
 
 app = Flask(__name__)
 app.config.from_object('config')
-redis_store = RedisSessionInterface(app)
+app.session_interface=RedisSessionInterface()
 
 from .views.load import load
 from .views.movement import movement

@@ -3,7 +3,7 @@
     <ul class="players">
         {% for player in team %}
         <li>
-            <ul class="team-player">
+            <ul id="{{ player.get_id() }}-box" class="team-player">
                 <li id="{{ player.get_id() }}" class="role">{{ player.get_role() }}</li>
                 {% for card in range(cards|length) %}
                 <li id="{{ player.get_id() }}-card-{{ card }}" class="card">

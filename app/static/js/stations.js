@@ -50,6 +50,7 @@ function select_station(event) {
             $('#logger').html('Built a station in '+CARDS[data.station].bold()+'. Removed station from '+CARDS[Number(to_remove)]+'.');
             ACTIONS++;
             PHASE++;
+            $('.holding.down').removeClass('hold down').hide(200);
             board_on();
             if (data.discard === 50) {
                 $('.down').off().on('click', select_gg);
@@ -80,7 +81,6 @@ function build_station() {
     }
     if ( $('.card.down').length !== 0 ) {
         select  = $('.down').parent().parent().index();
-        console.log(select)
     }
     $.getJSON( $SCRIPT_ROOT + '/_build_station', { position:  position,
                                                    index: select }).success(
@@ -101,11 +101,8 @@ function build_station() {
             document.getElementById("research-cnt").getElementsByTagName('tspan')[0].textContent = String(6-data.num_stations-1);
             set_cities(data.available);
             set_treatable(data.position);
+            $('.holding.down').removeClass('down').hide(200);
             board_on();
-
-            // if ( data.discard !== 50 && String(data.station) !== data.position ) {
-            //     $("#build-station").attr('class', 'action').prop('disabled', true);
-            // } else
             if ( data.can_build && data.station !== data.position ) {
                 $("#build-station").attr('class', 'action').prop('disabled', false);
             } else {

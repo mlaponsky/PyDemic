@@ -35,6 +35,7 @@ function execute_forecast() {
             buttons_on()
             set_cities(data.available);
             set_treatable(data.position);
+            $('.holding.down').removeClass('down').hide(200);
             board_on();
         }).error( function(error) {console.log(error) });
 }

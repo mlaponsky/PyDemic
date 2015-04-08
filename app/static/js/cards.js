@@ -48,6 +48,25 @@ function trash(event) {
     }
 }
 
+function set_team_trash(card, data) {
+    $('.available').off().attr('class', 'unavailable marked');
+    $('.treatable').off().attr('class', 'unavailable marked-t');
+    buttons_off();
+    card.off().addClass('giving');
+    board_off();
+    $('#'+data.recipient).parent().parent().attr('class', 'can-give');
+    $('#'+data.recipient+"-box li.card").off().on('click', trash).addClass('takeable');
+}
+
+function set_active_trash(card, data) {
+    $('.available').off().attr('class', 'unavailable marked');
+    $('.treatable').off().attr('class', 'unavailable marked-t');
+    buttons_off();
+    card.off().addClass('taking');
+    board_off();
+    $('.pl-card').off().on('click', trash).addClass('giveable');
+}
+
 function discard(card) {
     if ( $('.event-card').hasClass('down') ) {
         $('.down').removeClass('.down').hide(200);
@@ -132,12 +151,14 @@ function give_card(event) {
                         give(card, data);
                         buttons_on();
                     }
+                } else if ( typeof data.resp !== 'undefined' ) {
+                    set_team_trash(card, data);
                 } else {
-                    $('.available').off();
+                    $('.available').off().attr('class', 'unavailable marked');
+                    $('.treatable').off().attr('class', 'unavailable marked-t');
                     buttons_off();
                     card.off().attr('class', 'pl-card down');
-                    $('.giveable').removeClass('giveable').addClass('holding');
-                    $('.takeable').removeClass('takeable').addClass('holding');
+                    board_off();
                     if (!body.hasClass('menu-push-toleft')) {
                         team_toggle();
                     } else {
@@ -167,10 +188,14 @@ function select_recipient(event) {
     var card_id = $('.down').attr('id').split('-')[1];
     $.getJSON( $SCRIPT_ROOT + '/_select_recipient', { card: card_id, selected: recip }).success(
         function(data) {
-            var card = $('#card-'+data.card);
-            escape_give_select(card, data);
-            give(card, data);
-            card.off();
+            if (typeof data.resp !== 'undefined') {
+                set_team_trash($('.down'), data)
+            } else {
+                var card = $('#card-'+data.card);
+                escape_give_select(card, data);
+                give(card, data);
+                card.off();
+            }
         }).error(function(error) {console.log(errors)} );
 }
 

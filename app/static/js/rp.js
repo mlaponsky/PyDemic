@@ -29,6 +29,7 @@ function execute_rp() {
             discard('52');
             $('#infect-discard-'+String(data.deleted)).off().attr('class', 'graveyard');
             ACTIONS++;
+            $('.holding.down').removeClass('down').hide(200);
             board_on();
             $('.marked').off().on('click', execute_move).attr('class', 'available');
             $('.marked-t').off().on('click', treat).attr('class', 'treatable');

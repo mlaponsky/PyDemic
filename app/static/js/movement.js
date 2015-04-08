@@ -68,6 +68,7 @@ function execute_move(event) {
                 PHASE++;
             } else if (data.move === "airlift") {
                 $('#logger').html("Airlifted "+ROLES[data.player_id]+" from "+CARDS[data.origin].bold()+".");
+                $('.holding.down').removeClass('down').hide(200);
                 discard(data.discard)
             } else if (data.move === "dispatch") {
                 $('#logger').html("Dispatched "+ROLES[data.player_id]+" from "+CARDS[data.origin].bold()+".");

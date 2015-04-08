@@ -28,16 +28,19 @@ def give():
     if recip != player.get_id():
         recipients = [t for t in team if t.get_id() == recip]
     if len(recipients) == 1:
+        if len(recipients[0].hand) < MAX_CARDS:
+            action = { 'act': 'give',
+                        'card': str(card),
+                        'giver': player.get_id(),
+                        'taker': recipients[0].get_id(),
+                        'available': prev_avail }
+            actions.append(action)
 
-        action = { 'act': 'give',
-                    'card': str(card),
-                    'giver': player.get_id(),
-                    'taker': recipients[0].get_id(),
-                    'available': prev_avail }
-        actions.append(action)
-
-        player.give_card(card, recipients[0])
-        available, new_dispatch, origin, player_id = game.set_available(player)
+            player.give_card(card, recipients[0])
+            available, new_dispatch, origin, player_id = game.set_available(player)
+        else:
+            return jsonify( resp='too many cards',
+                            recipient=recipients[0].get_id() )
         session['game'] = pickle.dumps(game)
         session['actions'] = actions
         return jsonify( card=str(card),
@@ -63,15 +66,18 @@ def select_recipient():
             recipient = p
     prev_avail, dispatch, origin, player_id = game.set_available(player)
 
-    action = { 'act': 'give',
-                'card': str(card),
-                'giver': player.get_id(),
-                'taker': recipient.get_id(),
-                'available': prev_avail }
-    actions.append(action)
-
-    player.give_card(card, recipient)
-    available, new_dispatch, origin, player_id = game.set_available(player)
+    if len(recipient.hand) < MAX_CARDS:
+        action = { 'act': 'give',
+                    'card': str(card),
+                    'giver': player.get_id(),
+                    'taker': recipient.get_id(),
+                    'available': prev_avail }
+        actions.append(action)
+        player.give_card(card, recipient)
+        available, new_dispatch, origin, player_id = game.set_available(player)
+    else:
+        return jsonify( resp='too many cards',
+                        recipient=recipient.get_id() )
     session['game'] = pickle.dumps(game)
     session['actions'] = actions
     return jsonify( card=str(card),

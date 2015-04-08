@@ -57,21 +57,27 @@ function execute_move(event) {
         if (typeof data.available !== 'undefined') {
             if (data.move === "drive") {
                 $('#logger').html("Drove from "+CARDS[data.origin].bold()+" to "+CARDS[new_pos].bold()+".");
+                PHASE++;
             } else if (data.move === "charter") {
                 $('#logger').html("Flew from "+CARDS[data.origin].bold()+" to "+CARDS[new_pos].bold()+".");
                 discard(data.discard);
+                PHASE++;
             } else if (data.move === "fly") {
                 $('#logger').html("Flew from "+CARDS[data.origin].bold()+" to "+CARDS[new_pos].bold()+".");
                 discard(data.discard);
+                PHASE++;
             } else if (data.move === "airlift") {
                 $('#logger').html("Airlifted "+ROLES[data.player_id]+" from "+CARDS[data.origin].bold()+".");
                 discard(data.discard)
             } else if (data.move === "dispatch") {
                 $('#logger').html("Dispatched "+ROLES[data.player_id]+" from "+CARDS[data.origin].bold()+".");
+                PHASE++;
             } else if (data.move === "station-fly") {
                 $('#logger').html("Flew from "+CARDS[data.origin].bold()+" to "+CARDS[new_pos].bold()+". Discarded "+CARDS[data.discard].bold()+". (Cannot use this ability again this turn.)");
+                PHASE++;
             } else if (data.move === "shuttle") {
                 $('#logger').html("Shuttled from "+CARDS[data.origin].bold()+" to "+CARDS[new_pos].bold()+".");
+                PHASE++;
             }
             move(new_pos, data);
             buttons_on();
@@ -128,6 +134,7 @@ function select_discard(event) {
                     $('#logger').html($('#logger').html()+" (Cannot use this ability again this turn.)");
                 }
                 move(city_id, data);
+                PHASE++;
                 buttons_on();
     }).error(function(error){console.log(error);});
 }

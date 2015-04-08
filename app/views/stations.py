@@ -23,23 +23,25 @@ def select_station():
     can_build = player.get_position() not in game.research_stations and (player.get_position() in player.hand or player.get_role == OE)
     if position != -1:
         discard = GG
-        action = { 'act': "gg", 'data': { 'origin': str(position),
-                                          'can_build': can_build,
-                                          'discard': str(GG),
-                                          'owner': owner.get_id(),
-                                          'removed': str(to_remove),
-                                          'card_data': CARDS[discard],
-                                          'available': prev_avail } }
+        action = { 'act': "gg",
+                    'origin': str(position),
+                    'can_build': can_build,
+                    'discard': str(GG),
+                    'owner': owner.get_id(),
+                    'removed': str(to_remove),
+                    'card_data': CARDS[discard],
+                    'available': prev_avail }
     else:
         discard = player.get_position() if player.get_role() != OE else -1
         position = player.get_position()
-        action = { 'act': "build", 'data': { 'origin': str(player.get_position()),
-                                             'can_build': can_build,
-                                             'discard': str(discard),
-                                             'owner': owner.get_id(),
-                                             'removed': str(to_remove),
-                                             'card_data': CARDS[discard],
-                                             'available': prev_avail } }
+        action = { 'act': "build",
+                    'origin': str(player.get_position()),
+                    'can_build': can_build,
+                    'discard': str(discard),
+                    'owner': owner.get_id(),
+                    'removed': str(to_remove),
+                    'card_data': CARDS[discard],
+                    'available': prev_avail }
     actions.append(action)
 
     game.research_stations.remove(to_remove)
@@ -76,13 +78,13 @@ def build_station():
     print(owner.get_role(), GG in owner.hand)
     if num_stations < MAX_STATIONS:
         action = { 'act': "build" if position == -1 else 'gg',
-                   'data': { 'origin': str(position),
-                             'can_build': can_build,
-                             'discard': str(discard),
-                             'removed': 'none',
-                             'owner': owner.get_id(),
-                             'card_data': CARDS[discard],
-                             'available': prev_avail }}
+                   'origin': str(position),
+                   'can_build': can_build,
+                    'discard': str(discard),
+                    'removed': 'none',
+                    'owner': owner.get_id(),
+                    'card_data': CARDS[discard],
+                    'available': prev_avail }
         actions.append(action)
         owner.build_station(position, discard, game.research_stations, game.player_cards)
     available, new_dispatch, origin, player_id = game.set_available(player)

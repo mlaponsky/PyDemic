@@ -71,7 +71,6 @@ class Player:
     # Hand management
     def add_card(self, card):
         self.hand.append(card)
-        self.hand.sort()
 
     def discard(self, card, deck):
         if card in self.hand:

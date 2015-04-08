@@ -26,6 +26,28 @@ function create_card(city, data) {
     });
 }
 
+function trash(event) {
+    var card = $(event.target).parent();
+    card.removeClass('giveable').addClass('down');
+    var card_id_bits = card.attr('id').split('-');
+    var card_id = card_id_bits[card_id_bits.length - 1];
+    if (card_id === '48') {
+        select_airlift(card);
+    } else if (card_id === '49') {
+        select_forecast(card);
+    } else if (card_id === '50') {
+        select_gg(card);
+    } else if (card_id === '52') {
+        select_rp(card);
+    } else {
+        $.getJSON( $SCRIPT_ROOT + '/_trash', { card: Number(card_id) }).success(
+            function(data) {
+                discard(String(data.card));
+            }
+        ).error(function(error){console.log(error)});
+    }
+}
+
 function discard(card) {
     if ( $('.event-card').hasClass('down') ) {
         $('.down').removeClass('.down').hide(200);
@@ -68,10 +90,11 @@ function give(card, data) {
     card.off().attr('class', 'pl-card').hide(200);
     $('#'+data.recipient+'-card-'+data.card).on('click', take_card).addClass('takeable').show(200);
     set_cities(data.available);
-    ACTIONS++;
-    $('#undo-action').prop('disabled', ACTIONS===0);
     var giver = $('.active-player').attr('id').split('-')[1];
     $('#logger').html('You gave '+CARDS[Number(data.card)].bold()+' to the '+ROLES[data.recipient].bold()+'.');
+    ACTIONS++;
+    PHASE++;
+    $('#undo-action').prop('disabled', ACTIONS===0);
 }
 
 function give_card(event) {
@@ -170,11 +193,12 @@ function take_card(event) {
                 card.off().attr('class', 'card').hide(200);
                 $('#card-'+card_id).on('click', give_card).show(200).addClass('giveable');
                 set_cities(data.available);
-                ACTIONS++;
                 buttons_on();
-                $('#undo-action').prop('disabled', ACTIONS===0);
                 var taker = $('.active-player').attr('id').split('-')[1];
                 $('#logger').html('You took '+CARDS[Number(data.card)].bold()+ ' from the '+ROLES[data.source_id].bold()+'.');
+                ACTIONS++;
+                PHASE++;
+                $('#undo-action').prop('disabled', ACTIONS===0);
             }).error(function(error) {console.log(errors)} );
     }
 }

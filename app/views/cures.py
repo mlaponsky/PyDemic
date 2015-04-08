@@ -86,13 +86,14 @@ def execute_cure(cure_color, cure_cards, player, game, actions, prev_avail):
     if eradicated:
         game.cures[ cure_color ] = ERADICATED
 
-    action = { 'act': 'cure', 'data': { 'color': cure_color,
-                                        'cured': 0,
-                                        'cards': [str(card) for card in cure_cards],
-                                        'origin': str(player.get_position()),
-                                        'cubes': orig_cubes,
-                                        'rows': orig_rows,
-                                        'color_img': COLOR_IMG,
-                                        'card_data': [CARDS[card] for card in cure_cards],
-                                        'available': prev_avail }}
+    action = { 'act': 'cure',
+                'color': cure_color,
+                'cured': 0,
+                'cards': [str(card) for card in cure_cards],
+                'origin': str(player.get_position()),
+                'cubes': orig_cubes,
+                'rows': orig_rows,
+                'color_img': COLOR_IMG,
+                'card_data': [CARDS[card] for card in cure_cards],
+                'available': prev_avail }
     actions.append(action)

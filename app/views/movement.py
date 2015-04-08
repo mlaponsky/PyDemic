@@ -86,22 +86,23 @@ def set_move():
         session['game'] = pickle.dumps(game)
         return jsonify(selectable=selectable)
     else:
-        action = { 'act': move, 'data': { 'id': player_id,
-                                          'origin': origin,
-                                          'destination': new_pos,
-                                          'cards': discard,
-                                          'owner': owner.get_id(),
-                                          'available': prev_avail,
-                                          'can_build': prev_build,
-                                          'can_cure': prev_cure,
-                                          'cubes': orig_cubes,
-                                          'rows': orig_rows,
-                                          'color_img': COLOR_IMG,
-                                          'card_data': CARDS[int(discard)] if discard != '' else 'none',
-                                          'hand': prev_hand,
-                                          'team_hands': prev_hands,
-                                          'give': prev_give,
-                                          'take': prev_take }}
+        action = { 'act': move,
+                    'id': player_id,
+                    'origin': origin,
+                    'destination': new_pos,
+                    'cards': discard,
+                    'owner': owner.get_id(),
+                    'available': prev_avail,
+                    'can_build': prev_build,
+                    'can_cure': prev_cure,
+                    'cubes': orig_cubes,
+                    'rows': orig_rows,
+                    'color_img': COLOR_IMG,
+                    'card_data': CARDS[int(discard)] if discard != '' else 'none',
+                    'hand': prev_hand,
+                    'team_hands': prev_hands,
+                    'give': prev_give,
+                    'take': prev_take }
         actions.append(action)
         available, new_dispatch, origin, player_id = game.set_available(player)
         can_take, can_give, team_hands = game.set_share()
@@ -175,23 +176,23 @@ def select_move_card():
         player.has_stationed = True
         move = "station-fly"
 
-    action = { 'act': move, 'data': { 'id': player_id,
-                                      'origin': origin,
-                                      'destination': new_pos,
-                                      'cards': discard,
-                                      'owner': player.get_id(),
-                                      'available': prev_avail,
-                                      'can_build': prev_build,
-                                      'can_cure': prev_cure,
-                                      'cubes': orig_cubes,
-                                      'rows': orig_rows,
-                                      'color_img': COLOR_IMG,
-                                      'card_data': CARDS[int(discard)] if discard != '' else 'none',
-                                      'hand': prev_hand,
-                                      'team_hands': prev_hands,
-                                      'give': prev_give,
-                                      'take': prev_take
-                                      }}
+    action = { 'act': move,
+                'id': player_id,
+                'origin': origin,
+                'destination': new_pos,
+                'cards': discard,
+                'owner': player.get_id(),
+                'available': prev_avail,
+                'can_build': prev_build,
+                'can_cure': prev_cure,
+                'cubes': orig_cubes,
+                'rows': orig_rows,
+                'color_img': COLOR_IMG,
+                'card_data': CARDS[int(discard)] if discard != '' else 'none',
+                'hand': prev_hand,
+                'team_hands': prev_hands,
+                'give': prev_give,
+                'take': prev_take }
     actions.append(action)
 
     player.move(new_pos, board, game.cures, game.cubes, game.cubes_left, game.quarantined)

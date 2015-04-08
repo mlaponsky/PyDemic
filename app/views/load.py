@@ -35,6 +35,7 @@ def setup():
                                     form=form)
         game = Game(chosen, form.difficulty.data)
         actions = []
+        session.clear()
         session['game'] = pickle.dumps(game)
         session['actions'] = actions
         return redirect(url_for('load.start_game'))
@@ -65,6 +66,8 @@ def set_game():
         positions.append(str(p.get_position()))
 
     can_take, can_give, team_hands = game.set_share()
+    for p in team:
+        print(p.get_id(), p.hand)
 
     research_stations = copy(game.research_stations)
     can_build = player.can_build( player.get_position(), research_stations)
@@ -89,7 +92,6 @@ def set_game():
                     positions=positions,
                     cubes=cubes,
                     cube_rows=rows,
-                    colors=COLOR_IMG,
                     cures=cures,
                     rs=research_stations,
                     can_build=can_build,
@@ -99,13 +101,13 @@ def set_game():
                     team_hands=team_hands,
                     can_give=can_give,
                     can_take=can_take,
-                    cards=CARDS,
                     forecast=game.infect_cards.deck[:6],
                     player_discard=game.player_cards.discard,
                     player_grave=game.player_cards.graveyard,
                     infect_discard=game.infect_cards.discard,
                     infect_grave=game.infect_cards.graveyard,
-                    actions=actions )
+                    actions=actions,
+                    phase=game.phase )
 
 @load.route('/game')
 def start_game():

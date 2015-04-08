@@ -14,11 +14,11 @@ function set_cube_dimensions(cube, dims, row, num) {
     cube.css('pointer-events', 'none');
 }
 
-function create_cube(position, dims, color, image, row, num) {
+function create_cube(position, dims, color, row, num) {
     var cube = $('<img/>');
     var class_name = "city-"+position + " " + "cube-"+color + " " + "row-"+String(row);
     cube.attr("class", class_name);
-    cube.attr("src", image);
+    cube.attr("src", "static/img/cubes/cube-"+String(color)+".svg");
     set_cube_dimensions(cube, dims, row, num);
     cube.appendTo('#map');
 }
@@ -29,9 +29,9 @@ function set_cube_position(position, dims, color, row, num) {
     set_cube_dimensions(cube, dims, row, num);
 }
 
-function create_cube_row(position, dims, color, image, row, total) {
+function create_cube_row(position, dims, color, row, total) {
     for (var num=0; num<total; num++) {
-        create_cube(position, dims, String(color), image, row, num);
+        create_cube(position, dims, String(color), row, num);
     }
 }
 
@@ -41,15 +41,15 @@ function set_cube_row(position, dims, color, row, total) {
     }
 }
 
-function add_cubes(position, dims, color, image, row, total) {
+function add_cubes(position, dims, color, row, total) {
     var class_name = ".city-"+position+".cube-"+color+".row-"+String(row);
     var cube_row = $(class_name);
     for (var i=cube_row.length; i<total; i++) {
-        create_cube(position, dims, color, image, row, i);
+        create_cube(position, dims, color, row, i);
     }
 };
 
-function init_cubes(cubes, rows, images) {
+function init_cubes(cubes, rows) {
     positions = Object.keys(cubes);
     for (var i=0; i<positions.length; i++ ) {
         var cube_set = cubes[positions[i]];
@@ -57,7 +57,7 @@ function init_cubes(cubes, rows, images) {
             if (cube_set[color] !== 0) {
                 var city = document.getElementById(positions[i]);
                 var dims = city.getBoundingClientRect();
-                create_cube_row(positions[i], dims, color, images[color], rows[positions[i]][color], cube_set[color]);
+                create_cube_row(positions[i], dims, color, rows[positions[i]][color], cube_set[color]);
             }
         }
     }
@@ -105,6 +105,7 @@ function treat(event) {
         if (typeof data.c !== 'undefined') {
             remove_cubes(city, data.c, data.num_cubes, data.cubes_left);
             ACTIONS++;
+            PHASE++;
             $("#undo-action").prop('disabled', ACTIONS === 0);
         } else {
             $(".city-"+city).css("border", "2px solid #FFFFF0");

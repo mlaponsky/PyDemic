@@ -13,6 +13,7 @@ from .views.undo import undo
 from .views.cures import cures
 from .views.share import share
 from .views.events import events
+from .views.phase import phase
 
 app.register_blueprint(load)
 app.register_blueprint(movement)
@@ -22,3 +23,4 @@ app.register_blueprint(undo)
 app.register_blueprint(cures)
 app.register_blueprint(share)
 app.register_blueprint(events)
+app.register_blueprint(phase)

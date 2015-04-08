@@ -115,11 +115,11 @@ class Game:
         can_take = {}
         player = self.players[self.active]
         team = self.players[self.active:] + self.players[:self.active]
-        team_hands = []
+        team_hands = {}
         for p in team[1:]:
             can_take[p.get_id()] = []
             can_give[p.get_id()] = []
-            team_hands.append(copy(p.hand))
+            team_hands[p.get_id()] = copy(p.hand)
             for card in p.hand:
                 can_take[p.get_id()].append(player.can_take(card, p))
             for card in player.hand:

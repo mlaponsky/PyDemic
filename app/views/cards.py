@@ -29,10 +29,11 @@ def give():
         recipients = [t for t in team if t.get_id() == recip]
     if len(recipients) == 1:
 
-        action = { 'act': 'give', 'data': { 'card': str(card),
-                                            'giver': player.get_id(),
-                                            'taker': recipients[0].get_id(),
-                                            'available': prev_avail }}
+        action = { 'act': 'give',
+                    'card': str(card),
+                    'giver': player.get_id(),
+                    'taker': recipients[0].get_id(),
+                    'available': prev_avail }
         actions.append(action)
 
         player.give_card(card, recipients[0])
@@ -62,10 +63,11 @@ def select_recipient():
             recipient = p
     prev_avail, dispatch, origin, player_id = game.set_available(player)
 
-    action = { 'act': 'give', 'data': { 'card': str(card),
-                                        'giver': player.get_id(),
-                                        'taker': recipient.get_id(),
-                                        'available': prev_avail }}
+    action = { 'act': 'give',
+                'card': str(card),
+                'giver': player.get_id(),
+                'taker': recipient.get_id(),
+                'available': prev_avail }
     actions.append(action)
 
     player.give_card(card, recipient)
@@ -91,10 +93,11 @@ def take():
 
     prev_avail, dispatch, origin, player_id = game.set_available(player)
 
-    action = { 'act': 'take', 'data': { 'card': str(card),
-                                        'taker': player.get_id(),
-                                        'giver': source.get_id(),
-                                        'available': prev_avail }}
+    action = { 'act': 'take',
+                'card': str(card),
+                'taker': player.get_id(),
+                'giver': source.get_id(),
+                'available': prev_avail }
     actions.append(action)
 
     player.take_card(card, source)

@@ -12,6 +12,7 @@ function make_cure() {
                     document.getElementById(String(data.c)+"-cnt").getElementsByTagName('tspan')[0].textContent = String(data.cubes_left);
                 }
                 ACTIONS++;
+                PHASE++;
                 set_cities(data.available);
                 set_treatable(data.position);
                 $('#make-cure').prop('disabled', true);
@@ -82,6 +83,7 @@ function execute_cure() {
             buttons_on();
             $('#make-cure').prop('disabled', true).attr('class', 'action');
             ACTIONS++;
+            PHASE++;
             set_cities(data.available);
             set_treatable(data.position);
             $('#undo-action').prop('disabled', ACTIONS === 0)

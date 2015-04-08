@@ -1,33 +1,45 @@
 function undo() {
     $.getJSON( $SCRIPT_ROOT + '/_undo').success( function(data) {
-        if ( (data.result['act'] === "drive") || (data.result['act'] === "shuttle") || (data.result['act'] === "dispatch") ) {
-            undo_move(data.result['data']);
+        data=data.result;
+        if ( (data['act'] === "drive") || (data['act'] === "shuttle") || (data['act'] === "dispatch") ) {
+            undo_move(data);
             ACTIONS--;
-        } else if ((data.result['act'] === "charter") ||
-                   (data.result['act'] === "fly") ||
-                   (data.result['act'] === "station-fly") ||
-                   (data.result['act'] === "airlift")) {
-            undo_discard(data.result['data']['cards'], data.result['data']['owner']);
-            undo_move(data.result['data']);
+            PHASE--;
+        } else if ((data['act'] === "charter") ||
+                   (data['act'] === "fly") ||
+                   (data['act'] === "station-fly")) {
+            undo_discard(data['cards'], data['owner']);
+            undo_move(data);
             ACTIONS--;
-        } else if ( (data.result['act'] === "build") ||
-                    (data.result['act'] === "gg") ) {
-            undo_station(data.result['data']);
+            PHASE--;
+        } else if (data['act'] === "airlift") {
+            undo_discard(data['cards'], data['owner']);
+            undo_move(data);
             ACTIONS--;
-        } else if (data.result['act'] === "treat") {
-            undo_treatment(data.result['data']);
+        } else if (data['act'] === "build") {
+            undo_station(data);
             ACTIONS--;
-        } else if (data.result['act'] === "cure") {
-            undo_cure(data.result['data']);
+            PHASE--;
+        } else if (data['act'] === "gg") {
+            undo_station(data);
             ACTIONS--;
-        } else if (data.result['act'] === "take") {
-            undo_take(data.result['data']);
+        } else if (data['act'] === "treat") {
+            undo_treatment(data);
             ACTIONS--;
-        } else if (data.result['act'] === "give") {
-            undo_give(data.result['data']);
+            PHASE--;
+        } else if (data['act'] === "cure") {
+            undo_cure(data);
             ACTIONS--;
-        } else if (data.result['act'] === "rp") {
-            undo_rp(data.result['data']);
+            PHASE--;
+        } else if (data['act'] === "take") {
+            undo_take(data);
+            ACTIONS--;
+        } else if (data['act'] === "give") {
+            undo_give(data);
+            ACTIONS--;
+            PHASE--;
+        } else if (data['act'] === "rp") {
+            undo_rp(data);
             ACTIONS--;
         }
         $('#undo-action').prop('disabled', ACTIONS === 0);
@@ -147,6 +159,7 @@ function undo_give(data) {
 }
 
 function undo_rp(data) {
-    $('#infect-discard-'+String(data['deleted'])).off().attr('class', 'card');
+    $('#infect-discard-'+String(data['deleted'])).off().attr('class', 'infect-card');
+    $('#logger').html('(UNDO) Returned '+CARDS[data['deleted']].bold()+' from the graveyard.')
     undo_discard('52', data['owner']);
 }

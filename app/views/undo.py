@@ -17,7 +17,7 @@ def undo_action():
     actions = session['actions']
     player = game.players[game.active]
     action = actions.pop(-1)
-    data = action['data']
+    data = action
 
     if action['act'] == "drive" or action['act'] == "shuttle" or action['act'] == "dispatch":
         undo_move(data, player, game)

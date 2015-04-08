@@ -12,6 +12,24 @@
 	font-style: normal;
 }
 
+::-webkit-scrollbar
+{
+  width: 6%;  /* for vertical scrollbars */
+  height: 6%; /* for horizontal scrollbars */
+}
+
+::-webkit-scrollbar-track
+{
+  background: rgba(100, 100, 100, 0.1);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb
+{
+  background: rgba(100, 100, 100, 0.5);
+  border-radius: 10px;
+}
+
 body, html { font-size: 100%; height: 100%; width: 100%; padding: 0; margin: 0;}
 
 /* Reset */
@@ -101,6 +119,51 @@ a:hover {
     -o-background-size: cover;
     background-size: cover;
     position: relative;
+}
+
+#mask {
+	width: 60%;
+	height: 25%;
+	color: #fffff0;
+	background-color: #222222;
+	z-index: 1000;
+	position: absolute;
+	left: 20%;
+	top: 40%;
+	opacity: 0.9;
+	border: 3px solid #fffff0;
+	border-top-left-radius: 4% 20%;
+	border-top-right-radius: 4% 20%;
+	border-bottom-left-radius: 4% 20%;
+	border-bottom-right-radius: 4% 20%;
+	text-align: center;
+}
+
+#stage-name {
+	font-size: 2vw;
+	font-weight: bold;
+	display: inline-block;
+}
+
+#draw-cards {
+	height: 64%;
+	width: 100%;
+	margin-left: -2%;
+	margin-top: 1%;
+
+}
+.draw-card {
+	width: 13%;
+	height: 100%;
+	display: inline-block;
+	padding-left: 1%;
+	padding-right: 1%;
+}
+
+.draw-card > div {
+	background: #fffff0;
+	width: 100%;
+	height: 100%;
 }
 
 #cities {
@@ -242,11 +305,11 @@ a:hover {
 	font-size: 90%;
 }
 
-#logger {
+#logger-box {
 	position: absolute;
 	left: 36%;
 	bottom: 18.5%;
-	width: 47%;
+	width: 40%;
 	height: 4%;
 	background: #222222;
 	border: 2px solid #fffff0;
@@ -257,9 +320,31 @@ a:hover {
 	padding-top: 0.4%;
 	padding-bottom: 0.2%;
 	padding-left: 1.5%;
+	padding-right: 1.5%;
 	font-size: 0.77vw;
 	color: #fffff0;
 	opacity: 0.75;
+	overflow: hidden;
+	white-space: nowrap;
+}
+
+#logger {
+	width: 100%;
+	opacity: 100%;
+}
+
+#logger-box:hover > div {
+	cursor: default;
+	-webkit-animation: move_eye 5s linear 0s infinite normal;
+}
+
+@-webkit-keyframes move_eye {
+    from {
+        -webkit-transform: translate(0%,0)
+    }
+    to {
+        -webkit-transform: translate(-100%,0)
+    }
 }
 
 #finish {
@@ -336,4 +421,24 @@ a:hover {
 	left: 10%;
 	top: 18%;
 	border: 1px solid #fffff0;
+}
+
+#draw1 {
+	position: absolute;
+	right: 34%;
+	bottom: 24%;
+	width: 5.5%;
+	box-shadow: 0px 0px 8px 1px #fffff0;
+	border-radius: 3px;
+	background-color: transparent;
+}
+
+#draw2 {
+	position: absolute;
+	right: 27.5%;
+	bottom: 24%;
+	width: 5.5%;
+	box-shadow: 0px 0px 8px 1px #fffff0;
+	border-radius: 3px;
+	background-color: transparent;
 }

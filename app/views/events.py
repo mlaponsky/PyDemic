@@ -48,8 +48,9 @@ def rp():
     game.infect_cards.add_to_graveyard(card)
     owner.discard(RP, game.player_cards)
 
-    action = { 'act': 'rp', 'data': { 'owner': owner.get_id(),
-                                      'deleted': card } }
+    action = { 'act': 'rp',
+                'owner': owner.get_id(),
+                'deleted': card }
     actions.append(action)
     session['actions'] = actions
     session['game'] = pickle.dumps(game)

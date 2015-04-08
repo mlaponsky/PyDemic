@@ -49,7 +49,12 @@ function select_station(event) {
             $("#station-"+String(data.station)).show(200).attr('class', 'built');
             $('#logger').html('Built a station in '+CARDS[data.station].bold()+'. Removed station from '+CARDS[Number(to_remove)]+'.');
             ACTIONS++;
+            PHASE++;
             board_on();
+            if (data.discard === 50) {
+                $('.down').off().on('click', select_gg);
+                PHASE--;
+            }
             if (data.discard !== -1) {
                 discard(data.discard);
             }
@@ -84,8 +89,10 @@ function build_station() {
             $("#station-"+String(data.station)).show(200).attr('class', 'built');
             $('#logger').html('Built a station in '+CARDS[data.station].bold()+'.');
             ACTIONS++;
+            PHASE++;
             if ( data.discard === 50 ) {
                 $('.down').off().on('click', select_gg);
+                PHASE--;
             }
 
             if ( data.discard !== -1 ) {

@@ -49,6 +49,20 @@
 		{% include 'player_cards.html' %}
 		<div class="container">
 			<div id="map" class="main">
+				<div id='mask' hidden>
+					<span id="stage-name">INFECT STAGE</span>
+					<ul id="draw-cards">
+						<li id="draw-0" class="draw-card" >
+			                <div></div>
+			            </li>
+						<li id="draw-1" class="draw-card" >
+			                <div></div>
+			            </li>
+						<li id="draw-2" class="draw-card" >
+			                <div></div>
+			            </li>
+					</ul>
+				</div>
 				{% with messages = get_flashed_messages() %}
 				  {% if messages %}
 				    <ul class=flashes>
@@ -90,14 +104,14 @@
 
 				{% include 'player.html' %}
 
-				<div id="logger">
-					This is the actions log.
+				<div id="logger-box">
+					<div id="logger">This is the actions log.</div>
 				</div>
 				<button hidden='true' id="finish">DONE</button>
 				<ul hidden='true' id="forecast">
 					FORECAST
-					{% for card in game.infect_cards.deck[:6] %}
-					<li id="forecast-{{card}}">
+					{% for card in game.infect_cards.deck %}
+					<li id="forecast-{{card}}" class="forecast-card" hidden="true">
 						<div class="{{ colors[card // 12] }}"></div>
 	                    <p>{{ cards[card]['name'] }}</p>
 					</li>

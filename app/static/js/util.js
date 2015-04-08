@@ -79,14 +79,14 @@ function set_giveable(hand, can_give) {
 function set_takeable(team_hands, can_take) {
     var roles = Object.keys(can_take);
     $('.card').off().attr('class', 'card').hide();
-    for (var p=0; p<team_hands.length; p++) {
-        for (var n=0; n<team_hands[p].length; n++) {
-            $("#"+roles[p]+"-card-"+String(team_hands[p][n])).show();
-            if ( can_take[roles[p]][n] || team_hands[p][n] > 47 ) {
-                $("#"+roles[p]+"-card-"+String(team_hands[p][n])).off().on('click', take_card).addClass('takeable');
+    for (var p=0; p<roles.length; p++) {
+        for (var n=0; n<team_hands[roles[p]].length; n++) {
+            $("#"+roles[p]+"-card-"+String(team_hands[roles[p]][n])).show();
+            if ( can_take[roles[p]][n] || team_hands[roles[p]][n] > 47 ) {
+                $("#"+roles[p]+"-card-"+String(team_hands[roles[p]][n])).off().on('click', take_card).addClass('takeable');
             }
-            if ( team_hands[p][n] > 47 ) {
-                $("#"+roles[p]+"-card-"+String(team_hands[p][n])).addClass('event-card');
+            if ( team_hands[roles[p]][n] > 47 ) {
+                $("#"+roles[p]+"-card-"+String(team_hands[roles[p]][n])).addClass('event-card');
             }
         }
     }

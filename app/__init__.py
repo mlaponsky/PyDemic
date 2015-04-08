@@ -11,7 +11,7 @@ from .views.cubes import disease
 from .views.stations import stations
 from .views.undo import undo
 from .views.cures import cures
-from .views.share import share
+from .views.cards import cards
 from .views.events import events
 from .views.phase import phase
 
@@ -21,6 +21,6 @@ app.register_blueprint(disease)
 app.register_blueprint(stations)
 app.register_blueprint(undo)
 app.register_blueprint(cures)
-app.register_blueprint(share)
+app.register_blueprint(cards)
 app.register_blueprint(events)
 app.register_blueprint(phase)

@@ -8,7 +8,7 @@ import random
 import pickle
 from copy import copy
 
-share = Blueprint('share', __name__)
+cards = Blueprint('cards', __name__)
 
 @share.route('/_give_card')
 def give():

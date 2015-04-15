@@ -184,7 +184,7 @@ function give_card(event) {
                         $("#"+data.recipients[i]).off().on('click', select_recipient);
                     }
                     $('html').off().on( 'click', function(e) {
-                        if ( $(e.target).parent().parent().attr('class') !== 'can-give' || $(e.target).parent().attr('class') === 'down') {
+                        if ( $(e.target).hasClass('down') ) {
                             escape_give_select(card, data);
                         }
                     });
@@ -204,12 +204,11 @@ function select_recipient(event) {
     $.getJSON( $SCRIPT_ROOT + '/_select_recipient', { card: card_id, selected: recip }).success(
         function(data) {
             var card = $('#card-'+data.card);
+            escape_give_select(card, data);
+            card.off();
             give(card, data);
             if (typeof data.num_cards > 7) {
-                set_team_trash($('.down'), data)
-            } else {
-                escape_give_select(card, data);
-                card.off();
+                set_team_trash()
             }
         }).error(function(error) {console.log(errors)} );
 }

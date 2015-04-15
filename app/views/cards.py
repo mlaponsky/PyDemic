@@ -79,7 +79,7 @@ def select_recipient():
                     recipient=recipient.get_id(),
                     recipients=[r.get_id() for r in game.players[game.active+1:] + game.players[:game.active]],
                     available=available,
-                    num_cards=len(recipent.hand) )
+                    num_cards=len(recipient.hand) )
 
 @cards.route('/_take')
 def take():

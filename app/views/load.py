@@ -1,7 +1,7 @@
 from app import app
 from ..src.game import Game
 from ..src.constants import *
-from flask import render_template, flash, redirect, url_for, request, jsonify, \
+from flask import render_template, g, flash, redirect, url_for, request, jsonify, \
                     session, Blueprint
 import json
 from ..forms import SetupForm

@@ -25,9 +25,9 @@ class Game:
         self.from_discard = []
 
         # cubes[city][color]
-        self.cubes = {}
+        self.cubes = []
         for city in range(NUM_CITIES):
-             self.cubes[city] = [0] * 4
+             self.cubes.append([0] * 4)
         self.cubes_left = [NUM_CUBES] * 4
         self.cures = [0] * 4
 
@@ -49,8 +49,9 @@ class Game:
         self.player_cards = PlayerCards(self.players, self.num_epidemics)
         self.active = self.set_order()
 
-        for p in self.players:
-            print(p.hand)
+        # for n in range(5):
+        #     card = self.player_cards.draw_card(0)
+        #     self.players[self.active].hand.append(card)
     ## Manage game phase
     def get_phase(self):
         return self.phase

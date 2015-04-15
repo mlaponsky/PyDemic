@@ -3,7 +3,7 @@
         <li id="name" class="self-unchooseable">
             <div class="pl-name"></div>
         </li>
-        {% for card in range(cards|length) %}
+        {% for card in range(cards|length - 1) %}
             <li id="card-{{ card }}" class="pl-card" >
                 <div title="{{ cards[card]['name'] }} &#013; {{ cards[card]['description'] }}"></div>
             </li>

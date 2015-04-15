@@ -1,12 +1,15 @@
-import pickle
-from redis import Redis
+import pickle, sys, os
+from redis import Redis, ConnectionPool, from_url
 from datetime import timedelta
 from uuid import uuid4
 from werkzeug.datastructures import CallbackDict
 from flask.sessions import SessionInterface, SessionMixin
 
-class RedisSession(CallbackDict, SessionMixin):
+# POOL = ConnectionPool(host='192.168.1.12', port="6379", db=0)
+POOL = ConnectionPool(host='127.0.0.1', port="6379", db=0)
 
+
+class RedisSession(CallbackDict, SessionMixin):
     def __init__(self, initial=None, sid=None, new=False):
         def on_update(self):
             self.modified = True
@@ -22,7 +25,11 @@ class RedisSessionInterface(SessionInterface):
 
     def __init__(self, redis=None, prefix='game'):
         if redis is None:
-            redis = Redis()
+            url = os.environ.get('REDISTOGO_URL', 'http://localhost:6959')
+            if url != 'http://localhost:6959':
+                redis = from_url(url)
+            else:
+                redis = Redis(connection_pool=POOL)
         self.redis = redis
         self.prefix = prefix
 

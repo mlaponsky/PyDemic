@@ -16,7 +16,7 @@ function select_airlift(target) {
     } else {
         body.addClass('selecting');
     }
-    $('#logger').html('(Forecast) Select a player to move.')
+    $('#logger').html('(Airlift) Select a player to move.')
 }
 
 function airlift_select_player(event) {
@@ -43,7 +43,7 @@ function airlift_select_player(event) {
             $('html').keyup( function( e ) {
                 if (e.keyCode === 27) { escape_airlift() };
             });
-            $('#logger').html('(Forecast) Select a destination for the  '+ROLES[data.role].bold()+'.');
+            $('#logger').html('(Airlift) Select a destination for the  '+ROLES[data.role].bold()+'.');
         }
     ).error(function(error){console.log(error)});
 }

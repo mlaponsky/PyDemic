@@ -32,10 +32,10 @@ function execute_forecast() {
             $('#logger').html('Played <b>FORECAST</b>.');
             $('#next-phase').off().prop('disabled', true);
             $('#forecast').hide(200);
-            buttons_on()
+            buttons_on();
+            board_on();
             set_cities(data.available);
             set_treatable(data.position);
             $('.holding.down').removeClass('down').hide(200);
-            board_on();
         }).error( function(error) {console.log(error) });
 }

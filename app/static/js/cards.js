@@ -26,43 +26,21 @@ function create_card(city, data) {
     });
 }
 
-function trash(event) {
-    var card = $(event.target).parent();
-    card.removeClass('giveable').addClass('down');
-    var card_id_bits = card.attr('id').split('-');
-    var card_id = card_id_bits[card_id_bits.length - 1];
-    if (card_id === '48') {
-        select_airlift(card);
-    } else if (card_id === '49') {
-        select_forecast(card);
-    } else if (card_id === '50') {
-        select_gg(card);
-    } else if (card_id === '52') {
-        select_rp(card);
-    } else {
-        $.getJSON( $SCRIPT_ROOT + '/_trash', { card: Number(card_id) }).success(
-            function(data) {
-                discard(String(data.card));
-            }
-        ).error(function(error){console.log(error)});
-    }
-}
-
-function set_team_trash(card, data) {
+function set_team_trash() {
     $('.available').off().attr('class', 'unavailable marked');
     $('.treatable').off().attr('class', 'unavailable marked-t');
     buttons_off();
-    card.off().addClass('giving');
     board_off();
     $('#'+data.recipient).parent().parent().attr('class', 'can-give');
     $('#'+data.recipient+"-box li.card").off().on('click', trash).addClass('takeable');
 }
 
-function set_active_trash(card, data) {
-    $('.available').off().attr('class', 'unavailable marked');
+function set_active_trash() {
+    $(".available").off().attr('class', 'unavailable');
+    $(".selectable").off().attr('class', 'unavailable');
+    $(".selected").off().attr('class', 'unavailable');
     $('.treatable').off().attr('class', 'unavailable marked-t');
     buttons_off();
-    card.off().addClass('taking');
     board_off();
     $('.pl-card').off().on('click', trash).addClass('giveable');
 }
@@ -84,7 +62,7 @@ function undo_discard(card, owner) {
         $('#card-'+card).show(200);
     }
     $("#pl-discard-"+card).hide(200);
-    $('#logger').html($('#logger').html()+' Returned '+CARDS[Number(card)].bold()+' to the '+ROLES[owner].bold()+"'s hand.");
+    $('#logger').html( $('#logger').html()+' Returned '+CARDS[Number(card)].bold()+' to the '+ROLES[owner].bold()+"'s hand.");
 }
 
 function board_off() {
@@ -95,6 +73,8 @@ function board_off() {
 }
 
 function board_on() {
+    $('.giveable').off().removeClass('giveable');
+    $('.takeable').off().removeClass('takeable');
     $('.pl-card.down').off().removeClass('down').addClass('giveable');
     $('.card.down').off().removeClass('down').addClass('takeable');
     $('.pl-card.holding').removeClass('holding').addClass('giveable');
@@ -103,6 +83,35 @@ function board_on() {
     $('.takeable').off().on('click', take_card);
     $('.role.holding').off().on('click', select_player).removeClass('holding').addClass('choosable');
     $('#name.holding').off().on('click', function() {console.log('Ya')}).removeClass('holding').addClass('self-chooseable');
+    $('.can-give').removeClass('can-give');
+    $('.can-take').removeClass('can-take');
+}
+
+function trash(event) {
+    var card = $(event.target).parent();
+    card.removeClass('giveable').addClass('down');
+    var card_id_bits = card.attr('id').split('-');
+    var card_id = card_id_bits[card_id_bits.length - 1];
+    if (card_id === '48') {
+        select_airlift(card);
+    } else if (card_id === '49') {
+        select_forecast(card);
+    } else if (card_id === '50') {
+        select_gg(card);
+    } else if (card_id === '52') {
+        select_rp(card);
+    } else {
+        $.getJSON( $SCRIPT_ROOT + '/_trash', { card: Number(card_id),
+                                               action: 1 }).success(
+            function(data) {
+                $('#logger').html('');
+                discard(String(data.card));
+                board_on();
+                set_cities(data.available);
+                set_treatable(data.origin);
+            }
+        ).error(function(error){console.log(error)});
+    }
 }
 
 function give(card, data) {
@@ -142,17 +151,23 @@ function give_card(event) {
                         team_toggle();
                         setTimeout( function() {
                             give(card, data);
-                            setTimeout( function() {
-                                team_toggle();
-                                buttons_on();
-                            }, 1500);
+                            if ( typeof data.resp !== 'undefined' ) {
+                                $('#'+data.recipient).parent().parent().addClass('can_give');
+                                set_team_trash(card, data);
+                            } else {
+                                setTimeout( function() {
+                                    team_toggle();
+                                    buttons_on();
+                                }, 1500);
+                            }
                         }, 200);
                     } else {
                         give(card, data);
+                        if ( typeof data.num_cards > 7 ) {
+                            set_team_trash(card, data);
+                        }
                         buttons_on();
                     }
-                } else if ( typeof data.resp !== 'undefined' ) {
-                    set_team_trash(card, data);
                 } else {
                     $('.available').off().attr('class', 'unavailable marked');
                     $('.treatable').off().attr('class', 'unavailable marked-t');
@@ -188,12 +203,12 @@ function select_recipient(event) {
     var card_id = $('.down').attr('id').split('-')[1];
     $.getJSON( $SCRIPT_ROOT + '/_select_recipient', { card: card_id, selected: recip }).success(
         function(data) {
-            if (typeof data.resp !== 'undefined') {
+            var card = $('#card-'+data.card);
+            give(card, data);
+            if (typeof data.num_cards > 7) {
                 set_team_trash($('.down'), data)
             } else {
-                var card = $('#card-'+data.card);
                 escape_give_select(card, data);
-                give(card, data);
                 card.off();
             }
         }).error(function(error) {console.log(errors)} );

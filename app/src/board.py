@@ -4,12 +4,12 @@ from .constants import *
 
 class Board:
     def __init__(self):
-        self.neighbors = {}
-        self.rows = {}
+        self.neighbors = []
+        self.rows = []
         self.distance = 0
         for city in range(NUM_CITIES):
-            self.neighbors[city] = []
-            self.rows[city] = [-1] * 4
+            self.neighbors.append([])
+            self.rows.append([-1] * 4)
         self.fill_neighbors()
 
     def add_neighbor(self, n1, n2):

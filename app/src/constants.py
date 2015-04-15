@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+
+REDIS_HOST_ADDRESS = '192.169.1.12'
+
 BLUE = 0
 YELLOW = 1
 BLACK = 2

@@ -2,11 +2,12 @@ from app import app
 from ..src.game import Game
 from ..src.constants import *
 from flask import render_template, flash, redirect, url_for, request, jsonify, \
-                    session, Blueprint
+                    session, Blueprint, g
 import json
 import random
 import pickle
 from copy import copy
+import sys
 
 movement = Blueprint('movement', __name__)
 
@@ -20,6 +21,7 @@ def set_move():
     new_pos = request.args.get('id', 0, type=int)
     is_airlift = request.args.get('airlift', 0, type=int)
     index = request.args.get('index', 0, type=int)
+    adding = request.args.get('adding', 0, type=int)
     owner = game.players[(game.active + index) % game.num_players ]
     discard = ""
     cures = copy(game.cures)
@@ -103,7 +105,10 @@ def set_move():
                     'team_hands': prev_hands,
                     'give': prev_give,
                     'take': prev_take }
-        actions.append(action)
+        if adding == 0:
+            actions.append(action)
+        else:
+            actions[0]['trash'] = action
         available, new_dispatch, origin, player_id = game.set_available(player)
         can_take, can_give, team_hands = game.set_share()
 
@@ -115,10 +120,11 @@ def set_move():
             can_cure = player.can_cure(game.research_stations)
             session['actions'] = actions
             session['game'] = pickle.dumps(game)
+            print(player.hand)
             return jsonify( available=available,
                             player_id=player_id,
                             move=move,
-                            origin=action['data']['origin'],
+                            origin=action['origin'],
                             discard=discard,
                             cures=cures,
                             cubes_left=cubes_left,
@@ -127,23 +133,26 @@ def set_move():
                             team_hands=team_hands,
                             can_cure=can_cure,
                             can_take=can_take,
-                            can_give=can_give )
+                            can_give=can_give,
+                            num_cards=len(owner.hand) )
         else:
             can_build = player.can_build(new_pos, game.research_stations)
             can_cure = player.can_cure(game.research_stations)
             session['actions'] = actions
             session['game'] = pickle.dumps(game)
+            print(player.hand)
             return jsonify( available=available,
                             player_id=player_id,
                             move=move,
-                            origin=action['data']['origin'],
+                            origin=action['origin'],
                             discard=discard,
                             can_build=can_build,
                             can_cure=can_cure,
                             hand=player.hand,
                             team_hands=team_hands,
                             can_take=can_take,
-                            can_give=can_give )
+                            can_give=can_give,
+                            num_cards=len(owner.hand) )
 
 @movement.route('/_select_card_for_move')
 def select_move_card():
@@ -209,7 +218,7 @@ def select_move_card():
         return jsonify( available=available,
                         player_id=player_id,
                         move=move,
-                        origin=action['data']['origin'],
+                        origin=action['origin'],
                         cures=cures,
                         cubes_left=cubes_left,
                         can_build=can_build,
@@ -217,20 +226,22 @@ def select_move_card():
                         hand=player.hand,
                         team_hands=team_hands,
                         can_take=can_take,
-                        can_give=can_give )
+                        can_give=can_give,
+                        num_cards=len(owner.hand) )
     else:
         session['actions'] = actions
         session['game'] = pickle.dumps(game)
         return jsonify( available=available,
                         player_id=player_id,
                         move=move,
-                        origin=action['data']['origin'],
+                        origin=action['origin'],
                         can_build=can_build,
                         can_cure=can_cure,
                         hand=player.hand,
                         team_hands=team_hands,
                         can_take=can_take,
-                        can_give=can_give )
+                        can_give=can_give,
+                        num_cards=len(owner.hand) )
 
 @movement.route('/_select_player')
 def select_player():

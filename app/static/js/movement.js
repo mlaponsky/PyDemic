@@ -36,6 +36,25 @@ function move(new_pos, data) {
                 $("#build-station").prop('disabled', true);
                 $("#make-cure").prop('disabled', true);
             }
+            if (data.num_cards <= 7) {
+                if (is_airlift === 1) {
+                    $('#name').off().attr('class', 'self-unchooseable');
+                    $('.role').off().attr('class', 'role');
+                    if ( $('#active-dispatcher').length !== 0 ) {
+                        $('.role').off().on('click', select_player).attr('class', 'role choosable')
+                    }
+                    if (!body.hasClass('selecting')) {
+                        team_toggle();
+                    } else {
+                        body.removeClass('selecting');
+                    }
+                }
+                buttons_on();
+            } else {
+                board_off();
+                set_active_trash();
+                $('#logger').html( $('#logger').html() + ' Still over the card limit; choose another card to discard.');
+            }
     });
 
 }
@@ -45,15 +64,21 @@ function execute_move(event) {
     var new_pos = city.attr("id");
     var is_airlift = 0;
     var select = 0;
+    var adding = 0;
     if ( $('.event-card').hasClass('down') ){
         is_airlift = 1
         if ( $('.card.down').length !== 0 ) {
-            select  = $('.down').parent().parent().index();
+            select  = $('.event-card.down').parent().parent().index();
         }
     };
+    if ( $('.holding').hasClass('down') ) {
+        adding = 1
+    }
     $.getJSON($SCRIPT_ROOT + '/_move', { id: Number(new_pos),
                                          airlift: is_airlift,
-                                         index: select }).success(function(data) {
+                                         index: select,
+                                         adding: adding
+                                       }).success(function(data) {
         if (typeof data.available !== 'undefined') {
             if (data.move === "drive") {
                 $('#logger').html("Drove from "+CARDS[data.origin].bold()+" to "+CARDS[new_pos].bold()+".");
@@ -68,7 +93,6 @@ function execute_move(event) {
                 PHASE++;
             } else if (data.move === "airlift") {
                 $('#logger').html("Airlifted "+ROLES[data.player_id]+" from "+CARDS[data.origin].bold()+".");
-                $('.holding.down').removeClass('down').hide(200);
                 discard(data.discard)
             } else if (data.move === "dispatch") {
                 $('#logger').html("Dispatched "+ROLES[data.player_id]+" from "+CARDS[data.origin].bold()+".");
@@ -81,19 +105,6 @@ function execute_move(event) {
                 PHASE++;
             }
             move(new_pos, data);
-            buttons_on();
-            if (is_airlift === 1) {
-                $('#name').off().attr('class', 'self-unchooseable');
-                $('.role').off().attr('class', 'role');
-                if ( $('#active-dispatcher').length !== 0 ) {
-                    $('.role').off().on('click', select_player).attr('class', 'role choosable')
-                }
-                if (!body.hasClass('selecting')) {
-                    team_toggle();
-                } else {
-                    body.removeClass('selecting');
-                }
-            }
         } else {
             // If there are multiple ways to move to new_pos
             city.attr("class", "selected");

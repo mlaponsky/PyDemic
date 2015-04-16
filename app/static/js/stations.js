@@ -82,6 +82,7 @@ function build_station() {
     if ( $('.card.down').length !== 0 ) {
         select  = $('.down').parent().parent().index();
     }
+
     $.getJSON( $SCRIPT_ROOT + '/_build_station', { position:  position,
                                                    index: select }).success(
     function(data) {
@@ -102,6 +103,7 @@ function build_station() {
             set_cities(data.available);
             set_treatable(data.position);
             $('.holding.down').removeClass('down').hide(200);
+            
             board_on();
             if ( data.can_build && data.station !== data.position ) {
                 $("#build-station").attr('class', 'action').prop('disabled', false);
@@ -125,8 +127,7 @@ function build_station() {
             }
             $('#logger').html('There are already 6 stations. Either cancel action or select a station to remove.');
             $('html').off().on('click', function(e) {
-                if ( $(e.target).attr('id') !== 'build-station' ||
-                     $(e.target).attr('class') !== '.selectable' ) {
+                if ( $(e.target).attr('id') !== 'build-station' ) {
                     escape_station_select( data.available, data.position);
                 }
             });

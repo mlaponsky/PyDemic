@@ -1,4 +1,4 @@
-function move(new_pos, data) {
+function move(new_pos, data, is_airlift) {
     var city = document.getElementById(new_pos);
     var city_dims = city.getBoundingClientRect();
     var city_w = city_dims.width;
@@ -71,9 +71,6 @@ function execute_move(event) {
             select  = $('.event-card.down').parent().parent().index();
         }
     };
-    if ( $('.holding').hasClass('down') ) {
-        adding = 1
-    }
     $.getJSON($SCRIPT_ROOT + '/_move', { id: Number(new_pos),
                                          airlift: is_airlift,
                                          index: select,
@@ -104,7 +101,7 @@ function execute_move(event) {
                 $('#logger').html("Shuttled from "+CARDS[data.origin].bold()+" to "+CARDS[new_pos].bold()+".");
                 PHASE++;
             }
-            move(new_pos, data);
+            move(new_pos, data, is_airlift);
         } else {
             // If there are multiple ways to move to new_pos
             city.attr("class", "selected");
@@ -145,7 +142,7 @@ function select_discard(event) {
                 if (data.move === "station-fly") {
                     $('#logger').html($('#logger').html()+" (Cannot use this ability again this turn.)");
                 }
-                move(city_id, data);
+                move(city_id, data, 0);
                 PHASE++;
                 buttons_on();
     }).error(function(error){console.log(error);});

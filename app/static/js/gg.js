@@ -1,4 +1,7 @@
 function select_gg(target) {
+    for (var i=0; i<52; i++) {
+        console.log($('#card-'+String(i)).attr('class'));
+    }
     target.off().on('click', escape_gg).addClass('down').removeClass('giveable takeable');
     board_off();
 
@@ -21,6 +24,9 @@ function select_gg(target) {
     $('html').keyup( function( e ) {
         if (e.keyCode === 27) { escape_gg() };
     });
+    for (var i=0; i<52; i++) {
+        console.log($('#card-'+String(i)).attr('class'));
+    }
 }
 
 function escape_gg() {

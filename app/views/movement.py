@@ -120,7 +120,7 @@ def set_move():
             can_cure = player.can_cure(game.research_stations)
             session['actions'] = actions
             session['game'] = pickle.dumps(game)
-            print(player.hand)
+            print(can_give)
             return jsonify( available=available,
                             player_id=player_id,
                             move=move,

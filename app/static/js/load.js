@@ -19,6 +19,7 @@ var ROLES = { 'cp': "CONTINGENCY PLANNER",
               'scientist': "SCIENTIST" };
 
 var COLORS = ['BLUE', 'YELLOW', 'BLACK', 'RED', 'EVENT'];
+var TRASHING = 0;
 
 
 var ACTIONS = 0;

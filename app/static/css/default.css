@@ -197,25 +197,25 @@ a:hover {
 
 #build-station {
 	position: absolute;
-	left: 19%;
+	left: 17%;
 	bottom: 10%;
 }
 
 #make-cure {
 	position: absolute;
-	left: 19%;
+	left: 17%;
 	bottom: 2.5%;
 }
 
 #undo-action {
 	position: absolute;
-	left: 13%;
+	left: 11%;
 	bottom: 10%;
 }
 
 #next-phase {
 	position: absolute;
-	left: 13%;
+	left: 11%;
 	bottom: 2.5%;
 }
 

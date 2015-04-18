@@ -51,9 +51,10 @@ function move(new_pos, data, is_airlift) {
                 }
                 buttons_on();
             } else {
+                TRASHING = 1;
+                $('#logger').html( $('#logger').html() + ' Still over the card limit; choose another card to discard.');
                 board_off();
                 set_active_trash();
-                $('#logger').html( $('#logger').html() + ' Still over the card limit; choose another card to discard.');
             }
     });
 
@@ -64,7 +65,6 @@ function execute_move(event) {
     var new_pos = city.attr("id");
     var is_airlift = 0;
     var select = 0;
-    var adding = 0;
     if ( $('.event-card').hasClass('down') ){
         is_airlift = 1
         if ( $('.card.down').length !== 0 ) {
@@ -74,7 +74,7 @@ function execute_move(event) {
     $.getJSON($SCRIPT_ROOT + '/_move', { id: Number(new_pos),
                                          airlift: is_airlift,
                                          index: select,
-                                         adding: adding
+                                         trashing: TRASHING
                                        }).success(function(data) {
         if (typeof data.available !== 'undefined') {
             if (data.move === "drive") {
@@ -91,6 +91,9 @@ function execute_move(event) {
             } else if (data.move === "airlift") {
                 $('#logger').html("Airlifted "+ROLES[data.player_id]+" from "+CARDS[data.origin].bold()+".");
                 discard(data.discard)
+                if ( TRASHING === 1 ) {
+                    ACTIONS--;
+                }
             } else if (data.move === "dispatch") {
                 $('#logger').html("Dispatched "+ROLES[data.player_id]+" from "+CARDS[data.origin].bold()+".");
                 PHASE++;
@@ -123,6 +126,7 @@ function execute_move(event) {
             $('html').keyup( function( e ) {
                 if (e.keyCode === 27) { escape_card_select( $('.pl-card.down') ) };
             });
+            TRASHING = 0;
         }
     }).error(function(error){console.log(error);});
 };

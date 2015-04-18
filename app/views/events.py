@@ -43,6 +43,7 @@ def rp():
     card = request.args.get('remove', -1, type=int)
     index = request.args.get('index', 0, type=int)
     owner = game.players[(game.active + index) % game.num_players]
+    trashing = request.args.get('trashing', 0, type=int)
 
     game.infect_cards.remove_from_discard(card)
     game.infect_cards.add_to_graveyard(card)
@@ -51,7 +52,33 @@ def rp():
     action = { 'act': 'rp',
                 'owner': owner.get_id(),
                 'deleted': card }
-    actions.append(action)
+
+    if trashing == 0:
+        actions.append(action)
+    else:
+        actions[-1]['trash'] = action
     session['actions'] = actions
     session['game'] = pickle.dumps(game)
     return jsonify( deleted=card )
+
+@events.route('/_execute_oqn')
+def oqn():
+    game = pickle.loads(session['game'])
+    actions = session['actions']
+
+    index = request.args.get('index', 0, type=int)
+    trashing = request.args.get('trashing', 0, type=int)
+    owner = game.players[(game.active + index) % game.num_players]
+
+    game.oqn = True
+    owner.discard(OQN, game.player_cards)
+
+    action = { 'act': 'oqn',
+                'owner': owner.get_id() }
+    if trashing == 0:
+        actions.append(action)
+    else:
+        actions[-1]['trash'] = action
+    session['actions'] = actions
+    session['game'] = pickle.dumps(game)
+    return jsonify( owner=owner.get_id() )

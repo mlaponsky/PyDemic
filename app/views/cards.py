@@ -124,7 +124,7 @@ def trash():
     prev_avail, dispatch, origin, player_id = game.set_available(player)
 
     action = { 'act': 'trash',
-               'card': str(card),
+               'cards': str(card),
                'owner': owner.get_id(),
                'available': prev_avail }
     actions[-1]['trash'] = action

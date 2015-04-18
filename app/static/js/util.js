@@ -84,7 +84,6 @@ function set_takeable(team_hands, can_take) {
             $("#"+roles[p]+"-card-"+String(team_hands[roles[p]][n])).show();
             if ( can_take[roles[p]][n] || team_hands[roles[p]][n] > 47 ) {
                 $("#"+roles[p]+"-card-"+String(team_hands[roles[p]][n])).off().on('click', take_card).addClass('takeable');
-                console.log($("#"+roles[p]+"-card-"+String(team_hands[roles[p]][n])).hasClass('takeable'));
             }
             if ( team_hands[roles[p]][n] > 47 ) {
                 $("#"+roles[p]+"-card-"+String(team_hands[roles[p]][n])).addClass('event-card');

@@ -1,5 +1,5 @@
 function select_airlift(target) {
-    target.off().addClass('down').removeClass('giveable takeable');
+    target.off().addClass('down').removeClass('giveable takeable trashable');
     buttons_off();
     board_off();
     $('.role').attr('class', 'role choosable').off().on('click', airlift_select_player);
@@ -79,7 +79,7 @@ function airlift_select_self(event) {
 }
 
 function escape_airlift_select() {
-    if ($('.down').length !== 0 ) {
+    if ($('.down').length !== 0 && TRASHING === 0 ) {
         $('#name').off().attr('class', 'self-unchooseable');
         $('.role').off().attr('class', 'role');
         if ( $('#active-dispatcher').length !== 0 ) {
@@ -99,9 +99,31 @@ function escape_airlift_select() {
 function escape_airlift() {
     $.getJSON( $SCRIPT_ROOT + '/_select_player', { index: 0, airlift: 0 }).success(
         function(data) {
-            set_cities(data.available);
-            set_treatable(data.position);
-            escape_airlift_select();
             $('#logger').html('Cancelled AIRLIFT.')
+            if (TRASHING === 0) {
+                set_cities(data.available);
+                set_treatable(data.position);
+                escape_airlift_select();
+            } else {
+                $('#name').off().attr('class', 'self-unchooseable');
+                $('.role').off().attr('class', 'role');
+                if ( $('#active-dispatcher').length !== 0 ) {
+                    $('.role').off().on('click', select_player).attr('class', 'role choosable')
+                }
+                if ( !body.hasClass('selecting') ) {
+                    team_toggle();
+                } else {
+                    body.removeClass('selecting');
+                }
+                $('html').off();
+                $('.down').off().on('click', trash).removeClass('down').addClass('trashable');
+                $('.holding-t').off().on('click', trash).removeClass('holding-t').addClass('trashable');
+                if ( !body.hasClass('selecting') ) {
+                    team_toggle();
+                } else {
+                    body.removeClass('selecting');
+                }
+                $('#logger').html($('#logger').html() + ' Select a card to discard.');
+            }
         }).error(function(error){console.log(error)});
 }

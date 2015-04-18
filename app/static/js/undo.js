@@ -1,49 +1,54 @@
 function undo() {
     $.getJSON( $SCRIPT_ROOT + '/_undo').success( function(data) {
         data=data.result;
+        undo_trash(data);
         if ( (data['act'] === "drive") || (data['act'] === "shuttle") || (data['act'] === "dispatch") ) {
             undo_move(data);
-            ACTIONS--;
             PHASE--;
         } else if ((data['act'] === "charter") ||
                    (data['act'] === "fly") ||
                    (data['act'] === "station-fly")) {
             undo_discard(data['cards'], data['owner']);
             undo_move(data);
-            ACTIONS--;
             PHASE--;
         } else if (data['act'] === "airlift") {
             undo_discard(data['cards'], data['owner']);
             undo_move(data);
-            ACTIONS--;
         } else if (data['act'] === "build") {
             undo_station(data);
-            ACTIONS--;
             PHASE--;
         } else if (data['act'] === "gg") {
             undo_station(data);
-            ACTIONS--;
         } else if (data['act'] === "treat") {
             undo_treatment(data);
-            ACTIONS--;
             PHASE--;
         } else if (data['act'] === "cure") {
             undo_cure(data);
-            ACTIONS--;
             PHASE--;
         } else if (data['act'] === "take") {
             undo_take(data);
-            ACTIONS--;
+            PHASE--;
         } else if (data['act'] === "give") {
             undo_give(data);
-            ACTIONS--;
             PHASE--;
         } else if (data['act'] === "rp") {
             undo_rp(data);
-            ACTIONS--;
+        } else if (data['act'] === "oqn") {
+            undo_oqn(data);
         }
+        ACTIONS--;
         $('#undo-action').prop('disabled', ACTIONS === 0);
     }).error(function(error){console.log(error)});
+}
+
+function undo_discard(card, owner) {
+    if ($('.active-player').attr('id').split('-')[1] !== owner) {
+        $('#'+owner+"-card-"+card).show(200);
+    } else {
+        $('#card-'+card).show(200);
+    }
+    $("#pl-discard-"+card).hide(200);
+    $('#logger').html( $('#logger').html()+' Returned '+CARDS[Number(card)].bold()+' to the '+ROLES[owner].bold()+"'s hand.");
 }
 
 function undo_move(data) {
@@ -91,6 +96,7 @@ function undo_move(data) {
 
 function undo_station(data) {
     var city = Number(data['origin']);
+    console.log($('#station-'+data['origin']));
     $('#station-'+data['origin']).attr('class', 'unbuilt').hide();
     $('#logger').html('(UNDO) Removed station from '+CARDS[city].bold()+'.');
     if ( data['removed'] !== 'none' ) {
@@ -159,7 +165,32 @@ function undo_give(data) {
 }
 
 function undo_rp(data) {
-    $('#infect-discard-'+String(data['deleted'])).off().attr('class', 'infect-card');
+    $('#infect-discard-'+String(data['deleted'])).off().attr('class', 'infect-discard');
     $('#logger').html('(UNDO) Returned '+CARDS[data['deleted']].bold()+' from the graveyard.')
     undo_discard('52', data['owner']);
+}
+
+function undo_oqn(data) {
+    $('#logger').html('(UNDO) ');
+    undo_discard('51', data['owner']);
+}
+
+function undo_trash(data) {
+    var trash = data['trash'];
+    if (typeof trash !== 'undefined') {
+        if (trash['act'] === 'airlift') {
+            undo_discard(trash['cards'], trash['owner']);
+            undo_move(trash);
+        } else if (trash['act'] === 'rp') {
+            undo_rp(trash);
+        } else if (trash['act'] === 'gg') {
+            undo_station(trash);
+        } else if (trash['act'] === 'oqn') {
+            undo_oqn(trash);
+        } else if (trash['act'] === 'trash') {
+            undo_discard(trash['cards'], trash['owner']);
+            set_cities(trash['available']);
+        }
+        TRASHING--;
+    }
 }

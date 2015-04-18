@@ -1,10 +1,10 @@
 function select_rp(target) {
-    target.off().on('click', escape_rp).addClass('down').removeClass('giveable takeable');
+    target.off().on('click', escape_rp).addClass('down').removeClass('giveable takeable trashable');
     board_off();
     buttons_off();
     $('.available').off().attr('class', 'unavailable marked');
     $('.treatable').off().attr('class', 'unavailable marked-t');
-    if (!body.hasClass('menu-push-to-right')) {
+    if (!body.hasClass('menu-push-toright')) {
         infect_toggle();
     } else {
         body.addClass('selecting');
@@ -24,11 +24,14 @@ function execute_rp() {
         select  = $('.down').parent().parent().index();
     }
     $.getJSON( $SCRIPT_ROOT + '/_execute_rp', { remove: Number(card_id),
-                                                index: select } ).success(
+                                                index: select,
+                                                trashing: TRASHING } ).success(
         function(data) {
             discard('52');
             $('#infect-discard-'+String(data.deleted)).off().attr('class', 'graveyard');
-            ACTIONS++;
+            if (TRASHING === 0) {
+                ACTIONS++;
+            }
             $('.holding.down').removeClass('down').hide(200);
             board_on();
             $('.marked').off().on('click', execute_move).attr('class', 'available');
@@ -47,16 +50,21 @@ function execute_rp() {
 }
 
 function escape_rp() {
-    board_on();
-    $('.marked').off().on('click', execute_move).attr('class', 'available');
-    $('.marked-t').off().on('click', treat).attr('class', 'treatable');
+    $('html').off();
+    $('#logger').html('Cancelled <b>RESILIENT POPULATION</b>.');
+    if ( TRASHING === 0 ) {
+        board_on();
+        $('.marked').off().on('click', execute_move).attr('class', 'available');
+        $('.marked-t').off().on('click', treat).attr('class', 'treatable');
+        $('#undo-action').off().on('click', undo).prop('disabled', ACTIONS === 0);
+        buttons_on();
+    } else if ( TRASHING === 1 ) {
+        $('.down').off().on('click', trash).removeClass('down').addClass('trashable');
+        $('.holding-t').off().on('click', trash).removeClass('holding-t').addClass('trashable');
+    }
     if ( !body.hasClass('selecting') ) {
         infect_toggle();
     } else {
         body.removeClass('selecting');
     }
-    $('#undo-action').off().on('click', undo).prop('disabled', ACTIONS === 0);
-    buttons_on();
-    $('html').off();
-    $('#logger').html('Cancelled <b>RESILIENT POPULATION</b>.')
 }

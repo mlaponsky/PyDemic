@@ -42,6 +42,7 @@ class Game:
         self.infect_cards = InfectCards()
 
         self.initial_infect()
+        self.oqn = False
 
         for role in roles:
             self.players.append(self.assign_player(role))
@@ -49,9 +50,9 @@ class Game:
         self.player_cards = PlayerCards(self.players, self.num_epidemics)
         self.active = self.set_order()
 
-        # for n in range(5):
-        #     card = self.player_cards.draw_card(0)
-        #     self.players[self.active].hand.append(card)
+        for n in range(5):
+            card = self.player_cards.draw_card(0)
+            self.players[self.active].hand.append(card)
     ## Manage game phase
     def get_phase(self):
         return self.phase

@@ -18,6 +18,7 @@ def select_station():
     to_remove = request.args.get('id', 0, type=int)
     position = request.args.get('position', -1, type=int)
     index = request.args.get('index', 0, type=int)
+    trashing = request.args.get('trashing', 0, type=bool)
     owner = game.players[(game.active + index) % game.num_players]
     prev_avail, dispatch, origin, player_id = game.set_available(player)
     can_build = player.get_position() not in game.research_stations and (player.get_position() in player.hand or player.get_role == OE)
@@ -42,7 +43,10 @@ def select_station():
                     'removed': str(to_remove),
                     'card_data': CARDS[discard],
                     'available': prev_avail }
-    actions.append(action)
+    if trashing == 0:
+        actions.append(action)
+    else:
+        actions[-1]['trash'] = action
 
     game.research_stations.remove(to_remove)
     owner.build_station(position, discard, game.research_stations, game.player_cards)
@@ -68,6 +72,7 @@ def build_station():
 
     can_build = player.get_position() not in game.research_stations and (player.get_position() in player.hand or player.get_role() == OE)
     position = request.args.get('position', -1, type=int)
+    trashing = request.args.get('trashing', 0, type=int)
     if position != -1:
         discard = GG
     else:
@@ -75,7 +80,6 @@ def build_station():
         discard = player.get_position() if player.get_role() != OE else -1
     index = request.args.get('index', 0, type=int)
     owner = game.players[(game.active + index) % game.num_players]
-    print(owner.get_role(), GG in owner.hand)
     if num_stations < MAX_STATIONS:
         action = { 'act': "build" if position == -1 else 'gg',
                    'origin': str(position),
@@ -85,7 +89,10 @@ def build_station():
                     'owner': owner.get_id(),
                     'card_data': CARDS[discard],
                     'available': prev_avail }
-        actions.append(action)
+        if trashing == 0:
+            actions.append(action)
+        else:
+            actions[-1]['trash'] = action
         owner.build_station(position, discard, game.research_stations, game.player_cards)
     available, new_dispatch, origin, player_id = game.set_available(player)
     session['actions'] = actions

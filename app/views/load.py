@@ -21,13 +21,14 @@ def setup():
         roles = [ form.char0.data, form.char1.data, form.char2.data, form.char3.data ]
         chosen = []
         for role in roles:
-            if role == "random":
-                a = random.choice(available_roles)
-                available_roles.remove(a)
-                chosen.append(a)
-            elif role != 'none':
+            if role != 'random' and role != 'none':
                 available_roles.remove(role)
                 chosen.append(role)
+        for role in roles:
+            if role == "random":
+                r = random.choice(available_roles)
+                available_roles.remove(r)
+                chosen.append(r)
         if len(chosen) < 2:
             flash("You must select at least 2 players.")
             return render_template("setup.html",

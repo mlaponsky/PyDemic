@@ -19,6 +19,9 @@ def undo_action():
     action = actions.pop(-1)
     data = action
 
+    if 'trash' in data:
+        trash = data['trash']
+
     if action['act'] == "drive" or action['act'] == "shuttle" or action['act'] == "dispatch":
         undo_move(data, player, game)
     elif action['act'] == "charter" or action['act'] == "fly" or action['act'] == "airlift":
@@ -43,14 +46,16 @@ def undo_action():
         undo_give(data, game)
     elif action['act'] == "rp":
         undo_rp(data, game)
+    elif action['act'] == "oqn":
+        undo_oqn(data, game)
 
+    undo_trash(data, game, player)
 
     session['actions'] = actions
     session['game'] = pickle.dumps(game)
     return jsonify(result=action)
 
 def undo_move(data, player, game):
-    print(player.get_id(), data['id'])
     if player.get_id() != data['id']:
         for p in game.players:
             if p.get_id() == data['id']:
@@ -70,6 +75,8 @@ def undo_move(data, player, game):
             game.cubes[data['destination']][color] = number
             game.cubes_left[color] += number
     game.board.rows[data['destination']] = data['rows']
+    if 'trash' in data:
+        undo_trash
 
 def undo_discard(data, player, game):
     game.player_cards.remove_from_discard(int(data['cards']))
@@ -124,3 +131,30 @@ def undo_rp(data, game):
         if p.get_id() == data['owner']:
             owner = p
     owner.add_card(RP)
+
+def undo_oqn(data, game):
+    game.oqn = False
+    for p in game.players:
+        if p.get_id() == data['owner']:
+            owner = p
+    game.player_cards.remove_from_discard(OQN)
+    owner.add_card(OQN)
+
+def undo_trash(data, game, player):
+    if 'trash' in data:
+        trash = data['trash']
+        if 'owner' in trash:
+            for p in game.players:
+                if p.get_id() == trash['owner']:
+                    owner = p
+        if trash['act'] == 'airlift':
+            undo_move(trash, player, game)
+            undo_discard(trash, owner, game)
+        elif trash['act'] == 'gg':
+            undo_station(trash, player, game)
+        elif trash['act'] == 'rp':
+            undo_rp(trash, game)
+        elif trash['act'] == 'oqn':
+            undo_oqn(trash, game)
+        else:
+            undo_discard(trash, owner, game)

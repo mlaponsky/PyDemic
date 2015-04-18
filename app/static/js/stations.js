@@ -43,13 +43,16 @@ function select_station(event) {
     }
     $.getJSON( $SCRIPT_ROOT + '/_select_station', { id: Number(to_remove),
                                                     position: position,
-                                                    index: select }).success(
+                                                    index: select,
+                                                    trashing: TRASHING }).success(
         function(data) {
             $("#station-"+to_remove).hide(200).attr('class', 'unbuilt');
             $("#station-"+String(data.station)).show(200).attr('class', 'built');
             $('#logger').html('Built a station in '+CARDS[data.station].bold()+'. Removed station from '+CARDS[Number(to_remove)]+'.');
-            ACTIONS++;
-            PHASE++;
+            if (TRASHING === 0) {
+                ACTIONS++;
+                PHASE++;
+            }
             $('.holding.down').removeClass('hold down').hide(200);
             board_on();
             if (data.discard === 50) {
@@ -68,6 +71,7 @@ function select_station(event) {
             }
             $("#undo-action").prop('disabled', ACTIONS === 0);
             buttons_on();
+            TRASHING = 0;
             $('html').off();
         }
     ).error(function(error){console.log(error);});
@@ -84,13 +88,17 @@ function build_station() {
     }
 
     $.getJSON( $SCRIPT_ROOT + '/_build_station', { position:  position,
-                                                   index: select }).success(
+                                                   index: select,
+                                                   trashing: TRASHING }).success(
     function(data) {
         if (data.num_stations < 6) {
             $("#station-"+String(data.station)).show(200).attr('class', 'built');
             $('#logger').html('Built a station in '+CARDS[data.station].bold()+'.');
-            ACTIONS++;
-            PHASE++;
+            console.log(ACTIONS);
+            if (TRASHING === 0) {
+                ACTIONS++;
+                PHASE++;
+            }
             if ( data.discard === 50 ) {
                 $('.down').off().on('click', select_gg);
                 PHASE--;
@@ -103,8 +111,9 @@ function build_station() {
             set_cities(data.available);
             set_treatable(data.position);
             $('.holding.down').removeClass('down').hide(200);
-            
+
             board_on();
+            TRASHING = 0;
             if ( data.can_build && data.station !== data.position ) {
                 $("#build-station").attr('class', 'action').prop('disabled', false);
             } else {

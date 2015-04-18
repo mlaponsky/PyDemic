@@ -21,7 +21,8 @@ def set_move():
     new_pos = request.args.get('id', 0, type=int)
     is_airlift = request.args.get('airlift', 0, type=int)
     index = request.args.get('index', 0, type=int)
-    adding = request.args.get('adding', 0, type=int)
+    trashing = request.args.get('trashing', 0, type=int)
+    print(trashing)
     owner = game.players[(game.active + index) % game.num_players ]
     discard = ""
     cures = copy(game.cures)
@@ -105,10 +106,12 @@ def set_move():
                     'team_hands': prev_hands,
                     'give': prev_give,
                     'take': prev_take }
-        if adding == 0:
+        if trashing == 0:
             actions.append(action)
         else:
-            actions[0]['trash'] = action
+            actions[-1]['trash'] = action
+
+        print(actions[-1])
         available, new_dispatch, origin, player_id = game.set_available(player)
         can_take, can_give, team_hands = game.set_share()
 

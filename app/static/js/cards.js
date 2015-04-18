@@ -27,22 +27,24 @@ function create_card(city, data) {
 }
 
 function set_team_trash() {
+    TRASHING = 1;
     $('.available').off().attr('class', 'unavailable marked');
     $('.treatable').off().attr('class', 'unavailable marked-t');
     buttons_off();
     board_off();
     $('#'+data.recipient).parent().parent().attr('class', 'can-give');
-    $('#'+data.recipient+"-box li.card").off().on('click', trash).addClass('takeable');
+    $('#'+data.recipient+"-box li.card").off().on('click', trash).addClass('trashable');
 }
 
 function set_active_trash() {
+    TRASHING = 1;
     $(".available").off().attr('class', 'unavailable');
     $(".selectable").off().attr('class', 'unavailable');
     $(".selected").off().attr('class', 'unavailable');
     $('.treatable').off().attr('class', 'unavailable marked-t');
     buttons_off();
     board_off();
-    $('.pl-card').off().on('click', trash).addClass('giveable');
+    $('.pl-card').off().on('click', trash).addClass('trashable');
 }
 
 function discard(card) {
@@ -55,17 +57,8 @@ function discard(card) {
     $('#logger').html($('#logger').html()+' Discarded '+CARDS[Number(card)].bold()+'.');
 }
 
-function undo_discard(card, owner) {
-    if ($('.active-player').attr('id').split('-')[1] !== owner) {
-        $('#'+owner+"-card-"+card).show(200);
-    } else {
-        $('#card-'+card).show(200);
-    }
-    $("#pl-discard-"+card).hide(200);
-    $('#logger').html( $('#logger').html()+' Returned '+CARDS[Number(card)].bold()+' to the '+ROLES[owner].bold()+"'s hand.");
-}
-
 function board_off() {
+    $('.trashable').off().removeClass('trashable').addClass('holding-t');
     $('.giveable').off().removeClass('giveable').addClass('holding');
     $('.takeable').off().removeClass('takeable').addClass('holding');
     $('.role.choosable').off().removeClass('choosable').addClass('holding')
@@ -73,6 +66,7 @@ function board_off() {
 }
 
 function board_on() {
+    $('.trashable').off().removeClass('trashable');
     $('.giveable').off().removeClass('giveable');
     $('.takeable').off().removeClass('takeable');
     $('.pl-card.down').off().removeClass('down').addClass('giveable');
@@ -109,6 +103,8 @@ function trash(event) {
                 board_on();
                 set_cities(data.available);
                 set_treatable(data.origin);
+                buttons_on();
+                console.log(ACTIONS);
             }
         ).error(function(error){console.log(error)});
     }
@@ -138,6 +134,8 @@ function give_card(event) {
         select_forecast(card);
     } else if (card_id === '50') {
         select_gg(card);
+    } else if (card_id === '51') {
+        select_oqn(card);
     } else if (card_id === '52') {
         select_rp(card);
     } else {
@@ -151,7 +149,7 @@ function give_card(event) {
                         team_toggle();
                         setTimeout( function() {
                             give(card, data);
-                            if ( typeof data.resp !== 'undefined' ) {
+                            if ( data.num_cards > 7 ) {
                                 $('#'+data.recipient).parent().parent().addClass('can_give');
                                 set_team_trash(card, data);
                             } else {
@@ -223,6 +221,8 @@ function take_card(event) {
         select_forecast(card);
     } else if (card_id === '50') {
         select_gg(card);
+    } else if (card_id === '51') {
+        select_oqn(card);
     } else if (card_id === '52') {
         select_rp(card);
     } else {

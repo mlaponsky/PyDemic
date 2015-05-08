@@ -89,18 +89,24 @@ function build_station() {
 
     $.getJSON( $SCRIPT_ROOT + '/_build_station', { position:  position,
                                                    index: select,
-                                                   trashing: TRASHING }).success(
+                                                   trashing: TRASHING,
+                                                   is_stored: STORE}).success(
     function(data) {
         if (data.num_stations < 6) {
             $("#station-"+String(data.station)).show(200).attr('class', 'built');
             $('#logger').html('Built a station in '+CARDS[data.station].bold()+'.');
-            console.log(ACTIONS);
             if (TRASHING === 0) {
                 ACTIONS++;
                 PHASE++;
             }
             if ( data.discard === 50 ) {
-                $('.down').off().on('click', select_gg);
+                if ( STORE === 0 ) {
+                    $('.down').off().on('click', select_gg);
+                } else {
+                    $('#cp-store').hide(200);
+                    $('#pl-discard-'+data.discard).off().show(200).attr('class', 'graveyard');
+                    STORE = 0;
+                }
                 PHASE--;
             }
 

@@ -12,7 +12,6 @@ class Game:
         self.lose = False
         self.day = 0
         self.phase = 4
-        self.active_player = None
         self.id = uuid4()
 
         self.num_outbreaks = 0
@@ -49,10 +48,8 @@ class Game:
 
         self.player_cards = PlayerCards(self.players, self.num_epidemics)
         self.active = self.set_order()
+        self.selected = self.active
 
-        for n in range(5):
-            card = self.player_cards.draw_card(0)
-            self.players[self.active].hand.append(card)
     ## Manage game phase
     def get_phase(self):
         return self.phase
@@ -89,27 +86,36 @@ class Game:
                     first_player_index = self.players.index(player)
         return first_player_index
 
-    def dispatcher_availability(self, player, available):
+    def select_player(self, index):
+        self.selected = (index + self.active) % self.num_players
+        return self.players[self.selected]
+
+    def dispatcher_availability(self, available):
         dispatch = []
         for p in self.players:
-            if player.selected != p and player.selected.get_position() != p.get_position():
+            if self.selected != p and self.selected.get_position() != p.get_position():
                 available.append(str(p.get_position()))
                 dispatch.append(p.get_position())
         return dispatch
 
-    def set_available(self, player):
+    def set_available(self, is_airlift):
         dispatch = []
         available = []
-        selected = player.selected
-        player_id = player.selected.get_id()
-        origin = player.selected.get_position()
+        player = self.players[self.active]
+        selected = self.players[self.selected]
+        player_id = selected.get_id()
+        origin = selected.get_position()
 
-        if player.get_id() == 'dispatcher':
-            dispatch = self.dispatcher_availability(player, available)
-        for city in player.can_move(self.research_stations, self.board):
-            available.append(str(city))
-
-        player.selected = selected
+        if is_airlift == 1:
+            available = []
+            for city in range(NUM_CITIES):
+                if city != position:
+                    available.append(str(city))
+        else:
+            if player.get_id() == 'dispatcher':
+                dispatch = self.dispatcher_availability(available)
+            for city in player.can_move(self.research_stations, self.board):
+                available.append(str(city))
         return available, dispatch, origin, player_id
 
     def set_share(self):
@@ -193,27 +199,244 @@ class Game:
             if self.cubes[city][color] != 0:
                 return False
         return True
+# Basic actions
+    def move(self, new_pos, index, discard, method):
+        player = self.players[self.active]
+        mover = self.players[self.selected]
+        owner = self.players[(self.active + index) % self.num_players]
+
+        prev_avail, dispatch, origin, player_id = self.set_available(0)
+        prev_hand = copy(player.hand)
+        prev_take, prev_give, prev_hands = self.set_share()
+        prev_build = player.can_build(origin, self.research_stations)
+        prev_cure = player.can_cure(self.research_stations)
+        orig_cubes = copy(self.cubes[new_pos])
+        orig_rows = copy(self.board.rows[new_pos])
+        action = { 'act': method,
+                    'id': player.get_id(),
+                    'is_stored': 0,
+                    'origin': origin,
+                    'destination': new_pos,
+                    'cards': discard,
+                    'owner': owner.get_id(),
+                    'available': prev_avail,
+                    'can_build': prev_build,
+                    'can_cure': prev_cure,
+                    'cubes': orig_cubes,
+                    'rows': orig_rows,
+                    'hand': prev_hand,
+                    'team_hands': prev_hands,
+                    'give': prev_give,
+                    'take': prev_take }
+        mover.move(new_pos, self.board, self.cures, self.cubes, self.cubes_left, self.quarantined)
+        if discard != '':
+            owner.discard(discard, self.player_cards)
+        if player.get_role() != DISPATCHER:
+            self.selected = self.active
+        if method == 'station-fly':
+            player.has_stationed = True
+        return action
+
+    def build(self, to_remove):
+        player = self.players[self.active]
+        num_stations = len(self.research_stations)
+        prev_avail, dispatch, origin, player_id = self.set_available(0)
+
+        can_build = player.get_position() not in self.research_stations and (player.get_position() in player.hand or player.get_role() == OE)
+        discard = player.get_position() if player.get_role() != OE else -1
+
+        action = { 'act': "build",
+                   'origin': str(player.get_position()),
+                   'can_build': can_build,
+                   'discard': str(discard),
+                   'removed': str(to_remove),
+                   'owner': player.get_id(),
+                   'card_data': CARDS[discard],
+                   'available': prev_avail }
+        self.research_stations.append(player.get_position())
+        if discard != -1:
+            player.discard(discard, self.player_cards)
+        return action
+
+    def treat(self, color):
+        player = self.players[self.active]
+        city = player.get_position()
+        orig_cubes = copy(self.cubes[city][color])
+        orig_rows = copy(self.board.rows[city])
+        player.treat(color, self.cures, self.cubes, self.cubes_left, self.board)
+        cubes_removed = orig_cubes - self.cubes[city][color]
+        action = { 'act': "treat",
+                   'origin': str(city),
+                    'color': str(color),
+                    'cubes': orig_cubes,
+                    'removed': cubes_removed,
+                    'rows': orig_rows }
+        return action
+
+    def make_cure(self, cards):
+        player = self.players[self.active]
+        prev_avail, dispatch, origin, player_id = self.set_available(0)
+        orig_cubes = game.cubes[player.get_position()][cure_color]
+        orig_rows = copy(game.board.get_all_rows(player.get_position()))
+
+        cure_color = cards[0] // CITIES_PER_COLOR
+        player.make_cure(cards, self.cures, self.player_cards)
+        orig_cubes = game.cubes[player.get_position()][cure_color]
+        orig_rows = copy(game.board.get_all_rows(player.get_position()))
+
+        medic_pos = -1
+        for p in self.players:
+            if p.get_role() == MEDIC:
+                self.cubes_left[cure_color] += self.cubes[p.get_position()][cure_color]
+                self.cubes[p.get_position()][cure_color] = 0
+                self.board.delete_row(p.get_position(), cure_color)
+                medic_pos = p.get_position()
+                break
+
+        if self.is_eradicated(cure_color):
+            self.cures[ cure_color ] = ERADICATED
+
+        action = { 'act': 'cure',
+                    'color': cure_color,
+                    'cards': [str(card) for card in cure_cards],
+                    'origin': str(player.get_position()),
+                    'medic_pos': medic_pos,
+                    'cubes': orig_cubes,
+                    'rows': orig_rows,
+                    'available': prev_avail }
+        return action
+
+    def give_card(recipient, card):
+        giver = self.players[self.active]
+        receiver = self.players[(self.recipient + self.active) % self.num_players]
+        prev_avail, dispatch, origin, player_id = self.set_available(0)
+        giver.give_card(card, reciever)
+        action = { 'act': 'give',
+                    'card': str(card),
+                    'giver': giver.get_id(),
+                    'taker': receiver.get_id(),
+                    'available': prev_avail }
+        return action
+
+    def take_card(giver, card):
+        taker = self.players[self.active]
+        source = self.players[(self.source + self.active) % self.num_players]
+        prev_avail, dispatch, origin, player_id = game.set_available(is_airlift)
+        taker.take_card(card, source)
+        action = { 'act': 'take',
+                    'card': str(card),
+                    'taker': player.get_id(),
+                    'giver': source.get_id(),
+                    'available': prev_avail }
+        return action
 
 # Event card handling
-    def play_airlift(self, player, target, new_pos):
-        player.discard(AIRLIFT)
-        self.player_cards.add_to_discard(AIRLIFT)
-        target.move(new_pos)
-        if target.get_role() == QS:
-            self.quarantine_cities(target)
+    def play_airlift(self, owner_index, new_pos):
+        owner = self.players[(self.active + owner_index) % self.num_players]
+        mover = self.players[self.selected]
+        owner = self.players[(self.active + index) % self.num_players]
 
-    def play_gov_grant(self, player, loc):
-        self.research_stations.append(loc)
-        player.discard(GG)
+        prev_avail, dispatch, origin, player_id = self.set_available(0)
+        prev_hand = copy(player.hand)
+        prev_take, prev_give, prev_hands = self.set_share()
+        prev_build = player.can_build(origin, self.research_stations)
+        prev_cure = player.can_cure(self.research_stations)
+        orig_cubes = copy(self.cubes[new_pos])
+        orig_rows = copy(self.board.rows[new_pos])
+        action = { 'act': method,
+                    'id': player.get_id(),
+                    'is_stored': 1,
+                    'origin': origin,
+                    'destination': new_pos,
+                    'cards': discard,
+                    'owner': owner.get_id(),
+                    'available': prev_avail,
+                    'can_build': prev_build,
+                    'can_cure': prev_cure,
+                    'cubes': orig_cubes,
+                    'rows': orig_rows,
+                    'hand': prev_hand,
+                    'team_hands': prev_hands,
+                    'give': prev_give,
+                    'take': prev_take }
+        mover.move(new_pos, self.board, self.cures, self.cubes, self.cubes_left, self.quarantined)
 
-    def resolve_forecast(self, reorded):
-        self.infect_cards.set_deck(self.infect_cards.get_deck()[:6])
-        self.infect_cards.set_deck(reorded + self.infect_cards.get_deck())
-        player.discard(FORECAST)
+        if is_stored == 0:
+            owner.discard(AIRLIFT, self.plater_cards)
+        else:
+            owner.play_event(self.player_cards)
+        self.selected = self.active
+        return action
+
+    def play_gg(self, city, index, to_remove, is_stored):
+        player = self.players[self.active]
+        owner = self.players[(self.active + index) % self.num_players]
+        can_build = player.get_position() not in self.research_stations and (player.get_position() in player.hand or player.get_role() == OE)
+
+        action = { 'act': "gg",
+                   'origin': str(position),
+                   'can_build': can_build,
+                   'discard': str(GG),
+                   'removed': str(to_remove),
+                   'owner': owner.get_id(),
+                   'card_data': CARDS[GG],
+                   'available': prev_avail }
+        if is_stored == 0:
+            owner.discard(GG, self.player_cards)
+        else:
+            owner.play_event(self.player_cards)
+        self.research_stations(city)
+        if to_remove != -1:
+            self.research_stations.remove(to_remove)
+        return action
+
+
+    def play_forecast(self, index, reorded, is_stored):
+        owner = self.players[(self.active + index) % self.num_players]
+        self.infect_cards.set_deck(reorded + self.infect_cards.deck[:6])
+        if is_stored == 0:
+            owner.discard(FORECAST, self.plater_cards)
+        else:
+            owner.play_event(self.player_cards)
+
+    def play_rp(card, index, is_stored):
+        owner = self.players[(self.active + index) % self.num_players]
+        self.infect_cards.remove_from_discard(card)
+        self.infect_cards.add_to_graveyard(card)
+        if is_stored == 0:
+            owner.discard(RP, self.plater_cards)
+        else:
+            owner.play_event(self.player_cards)
+
+        action = { 'act': 'rp',
+                    'owner': owner.get_id(),
+                    'store': is_stored,
+                    'deleted': card }
+        return action
+
+    def play_oqn(index, is_stored):
+        owner = self.players[(self.active + index) % self.num_players]
+        self.oqn = True
+        if is_stored == 0:
+            owner.discard(OQN, self.plater_cards)
+        else:
+            owner.play_event(self.player_cards)
+
+        action = { 'act': 'oqn',
+                    'store': is_stored,
+                    'owner': owner.get_id() }
+        return action
+
+    def store_on_cp(card):
+        player = self.players[self.active]
+        player.get_event_from_discard(card, self.player_cards)
+        action = { 'act': 'store',
+                    'card': card }
+        return action
 
 ## End conditions
     # Win
-    def isWin(self):
+    def is_win(self):
         for have_cure in self.cures:
             if not have_cure:
                 return False

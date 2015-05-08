@@ -20,9 +20,9 @@ def set_move():
     origin = player.get_position()
     new_pos = request.args.get('id', 0, type=int)
     is_airlift = request.args.get('airlift', 0, type=int)
+    is_cp = request.args.get('store', 0, type=int)
     index = request.args.get('index', 0, type=int)
     trashing = request.args.get('trashing', 0, type=int)
-    print(trashing)
     owner = game.players[(game.active + index) % game.num_players ]
     discard = ""
     cures = copy(game.cures)
@@ -35,127 +35,64 @@ def set_move():
     can_charter = player.can_charter(game.research_stations, board)
     can_fly_direct = player.can_fly_direct(board)
 
-    prev_avail, dispatch, origin, player_id = game.set_available(player)
-    prev_hand = copy(player.hand)
-    prev_take, prev_give, prev_hands = game.set_share()
-    prev_build = player.can_build(origin, game.research_stations)
-    prev_cure = player.can_cure(game.research_stations)
-    orig_cubes = copy(game.cubes[new_pos])
-    orig_rows = copy(board.rows[new_pos])
-
     if is_airlift == 1:
-        player.move(new_pos, board, game.cures, game.cubes, game.cubes_left, game.quarantined)
-        discard = str(AIRLIFT)
-        owner.discard(AIRLIFT, game.player_cards)
-        move = "airlift"
+        action = game.play_airlift(index, new_pos, is_cp)
     elif new_pos in player.can_drive(board):
-        player.move(new_pos, board, game.cures, game.cubes, game.cubes_left, game.quarantined)
-        move="drive"
+        action = game.move(new_pos, index, '', 'drive')
     elif new_pos in dispatch:
-        player.move(new_pos, board, game.cures, game.cubes, game.cubes_left, game.quarantined)
-        move="dispatch"
+        action = game.move(new_pos, index, '', 'dispatch')
     elif new_pos in player.can_shuttle(game.research_stations):
-        player.move(new_pos, board, game.cures, game.cubes, game.cubes_left, game.quarantined)
-        move = "shuttle"
+        action = game.move(new_pos, index, '', 'shuttle')
     elif player.get_role() == OE and new_pos in player.can_station_fly(game.research_stations, board):
         for card in player.hand:
             if card in range(NUM_CITIES):
                 selectable.append( str(card) )
         if len(selectable) == 1:
-            player.discard( int(selectable[0]), game.player_cards )
-            discard = selectable[0]
-            player.move(new_pos, board, game.cures, game.cubes, game.cubes_left, game.quarantined)
-            move = "station-fly"
+            action = game.move(new_pos, index, selectable[0], 'station-fly')
     elif new_pos in can_fly_direct and new_pos not in can_charter:
-        player.discard(new_pos, game.player_cards)
-        player.move(new_pos, board, game.cures, game.cubes, game.cubes_left, game.quarantined)
         discard = str(new_pos)
-        move = "fly"
+        action = game.move(new_pos, index, discard, 'fly')
     elif new_pos in can_charter and new_pos not in can_fly_direct:
-        player.discard(origin, game.player_cards)
         discard = origin
-        player.move(new_pos, board, game.cures, game.cubes, game.cubes_left, game.quarantined)
-        move = "charter"
-
+        action = game.move(new_pos, index, discard, 'charter')
     elif new_pos in can_charter and new_pos in can_fly_direct:
         selectable.append( str(new_pos) )
         selectable.append( str(origin) )
     else:
-        player.move(new_pos, board, game.cures, game.cubes, game.cubes_left, game.quarantined)
-        move = "shuttle"
+        action = game.move(new_pos, index, '', 'shuttle')
 
     if len(selectable) > 1:
         session['actions'] = actions
         session['game'] = pickle.dumps(game)
         return jsonify(selectable=selectable)
     else:
-        action = { 'act': move,
-                    'id': player_id,
-                    'origin': origin,
-                    'destination': new_pos,
-                    'cards': discard,
-                    'owner': owner.get_id(),
-                    'available': prev_avail,
-                    'can_build': prev_build,
-                    'can_cure': prev_cure,
-                    'cubes': orig_cubes,
-                    'rows': orig_rows,
-                    'color_img': COLOR_IMG,
-                    'card_data': CARDS[int(discard)] if discard != '' else 'none',
-                    'hand': prev_hand,
-                    'team_hands': prev_hands,
-                    'give': prev_give,
-                    'take': prev_take }
         if trashing == 0:
             actions.append(action)
         else:
             actions[-1]['trash'] = action
 
-        print(actions[-1])
-        available, new_dispatch, origin, player_id = game.set_available(player)
+        available, new_dispatch, origin, player_id = game.set_available(is_airlift)
         can_take, can_give, team_hands = game.set_share()
 
-        if is_airlift == 1 or player.get_role() != DISPATCHER:
-            player.selected = player
-        if player.get_role() == MEDIC:
-            cubes_left = copy(game.cubes_left)
-            can_build = player.can_build(new_pos, game.research_stations)
-            can_cure = player.can_cure(game.research_stations)
-            session['actions'] = actions
-            session['game'] = pickle.dumps(game)
-            print(can_give)
-            return jsonify( available=available,
-                            player_id=player_id,
-                            move=move,
-                            origin=action['origin'],
-                            discard=discard,
-                            cures=cures,
-                            cubes_left=cubes_left,
-                            can_build=can_build,
-                            hand=player.hand,
-                            team_hands=team_hands,
-                            can_cure=can_cure,
-                            can_take=can_take,
-                            can_give=can_give,
-                            num_cards=len(owner.hand) )
-        else:
-            can_build = player.can_build(new_pos, game.research_stations)
-            can_cure = player.can_cure(game.research_stations)
-            session['actions'] = actions
-            session['game'] = pickle.dumps(game)
-            print(player.hand)
-            return jsonify( available=available,
-                            player_id=player_id,
-                            move=move,
-                            origin=action['origin'],
-                            discard=discard,
-                            can_build=can_build,
-                            can_cure=can_cure,
-                            hand=player.hand,
-                            team_hands=team_hands,
-                            can_take=can_take,
-                            can_give=can_give,
-                            num_cards=len(owner.hand) )
+        cubes_left = copy(game.cubes_left)
+        can_build = player.can_build(new_pos, game.research_stations)
+        can_cure = player.can_cure(game.research_stations)
+        session['actions'] = actions
+        session['game'] = pickle.dumps(game)
+        return jsonify( available=available,
+                        player_id=player_id,
+                        move=action['act'],
+                        origin=action['origin'],
+                        discard=discard,
+                        cures=cures,
+                        cubes_left=cubes_left,
+                        can_build=can_build,
+                        hand=copy(player.hand),
+                        team_hands=team_hands,
+                        can_cure=can_cure,
+                        can_take=can_take,
+                        can_give=can_give,
+                        num_cards=len(owner.hand) )
 
 @movement.route('/_select_card_for_move')
 def select_move_card():
@@ -171,80 +108,35 @@ def select_move_card():
     cures = copy(game.cures)
     action = 0
 
-    prev_avail, dispatch, origin, player_id = game.set_available(player)
-    prev_build = player.can_build(origin, game.research_stations)
-    prev_cure = player.can_cure(game.research_stations)
-    prev_hand = copy(player.hand)
-    prev_take, prev_give, prev_hands = game.set_share()
-    orig_cubes = game.cubes[new_pos]
-    orig_rows = board.rows[new_pos]
-
-    player.discard(discard, game.player_cards)
     if discard == origin:
-        move = "charter"
+        action = game.move(new_pos, index, discard, 'charter')
     elif discard == new_pos:
-        move = "fly"
+        action = game.move(new_pos, index, discard, 'fly')
     elif player.get_role() == OE:
-        player.has_stationed = True
-        move = "station-fly"
-
-    action = { 'act': move,
-                'id': player_id,
-                'origin': origin,
-                'destination': new_pos,
-                'cards': discard,
-                'owner': player.get_id(),
-                'available': prev_avail,
-                'can_build': prev_build,
-                'can_cure': prev_cure,
-                'cubes': orig_cubes,
-                'rows': orig_rows,
-                'color_img': COLOR_IMG,
-                'card_data': CARDS[int(discard)] if discard != '' else 'none',
-                'hand': prev_hand,
-                'team_hands': prev_hands,
-                'give': prev_give,
-                'take': prev_take }
+        action = game.move(new_pos, index, discard, 'station-fly')
     actions.append(action)
 
-    player.move(new_pos, board, game.cures, game.cubes, game.cubes_left, game.quarantined)
     can_build = player.can_build(new_pos, game.research_stations)
     can_cure = player.can_cure(game.research_stations)
-    available, new_dispatch, origin, player_id = game.set_available(player)
+    available, new_dispatch, origin, player_id = game.set_available(is_airlift)
     can_take, can_give, team_hands = game.set_share()
 
-    if player.get_role() != DISPATCHER:
-        player.selected = player
-    if player.get_role() == MEDIC:
-        session['actions'] = actions
-        session['game'] = pickle.dumps(game)
-        return jsonify( available=available,
-                        player_id=player_id,
-                        move=move,
-                        origin=action['origin'],
-                        cures=cures,
-                        cubes_left=cubes_left,
-                        can_build=can_build,
-                        can_cure=can_cure,
-                        hand=player.hand,
-                        team_hands=team_hands,
-                        can_take=can_take,
-                        can_give=can_give,
-                        num_cards=len(owner.hand) )
-    else:
-        session['actions'] = actions
-        session['game'] = pickle.dumps(game)
-        return jsonify( available=available,
-                        player_id=player_id,
-                        move=move,
-                        origin=action['origin'],
-                        can_build=can_build,
-                        can_cure=can_cure,
-                        hand=player.hand,
-                        team_hands=team_hands,
-                        can_take=can_take,
-                        can_give=can_give,
-                        num_cards=len(owner.hand) )
+    session['actions'] = actions
+    session['game'] = pickle.dumps(game)
+    return jsonify( available=available,
+                    player_id=player_id,
+                    move=move,
+                    origin=action['origin'],
+                    cures=cures,
+                    cubes_left=cubes_left,
+                    can_build=can_build,
+                    can_cure=can_cure,
+                    hand=player.hand,
+                    team_hands=team_hands,
+                    can_take=can_take,
+                    can_give=can_give,
+                    num_cards=len(owner.hand) )
+
 
 @movement.route('/_select_player')
 def select_player():
@@ -252,8 +144,7 @@ def select_player():
     index = request.args.get('index', 0, type=int)
     is_airlift = request.args.get('airlift', 0, type=int)
     player = game.players[game.active]
-    selected = game.players[(game.active + index) % game.num_players]
-    player.selected = selected
+    selected = game.select_player(index)
     position = selected.get_position()
     if is_airlift == 1:
         available = []
@@ -261,7 +152,7 @@ def select_player():
             if city != position:
                 available.append(str(city))
     else:
-        available, dispatch, origin, player_id = game.set_available(player)
+        available, dispatch, origin, player_id = game.set_available(is_airlift)
     can_build = player.can_build(player.get_position(), game.research_stations)
     can_cure = player.can_cure(game.research_stations)
     session['game'] = pickle.dumps(game)

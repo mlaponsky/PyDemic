@@ -1,7 +1,8 @@
 function select_oqn(target) {
     var select = 0;
-    if ( target.hasClass('.card') ) {
+    if ( target.hasClass('card') ) {
         select = target.parent().parent().index();
+        console.log(select);
     }
     target.addClass('down').removeClass('giveable takeable trashable');
     board_off();

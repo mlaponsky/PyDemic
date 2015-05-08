@@ -147,12 +147,14 @@ function buttons_on() {
     $('#make-cure').attr('class', 'action').off().on('click', make_cure);
     $('#undo-action').attr('class', 'action').off().on('click', undo);
     // $('#next-phase').attr('class', 'action').off().on('click', advance);
+    $('#cp-store').off().on('click', select_store).removeClass('down').addClass('giveable');
 }
 
 function buttons_off() {
     $('#build-station').attr('class', 'paused').off();
     $('#make-cure').attr('class', 'paused').off();
     $('#undo-action').attr('class', 'paused').off();
+    $('#cp-store').off().removeClass('giveable');
 }
 
 function escape_card_select(objects) {

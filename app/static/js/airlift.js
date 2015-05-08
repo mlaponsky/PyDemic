@@ -27,7 +27,8 @@ function airlift_select_player(event) {
         is_airlift = 1;
     }
     $.getJSON( $SCRIPT_ROOT + '/_select_player', { index: select,
-                                                   airlift: is_airlift }).success(
+                                                   airlift: is_airlift,
+                                                   store: STORE }).success(
         function(data) {
             set_cities(data.available);
             target.attr('class', 'role chosen');
@@ -54,7 +55,8 @@ function airlift_select_self(event) {
         is_airlift = 1;
     }
     $.getJSON( $SCRIPT_ROOT + '/_select_player', { index: 0,
-                                                   airlift: is_airlift }).success(
+                                                   airlift: is_airlift,
+                                                   store: STORE }).success(
         function(data) {
             set_cities(data.available);
             $('.role').off().attr('class', 'role');

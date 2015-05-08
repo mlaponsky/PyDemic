@@ -73,7 +73,7 @@ function undo_move(data) {
             var cubes_left = Number(cube_counter);
             var prev_city = document.getElementById(String(data['destination']));
             var prev_dims = prev_city.getBoundingClientRect();
-            add_cubes(String(data['destination']), prev_dims, String(i), data['color_img'][i], data['rows'][i], data['cubes'][i]);
+            add_cubes(String(data['destination']), prev_dims, String(i), data['rows'][i], data['cubes'][i]);
             cubes_left += data['cubes'][i];
             document.getElementById(String(i)+"-cnt").getElementsByTagName('tspan')[0].textContent = String(cubes_left);
         }
@@ -122,7 +122,7 @@ function undo_treatment(data) {
     var city = document.getElementById(data['origin']);
     var dims = city.getBoundingClientRect();
     add_cubes(data['origin'], dims, data['color'],
-                data['color_img'][Number(data['color'])], data['rows'][Number(data['color'])], data['cubes']);
+                Number(data['color']), data['rows'][Number(data['color'])], data['cubes']);
 
     var cubes_left = Number(document.getElementById(data['color']+"-cnt").getElementsByTagName('tspan')[0].textContent)
     document.getElementById(data['color']+"-cnt").getElementsByTagName('tspan')[0].textContent = cubes_left - data['removed'];
@@ -139,7 +139,7 @@ function undo_cure(data) {
     var city = document.getElementById(String(data['origin']));
     var dims = city.getBoundingClientRect();
     add_cubes(String(data['origin']), dims, String(data['color']),
-                data['color_img'][data['color']], data['rows'][Number(data['color'])], data['cubes']);
+                data['color'], data['rows'][Number(data['color'])], data['cubes']);
 
     if ( $("#medic").length !== 0) {
         var cubes_left = Number(document.getElementById(data['color']+"-cnt").getElementsByTagName('tspan')[0].textContent)
@@ -191,6 +191,5 @@ function undo_trash(data) {
             undo_discard(trash['cards'], trash['owner']);
             set_cities(trash['available']);
         }
-        TRASHING--;
     }
 }

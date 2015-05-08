@@ -28,7 +28,7 @@ function execute_forecast() {
                                                       card5: Number(card5),
                                                       index: select }).success(
         function(data) {
-            discard('48');
+            discard('49');
             $('#logger').html('Played <b>FORECAST</b>.');
             $('#next-phase').off().prop('disabled', true);
             $('#forecast').hide(200);

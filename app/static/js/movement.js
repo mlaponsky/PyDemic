@@ -27,8 +27,7 @@ function move(new_pos, data, is_airlift) {
             medic_with_cure(data, new_pos);
             set_cities(data.available);
             $("#undo-action").prop('disabled', ACTIONS === 0);
-            var active = $(".active-player").attr('id').split('-')[1]
-            if (data.player_id === active) {
+            if (data.player_id === ACTIVE) {
                 set_treatable(new_pos);
                 $("#build-station").prop('disabled', !data.can_build);
                 $("#make-cure").prop('disabled', !data.can_cure);
@@ -74,6 +73,7 @@ function execute_move(event) {
     $.getJSON($SCRIPT_ROOT + '/_move', { id: Number(new_pos),
                                          airlift: is_airlift,
                                          index: select,
+                                         store: STORE,
                                          trashing: TRASHING
                                        }).success(function(data) {
         if (typeof data.available !== 'undefined') {
@@ -90,7 +90,13 @@ function execute_move(event) {
                 PHASE++;
             } else if (data.move === "airlift") {
                 $('#logger').html("Airlifted "+ROLES[data.player_id]+" from "+CARDS[data.origin].bold()+".");
-                discard(data.discard)
+                if ( STORE === 0 ) {
+                    discard(data.discard);
+                } else {
+                    $('#cp-store').hide(200);
+                    $('#pl-discard-'+data.discard).off().show(200).attr('class', 'graveyard');
+                    STORE = 0;
+                }
                 if ( TRASHING === 1 ) {
                     ACTIONS--;
                 }

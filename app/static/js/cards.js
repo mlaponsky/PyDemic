@@ -26,14 +26,17 @@ function create_card(city, data) {
     });
 }
 
-function set_team_trash() {
+function set_team_trash(data) {
     TRASHING = 1;
+    $('.can-give').off().removeClass('can-give');
     $('.available').off().attr('class', 'unavailable marked');
     $('.treatable').off().attr('class', 'unavailable marked-t');
+    $('.role').off().attr('class', 'role');
     buttons_off();
     board_off();
-    $('#'+data.recipient).parent().parent().attr('class', 'can-give');
+    $('#'+data.recipient).parent().parent().attr('class', 'team-trashing');
     $('#'+data.recipient+"-box li.card").off().on('click', trash).addClass('trashable');
+    $('#logger').html( $('#logger').html() + ' Over the hand limit; please choose discard a card.');
 }
 
 function set_active_trash() {
@@ -45,6 +48,7 @@ function set_active_trash() {
     buttons_off();
     board_off();
     $('.pl-card').off().on('click', trash).addClass('trashable');
+    $('#logger').html( $('#logger').html() + ' Over the hand limit; please choose discard a card.');
 }
 
 function discard(card) {
@@ -72,13 +76,15 @@ function board_on() {
     $('.pl-card.down').off().removeClass('down').addClass('giveable');
     $('.card.down').off().removeClass('down').addClass('takeable');
     $('.pl-card.holding').removeClass('holding').addClass('giveable');
+    $('.pl-discard.holding').removeClass('holding').addClass('takeable').off().on('click', store_on_cp);
     $('.card.holding').removeClass('holding').addClass('takeable');
     $('.giveable').off().on('click', give_card);
-    $('.takeable').off().on('click', take_card);
+    $('.card.takeable').off().on('click', take_card);
     $('.role.holding').off().on('click', select_player).removeClass('holding').addClass('choosable');
-    $('#name.holding').off().on('click', function() {console.log('Ya')}).removeClass('holding').addClass('self-chooseable');
+    $('#name.holding').off().removeClass('holding').addClass('self-chooseable');
     $('.can-give').removeClass('can-give');
     $('.can-take').removeClass('can-take');
+    $('.team-trashing').removeClass('team-trashing');
 }
 
 function trash(event) {
@@ -92,6 +98,8 @@ function trash(event) {
         select_forecast(card);
     } else if (card_id === '50') {
         select_gg(card);
+    } else if (card_id === '51') {
+        select_oqn(card);
     } else if (card_id === '52') {
         select_rp(card);
     } else {
@@ -99,22 +107,31 @@ function trash(event) {
                                                action: 1 }).success(
             function(data) {
                 $('#logger').html('');
-                discard(String(data.card));
+                if ( card.hasClass('pl-card') ) {
+                    discard(String(data.card));
+                } else {
+                    card.off().removeClass('takeable trashable down').hide(200);
+                    $('#logger').html('Discarded '+CARDS[Number(data.card)].bold()+'.');
+                }
                 board_on();
                 set_cities(data.available);
                 set_treatable(data.origin);
                 buttons_on();
-                console.log(ACTIONS);
+                if ( !body.hasClass('selecting') ) {
+                    team_toggle();
+                } else {
+                    body.removeClass('selecting');
+                }
             }
         ).error(function(error){console.log(error)});
     }
+    TRASHING = 0;
 }
 
 function give(card, data) {
     card.off().attr('class', 'pl-card').hide(200);
     $('#'+data.recipient+'-card-'+data.card).on('click', take_card).addClass('takeable').show(200);
     set_cities(data.available);
-    var giver = $('.active-player').attr('id').split('-')[1];
     $('#logger').html('You gave '+CARDS[Number(data.card)].bold()+' to the '+ROLES[data.recipient].bold()+'.');
     ACTIONS++;
     PHASE++;
@@ -124,9 +141,9 @@ function give(card, data) {
 function give_card(event) {
     var card = $(event.target).parent();
     var card_id = card.attr('id').split('-')[1];
-    var sel = $('.active-player').attr('id').split('-')[1];
+    var sel = ACTIVE;
     if ( $('.role.chosen').length !== 0 ) {
-        sel = $('.chosen').attr('id');
+        sel = $('.chosen').parent().parent().index();
     }
     if (card_id === '48') {
         select_airlift(card);
@@ -151,7 +168,7 @@ function give_card(event) {
                             give(card, data);
                             if ( data.num_cards > 7 ) {
                                 $('#'+data.recipient).parent().parent().addClass('can_give');
-                                set_team_trash(card, data);
+                                set_team_trash(data);
                             } else {
                                 setTimeout( function() {
                                     team_toggle();
@@ -161,8 +178,9 @@ function give_card(event) {
                         }, 200);
                     } else {
                         give(card, data);
-                        if ( typeof data.num_cards > 7 ) {
-                            set_team_trash(card, data);
+                        if ( data.num_cards > 7 ) {
+                            $('#'+data.recipient).parent().parent().addClass('can_give');
+                            set_team_trash(data);
                         }
                         buttons_on();
                     }
@@ -197,23 +215,26 @@ function give_card(event) {
 }
 
 function select_recipient(event) {
-    var recip = $(event.target).attr('id');
+    var recip = $(event.target).parent().parent().index();
     var card_id = $('.down').attr('id').split('-')[1];
-    $.getJSON( $SCRIPT_ROOT + '/_select_recipient', { card: card_id, selected: recip }).success(
+    $.getJSON( $SCRIPT_ROOT + '/_select_recipient', { card: card_id,
+                                                      selected: recip }).success(
         function(data) {
             var card = $('#card-'+data.card);
-            escape_give_select(card, data);
+            if ( data.num_cards <= 7) {
+                escape_give_select(card, data);
+            }
             card.off();
             give(card, data);
-            if (typeof data.num_cards > 7) {
-                set_team_trash()
+            if (data.num_cards > 7) {
+                set_team_trash(data);
             }
         }).error(function(error) {console.log(errors)} );
 }
 
 function take_card(event) {
     var card = $(event.target).parent();
-    var source_id = card.attr('id').split('-')[0]
+    var source = card.parent().parent().index();
     var card_id = card.attr('id').split('-')[2];
     if (card_id === '48') {
         select_airlift(card);
@@ -227,16 +248,18 @@ function take_card(event) {
         select_rp(card);
     } else {
         $.getJSON( $SCRIPT_ROOT + '/_take', { card: Number(card_id),
-                                              id: source_id}).success(
+                                              id: source}).success(
             function(data) {
                 card.off().attr('class', 'card').hide(200);
                 $('#card-'+card_id).on('click', give_card).show(200).addClass('giveable');
                 set_cities(data.available);
                 buttons_on();
-                var taker = $('.active-player').attr('id').split('-')[1];
                 $('#logger').html('You took '+CARDS[Number(data.card)].bold()+ ' from the '+ROLES[data.source_id].bold()+'.');
                 ACTIONS++;
                 PHASE++;
+                if ( data.num_cards > 7 ) {
+                    set_active_trash();
+                }
                 $('#undo-action').prop('disabled', ACTIONS===0);
             }).error(function(error) {console.log(errors)} );
     }
@@ -244,10 +267,7 @@ function take_card(event) {
 
 function escape_give_select(card, data) {
     buttons_on();
-    $('.available').off().on('click', execute_move);
-    card.off().on('click', give_card).removeClass('down').addClass('giveable');
-    $('.pl-card.holding').off().on('click', give_card).removeClass('holding').addClass('giveable');
-    $('.card.holding').off().on('click', take_card).removeClass('holding').addClass('takeable');
+    board_on();
     if ( !body.hasClass('selecting') ) {
         team_toggle();
     } else {
@@ -256,7 +276,7 @@ function escape_give_select(card, data) {
     $('.role').parent().parent().attr('class', '');
     $('.role').off();
 
-    if ( $('#active-dispatcher').length !== 0 ) {
+    if ( ACTIVE === 'dispatcher' ) {
         $('.role').off().on('click', select_player).attr('class', 'role choosable')
     }
     $('html').off();

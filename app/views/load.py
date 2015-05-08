@@ -67,8 +67,6 @@ def set_game():
         positions.append(str(p.get_position()))
 
     can_take, can_give, team_hands = game.set_share()
-    for p in team:
-        print(p.get_id(), p.hand)
 
     research_stations = copy(game.research_stations)
     can_build = player.can_build( player.get_position(), research_stations)
@@ -84,6 +82,10 @@ def set_game():
         if not all(v==0 for v in game.cubes[city]):
             cubes[city] = game.cubes[city]
             rows[city] = board.get_all_rows(city)
+
+    store = None
+    if player.get_role() == CP:
+        store = player.event
 
     session['actions'] = actions
     session['game'] = pickle.dumps(game)
@@ -103,6 +105,7 @@ def set_game():
                     can_give=can_give,
                     can_take=can_take,
                     forecast=game.infect_cards.deck[:6],
+                    store=store,
                     player_discard=game.player_cards.discard,
                     player_grave=game.player_cards.graveyard,
                     infect_discard=game.infect_cards.discard,

@@ -16,7 +16,7 @@ def give():
     actions = session['actions']
 
     card = request.args.get('card', -1, type=int)
-    recip = request.args.get('recip', '', type=str)
+    recip = request.args.get('recip', 0, type=int)
     player = game.players[game.active]
     team = game.players[game.active+1:] + game.players[:game.active]
 
@@ -24,20 +24,12 @@ def give():
     for t in team:
         if player.can_give(card, t):
             recipients.append(t)
-    prev_avail, dispatch, origin, player_id = game.set_available(player)
     if recip != player.get_id():
         recipients = [t for t in team if t.get_id() == recip]
     if len(recipients) == 1:
-        action = { 'act': 'give',
-                    'card': str(card),
-                    'giver': player.get_id(),
-                    'taker': recipients[0].get_id(),
-                    'available': prev_avail }
+        action = game.give_card(recip, card)
         actions.append(action)
-
-        player.give_card(card, recipients[0])
         available, new_dispatch, origin, player_id = game.set_available(player)
-
         session['game'] = pickle.dumps(game)
         session['actions'] = actions
         return jsonify( card=str(card),
@@ -58,25 +50,16 @@ def select_recipient():
 
     player = game.players[game.active]
     card = request.args.get('card', -1, type=int)
-    r_id = request.args.get('selected', '', type=str)
-    for p in game.players:
-        if p.get_id() == r_id:
-            recipient = p
-    prev_avail, dispatch, origin, player_id = game.set_available(player)
+    recip = request.args.get('selected', 0, type=int)
+    recipient = game.players[(game.active + recip) % game.num+_players]
 
-    action = { 'act': 'give',
-                'card': str(card),
-                'giver': player.get_id(),
-                'taker': recipient.get_id(),
-                'available': prev_avail }
+    action = game.give_card(recip, card)
+    available, new_dispatch, origin, player_id = game.set_available(0)
     actions.append(action)
-    player.give_card(card, recipient)
-    available, new_dispatch, origin, player_id = game.set_available(player)
-
     session['game'] = pickle.dumps(game)
     session['actions'] = actions
     return jsonify( card=str(card),
-                    recipient=recipient.get_id(),
+                    recipient=action['taker'],
                     recipients=[r.get_id() for r in game.players[game.active+1:] + game.players[:game.active]],
                     available=available,
                     num_cards=len(recipient.hand) )
@@ -88,18 +71,9 @@ def take():
 
     player = game.players[game.active]
     card = request.args.get('card', -1, type=int)
-    source_id = request.args.get('id', '', type=str)
-    for p in game.players:
-        if p.get_id() == source_id:
-            source = p
+    source = request.args.get('id', 0, type=int)
 
-    prev_avail, dispatch, origin, player_id = game.set_available(player)
-
-    action = { 'act': 'take',
-                'card': str(card),
-                'taker': player.get_id(),
-                'giver': source.get_id(),
-                'available': prev_avail }
+    action = game.take_card(source, card)
     actions.append(action)
 
     player.take_card(card, source)
@@ -107,7 +81,7 @@ def take():
     session['game'] = pickle.dumps(game)
     session['actions'] = actions
     return jsonify( card=str(card),
-                    source_id=source.get_id(),
+                    source_id=action['source'],
                     available=available,
                     num_cards=len(player.hand) )
 
@@ -128,8 +102,9 @@ def trash():
                'owner': owner.get_id(),
                'available': prev_avail }
     actions[-1]['trash'] = action
-    player.discard(card, game.player_cards)
+    owner.discard(card, game.player_cards)
     available, dispatch, origin, player_id = game.set_available(player)
+    session['actions'] = actions
     session['game'] = pickle.dumps(game)
     return jsonify( available=available,
                     origin=str(origin),

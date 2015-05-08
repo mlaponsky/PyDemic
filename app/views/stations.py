@@ -15,51 +15,30 @@ def select_station():
     game = pickle.loads(session['game'])
     actions = session['actions']
     player = game.players[game.active]
-    to_remove = request.args.get('id', 0, type=int)
+    to_remove = request.args.get('id', -1, type=int)
     position = request.args.get('position', -1, type=int)
     index = request.args.get('index', 0, type=int)
-    trashing = request.args.get('trashing', 0, type=bool)
-    owner = game.players[(game.active + index) % game.num_players]
-    prev_avail, dispatch, origin, player_id = game.set_available(player)
-    can_build = player.get_position() not in game.research_stations and (player.get_position() in player.hand or player.get_role == OE)
+    trashing = request.args.get('trashing', 0, type=int)
+    is_stored = request.args.get('is_stored', 0, type=int)
+
     if position != -1:
-        discard = GG
-        action = { 'act': "gg",
-                    'origin': str(position),
-                    'can_build': can_build,
-                    'discard': str(GG),
-                    'owner': owner.get_id(),
-                    'removed': str(to_remove),
-                    'card_data': CARDS[discard],
-                    'available': prev_avail }
+        action = game.play_gg(position, index, to_remove, is_stored)
     else:
-        discard = player.get_position() if player.get_role() != OE else -1
-        position = player.get_position()
-        action = { 'act': "build",
-                    'origin': str(player.get_position()),
-                    'can_build': can_build,
-                    'discard': str(discard),
-                    'owner': owner.get_id(),
-                    'removed': str(to_remove),
-                    'card_data': CARDS[discard],
-                    'available': prev_avail }
+        action = game.build(to_remove)
+
     if trashing == 0:
         actions.append(action)
     else:
         actions[-1]['trash'] = action
-
-    game.research_stations.remove(to_remove)
-    owner.build_station(position, discard, game.research_stations, game.player_cards)
-
     available, new_dispatch, origin, player_id = game.set_available(player)
 
     session['actions'] = actions
     session['game'] = pickle.dumps(game)
     return jsonify( position=player.get_position(),
                     station=position,
-                    discard=discard,
-                    can_build=can_build,
-                    owner=owner.get_id(),
+                    discard=action['discard'],
+                    can_build=action['can_build'],
+                    owner=action['owner'],
                     available=available )
 
 @stations.route('/_build_station')
@@ -67,41 +46,32 @@ def build_station():
     game = pickle.loads(session['game'])
     actions = session['actions']
     player = game.players[game.active]
-    num_stations = len(game.research_stations)
-    prev_avail, dispatch, origin, player_id = game.set_available(player)
-
-    can_build = player.get_position() not in game.research_stations and (player.get_position() in player.hand or player.get_role() == OE)
     position = request.args.get('position', -1, type=int)
     trashing = request.args.get('trashing', 0, type=int)
-    if position != -1:
-        discard = GG
-    else:
-        position = player.get_position()
-        discard = player.get_position() if player.get_role() != OE else -1
     index = request.args.get('index', 0, type=int)
-    owner = game.players[(game.active + index) % game.num_players]
+    is_stored = request.args.get('is_stored', 0, type=int)
+    num_stations = len(game.research_stations)
+
     if num_stations < MAX_STATIONS:
-        action = { 'act': "build" if position == -1 else 'gg',
-                   'origin': str(position),
-                   'can_build': can_build,
-                    'discard': str(discard),
-                    'removed': 'none',
-                    'owner': owner.get_id(),
-                    'card_data': CARDS[discard],
-                    'available': prev_avail }
+        if position != -1:
+            action = game.play_gg(position, index, -1, is_stored)
+        else:
+            position = player.get_position()
+            action = game.build(-1)
+
         if trashing == 0:
             actions.append(action)
         else:
             actions[-1]['trash'] = action
-        owner.build_station(position, discard, game.research_stations, game.player_cards)
-    available, new_dispatch, origin, player_id = game.set_available(player)
+    available, new_dispatch, origin, player_id = game.set_available(0)
     session['actions'] = actions
     session['game'] = pickle.dumps(game)
     return jsonify( position=player.get_position(),
                     station=position,
-                    can_build=can_build,
+                    can_build=action['can_build'],
                     num_stations=num_stations,
-                    discard=discard,
+                    discard=action['discard'],
+                    owner=action['owner'],
                     available=available )
 
 @stations.route('/_escape_gg')

@@ -20,10 +20,11 @@ var ROLES = { 'cp': "CONTINGENCY PLANNER",
 
 var COLORS = ['BLUE', 'YELLOW', 'BLACK', 'RED', 'EVENT'];
 var TRASHING = 0;
-
-
 var ACTIONS = 0;
 var PHASE = 0;
+var STORE = 0;
+var ACTIVE;
+
 function initial_load() {
     $.getJSON($SCRIPT_ROOT + '/_load').success(function(data) {
         var available = data.available;
@@ -40,6 +41,7 @@ function initial_load() {
         var actions = data.actions;
         ACTIONS = actions.length;
         PHASE = data.phase;
+        ACTIVE = roles[0];
 
         set_stations(48, rs);
         for (var k=0; k<53; k++ ) {
@@ -57,6 +59,19 @@ function initial_load() {
         set_cities(available);
         set_treatable(positions[0])
         set_selectable_players(roles[0]);
+        $('#cp-store').hide();
+        if ( ACTIVE === 'cp' ) {
+            for (var l=48; l<53; l++) {
+                if ( !$('#pl-discard-'+String(l)).hasClass('graveyard') ) {
+                    $('#pl-discard-'+String(l)).off().on('click', store_on_cp).addClass('takeable');
+                }
+            }
+            if (data.store !== null) {
+                $('#cp-store').attr('src', 'static/img/player_cards/pl-'+String(data.store)+'.svg');
+                $('#cp-store').attr('class', 'store-'+String(data.store)).show();
+            }
+            $('#cp-store').off().on('click', select_store).addClass('giveable').css('z-index', 1000);
+        }
 
         for (var i=0; i<cures.length; i++) {
             set_cure(String(i), cures[i]);

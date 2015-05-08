@@ -30,9 +30,9 @@ function escape_gg() {
                 $('.marked').off().on('click', execute_move).attr('class', 'available');
                 $('.selectable').off().attr('class', 'unavailable');
                 set_treatable(String(data.position));
-                buttons_on();
                 $('html').off();
                 board_on();
+                buttons_on();
             } else if ( TRASHING === 1 ) {
                 $('.down').off().on('click', trash).addClass('trashable').removeClass('down');
                 $('.holding-t').off().on('click', trash).addClass('trashable').removeClass('holding-t');

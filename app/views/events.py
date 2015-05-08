@@ -22,11 +22,9 @@ def forecast():
     card4 = request.args.get('card0', infect[4], type=int)
     card5 = request.args.get('card0', infect[5], type=int)
     index = request.args.get('index', 0, type=int)
-    owner = game.players[(game.active + index) % game.num_players]
     forecast = [ card0, card1, card2, card3, card4, card5 ]
-    game.infect_cards.deck = forecast+infect[6:]
 
-    owner.discard(FORECAST, game.player_cards)
+    game.play_forecast(index, forecast)
 
     available, dispatch, origin, player_id = game.set_available(player)
     session['game'] = pickle.dumps(game)
@@ -42,16 +40,9 @@ def rp():
     player = game.players[game.active]
     card = request.args.get('remove', -1, type=int)
     index = request.args.get('index', 0, type=int)
-    owner = game.players[(game.active + index) % game.num_players]
     trashing = request.args.get('trashing', 0, type=int)
 
-    game.infect_cards.remove_from_discard(card)
-    game.infect_cards.add_to_graveyard(card)
-    owner.discard(RP, game.player_cards)
-
-    action = { 'act': 'rp',
-                'owner': owner.get_id(),
-                'deleted': card }
+    action = game.play_rp(card, index)
 
     if trashing == 0:
         actions.append(action)
@@ -68,13 +59,7 @@ def oqn():
 
     index = request.args.get('index', 0, type=int)
     trashing = request.args.get('trashing', 0, type=int)
-    owner = game.players[(game.active + index) % game.num_players]
-
-    game.oqn = True
-    owner.discard(OQN, game.player_cards)
-
-    action = { 'act': 'oqn',
-                'owner': owner.get_id() }
+    action = game.play_oqn(index)
     if trashing == 0:
         actions.append(action)
     else:
@@ -82,3 +67,15 @@ def oqn():
     session['actions'] = actions
     session['game'] = pickle.dumps(game)
     return jsonify( owner=owner.get_id() )
+
+@events.route('/_store_on_cp')
+def store_on_cp():
+    game = pickle.loads(session['game'])
+    actions = session['actions']
+    card = request.args.get('card', -1, type=int)
+
+    action = game.store_on_cp(card)
+    actions.append(action)
+    session['actions'] = actions
+    session['game'] = pickle.dumps(game)
+    return jsonify( success=True )

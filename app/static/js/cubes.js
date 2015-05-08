@@ -129,7 +129,7 @@ function treat(event) {
 }
 
 function select_cube_color(event) {
-    var cube = event.target.getAttribute('class');
+    var cube = $(event.target).attr('class');
     var class_array = cube.split(' ');
     var city = class_array[0].split('-')[1];
     var color = class_array[1].split('-')[1];

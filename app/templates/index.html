@@ -39,6 +39,7 @@
 		<script charset="utf-8" src="static/js/gg.js"></script>
 		<script charset="utf-8" src="static/js/oqn.js"></script>
 		<script charset="utf-8" src="static/js/rp.js"></script>
+		<script charset="utf-8" src="static/js/cp_event.js"></script>
 		<script charset="utf-8" src="static/js/undo.js"></script>
 		<script charset="utf-8" src="static/js/load.js"></script>
 		<script charset="utf-8" src="static/js/image_size.js"></script>
@@ -102,12 +103,8 @@
 
 				{% include 'stats.html' %}
 
-				<object id="player-color" type="image/svg+xml" data="{{ active_player.piece }}">
-					<h3>Fallback</h3>
-				</object>
-				<object id="cp-event" type="image/svg+xml" data="static/img/player_cards/pl-48.svg">
-					<h3>Fallback</h3>
-				</object>
+				<img id="player-color" src="{{ active_player.piece }}">
+				<img id="cp-store" class=".store-48" src="static/img/player_cards/pl-48.svg">
 
 				{% include 'player.html' %}
 

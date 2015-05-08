@@ -7,8 +7,8 @@ function make_cure() {
                     discard(data.cards[i]);
                 }
                 set_cure(String(data.c), data.cured);
-                if ( $("#medic").length !== 0) {
-                    $(".city-"+data.position+".cube-"+String(data.c)).remove();
+                if ( data.medic !== -1 ) {
+                    $(".city-"+data.medic+".cube-"+String(data.c)).remove();
                     document.getElementById(String(data.c)+"-cnt").getElementsByTagName('tspan')[0].textContent = String(data.cubes_left);
                 }
                 ACTIONS++;

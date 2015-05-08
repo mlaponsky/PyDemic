@@ -63,10 +63,7 @@ class Player:
         return can_charter
 
     def move(self, new_pos, board, cures, cubes, cubes_left, quarantined):
-        if self.selected == self:
-            self.position = new_pos
-        else:
-            self.selected.move(new_pos, board, cures, cubes, cubes_left, quarantined)
+        self.position = new_pos
 
     # Hand management
     def add_card(self, card):
@@ -137,16 +134,19 @@ class Player:
         cards = [ card for card in self.hand if card // CITIES_PER_COLOR == cure_color ]
         return cards
 
-    def make_cure(self, cards, deck):
+    def make_cure(self, cards, cures, deck):
+        cure_color = cards[0] // CITIES_PER_COLOR
         for card in cards:
             self.discard(card, deck)
+        cures[cure_color] = CURED
+
 
     # Research Stations
     def can_build(self, city, research_stations):
         return (self.position == city and city in self.hand and city not in research_stations)
 
     def build_station(self, city, discard, research_stations, deck):
-        if (discard != -1):
+        if discard != -1 and discard in self.hand:
             self.discard(discard, deck)
         research_stations.append(city)
 
@@ -181,6 +181,13 @@ class ContingencyPlanner(Player):
         card = self.event
         self.event = None
         deck.add_to_graveyard(card)
+
+    def build_station(self, city, discard, research_stations, deck):
+        if discard != -1 and discard in self.hand:
+            self.discard(discard, deck)
+        else:
+            self.play_event(deck)
+        research_stations.append(city)
 
 class Dispatcher(Player):
     def __init__(self):

@@ -28,8 +28,8 @@ class Player:
         return self.position
 
     # Movement
-    def can_move(self, research_stations, board):
-        return self.can_drive(board) + self.can_shuttle(research_stations) + self.can_fly_direct(board) + self.can_charter(research_stations, board)
+    def can_move(self, hand, research_stations, board):
+        return self.can_drive(board) + self.can_shuttle(research_stations) + self.can_fly_direct(hand, board) + self.can_charter(hand, board)
 
     def can_drive(self, board):
         return board.get_neighbors(self.position)
@@ -41,8 +41,8 @@ class Player:
             shuttle.remove(self.position)
         return shuttle
 
-    def can_fly_direct(self, board):
-        can_fly = copy(self.hand)
+    def can_fly_direct(self, hand, board):
+        can_fly = hand
         neighbors = board.get_neighbors(self.position)
         if self.position in can_fly:
             can_fly.remove(self.position)
@@ -51,10 +51,10 @@ class Player:
                 can_fly.remove(city)
         return can_fly
 
-    def can_charter(self, research_stations, board):
+    def can_charter(self, hand, board):
         can_charter = []
         neighbors = board.get_neighbors(self.position)
-        if self.position in self.hand:
+        if self.position in hand:
             can_charter = [ city for city in range(NUM_CITIES) ]
             can_charter.remove(self.position)
             for n in neighbors:
@@ -202,38 +202,38 @@ class Dispatcher(Player):
         self.piece = ROLES[role]['piece_img']
         self.selected = self
 
-    def can_drive(self, board):
-        if self.selected == self:
-            return board.get_neighbors(self.position)
-        else:
-            return board.get_neighbors(self.selected.get_position())
-
-    def can_shuttle(self, research_stations):
-        shuttle = []
-        if self.selected.get_position() in research_stations:
-            shuttle = copy(research_stations)
-            shuttle.remove(self.selected.get_position())
-        return shuttle
-
-    def can_fly_direct(self, board):
-        can_fly = copy(self.hand)
-        neighbors = board.get_neighbors(self.selected.get_position())
-        if self.selected.get_position() in can_fly:
-            can_fly.remove(self.selected.position)
-        for city in neighbors:
-            if city in can_fly:
-                can_fly.remove(city)
-        return can_fly
-
-    def can_charter(self, research_stations, board):
-        can_charter = []
-        if self.selected.get_position() in self.hand:
-            can_charter = [ city for city in range(NUM_CITIES) ]
-            can_charter.remove(self.selected.get_position())
-            for n in board.get_neighbors(self.selected.get_position()):
-                if n in can_charter:
-                    can_charter.remove(n)
-        return can_charter
+    # def can_drive(self, selected_id, board):
+    #     if self.selected == self:
+    #         return board.get_neighbors(self.position)
+    #     else:
+    #         return board.get_neighbors(self.selected.get_position())
+    #
+    # def can_shuttle(self, research_stations):
+    #     shuttle = []
+    #     if self.selected.get_position() in research_stations:
+    #         shuttle = copy(research_stations)
+    #         shuttle.remove(self.selected.get_position())
+    #     return shuttle
+    #
+    # def can_fly_direct(self, board):
+    #     can_fly = copy(self.hand)
+    #     neighbors = board.get_neighbors(self.selected.get_position())
+    #     if self.selected.get_position() in can_fly:
+    #         can_fly.remove(self.selected.position)
+    #     for city in neighbors:
+    #         if city in can_fly:
+    #             can_fly.remove(city)
+    #     return can_fly
+    #
+    # def can_charter(self, research_stations, board):
+    #     can_charter = []
+    #     if self.selected.get_position() in self.hand:
+    #         can_charter = [ city for city in range(NUM_CITIES) ]
+    #         can_charter.remove(self.selected.get_position())
+    #         for n in board.get_neighbors(self.selected.get_position()):
+    #             if n in can_charter:
+    #                 can_charter.remove(n)
+    #     return can_charter
 
 class Medic(Player):
     def __init__(self):

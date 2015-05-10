@@ -43,8 +43,9 @@ function set_cube_row(position, dims, color, row, total) {
 
 function add_cubes(position, dims, color, row, total) {
     var class_name = ".city-"+position+".cube-"+color+".row-"+String(row);
-    var cube_row = $(class_name);
-    for (var i=cube_row.length; i<total; i++) {
+    var cubes = $(class_name);
+    console.log(total);
+    for (var i=cubes.length; i<total; i++) {
         create_cube(position, dims, color, row, i);
     }
 };

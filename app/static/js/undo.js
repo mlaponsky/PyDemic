@@ -82,14 +82,14 @@ function undo_move(data) {
     $(".available").off();
     $(".available").attr("class", "unavailable");
     //Animate movement and set availability.
-    $("#"+data['id']+"-piece").offset({left: player_l, top: player_t});
+    $("#"+data['mover']+"-piece").offset({left: player_l, top: player_t});
     set_cities(data['available']);
-    if ( $('#'+data['id']).length === 0 ) {
+    if ( $('#'+data['mover']).length === 0 ) {
         set_treatable(data['origin'])
     }
     set_giveable(data['hand'], data['give']);
     set_takeable(data['team_hands'], data['take']);
-    $('#logger').html("(UNDO) Return "+ROLES[data['id']].bold()+" to "+CARDS[data['origin']].bold()+".");
+    $('#logger').html("(UNDO) Return "+ROLES[data['mover']].bold()+" to "+CARDS[data['origin']].bold()+".");
     $("#build-station").prop('disabled', !data['can_build']);
     $("#make-cure").prop('disabled', !data['can_cure']);
 }
@@ -121,8 +121,9 @@ function undo_station(data) {
 function undo_treatment(data) {
     var city = document.getElementById(data['origin']);
     var dims = city.getBoundingClientRect();
+    console.log(data['cubes'])
     add_cubes(data['origin'], dims, data['color'],
-                Number(data['color']), data['rows'][Number(data['color'])], data['cubes']);
+                data['rows'][Number(data['color'])], data['cubes']);
 
     var cubes_left = Number(document.getElementById(data['color']+"-cnt").getElementsByTagName('tspan')[0].textContent)
     document.getElementById(data['color']+"-cnt").getElementsByTagName('tspan')[0].textContent = cubes_left - data['removed'];

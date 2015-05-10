@@ -195,6 +195,7 @@ function give_card(event) {
                     } else {
                         body.addClass('selecting');
                     }
+                    console.log(data.recipients)
                     for (var i=0; i<data.recipients.length; i++) {
                         $("#"+data.recipients[i]).parent().parent().attr('class', 'can-give');
                         $("#"+data.recipients[i]).off().on('click', select_recipient);

@@ -88,12 +88,16 @@ class Game:
 
     def select_player(self, index):
         self.selected = (index + self.active) % self.num_players
-        return self.players[self.selected]
+        selected = self.players[self.selected]
+        if selected.get_id() == OE:
+            selected.has_stationed = True
+        return selected
 
     def dispatcher_availability(self, available):
         dispatch = []
+        selected = self.players[self.selected]
         for p in self.players:
-            if self.selected != p and self.selected.get_position() != p.get_position():
+            if selected != p and selected.get_position() != p.get_position():
                 available.append(str(p.get_position()))
                 dispatch.append(p.get_position())
         return dispatch
@@ -114,7 +118,7 @@ class Game:
         else:
             if player.get_id() == 'dispatcher':
                 dispatch = self.dispatcher_availability(available)
-            for city in player.can_move(self.research_stations, self.board):
+            for city in selected.can_move(player.hand, self.research_stations, self.board):
                 available.append(str(city))
         return available, dispatch, origin, player_id
 
@@ -214,6 +218,8 @@ class Game:
         orig_rows = copy(self.board.rows[new_pos])
         action = { 'act': method,
                     'id': player.get_id(),
+                    'owner': owner.get_id(),
+                    'mover': mover.get_id(),
                     'is_stored': 0,
                     'origin': origin,
                     'destination': new_pos,
@@ -262,6 +268,7 @@ class Game:
         player = self.players[self.active]
         city = player.get_position()
         orig_cubes = copy(self.cubes[city][color])
+        print(orig_cubes)
         orig_rows = copy(self.board.rows[city])
         player.treat(color, self.cures, self.cubes, self.cubes_left, self.board)
         cubes_removed = orig_cubes - self.cubes[city][color]
@@ -306,11 +313,11 @@ class Game:
                     'available': prev_avail }
         return action
 
-    def give_card(recipient, card):
+    def give_card(self, recipient, card):
         giver = self.players[self.active]
-        receiver = self.players[(self.recipient + self.active) % self.num_players]
+        receiver = self.players[(recipient + self.active) % self.num_players]
         prev_avail, dispatch, origin, player_id = self.set_available(0)
-        giver.give_card(card, reciever)
+        giver.give_card(card, receiver)
         action = { 'act': 'give',
                     'card': str(card),
                     'giver': giver.get_id(),
@@ -318,14 +325,14 @@ class Game:
                     'available': prev_avail }
         return action
 
-    def take_card(giver, card):
+    def take_card(self, giver, card):
         taker = self.players[self.active]
-        source = self.players[(self.source + self.active) % self.num_players]
-        prev_avail, dispatch, origin, player_id = game.set_available(is_airlift)
+        source = self.players[(giver + self.active) % self.num_players]
+        prev_avail, dispatch, origin, player_id = self.set_available(0)
         taker.take_card(card, source)
         action = { 'act': 'take',
                     'card': str(card),
-                    'taker': player.get_id(),
+                    'taker': taker.get_id(),
                     'giver': source.get_id(),
                     'available': prev_avail }
         return action

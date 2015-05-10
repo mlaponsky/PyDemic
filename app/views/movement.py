@@ -16,6 +16,7 @@ def set_move():
     game = pickle.loads(session['game'])
     actions = session['actions']
     player = game.players[game.active]
+    selected = game.players[game.active]
     board = game.board
     origin = player.get_position()
     new_pos = request.args.get('id', 0, type=int)
@@ -32,8 +33,9 @@ def set_move():
 
     # neighbors = game.board.get_neighbors(origin)
     new_neighbors = game.board.get_neighbors(new_pos)
-    can_charter = player.can_charter(game.research_stations, board)
-    can_fly_direct = player.can_fly_direct(board)
+    can_charter = selected.can_charter(player.hand, board)
+    can_fly_direct = selected.can_fly_direct(player.hand, board)
+    prev_avail, dispatch, origin, player_id = game.set_available(0)
 
     if is_airlift == 1:
         action = game.play_airlift(index, new_pos, is_cp)
@@ -109,23 +111,23 @@ def select_move_card():
     action = 0
 
     if discard == origin:
-        action = game.move(new_pos, index, discard, 'charter')
+        action = game.move(new_pos, 0, discard, 'charter')
     elif discard == new_pos:
-        action = game.move(new_pos, index, discard, 'fly')
+        action = game.move(new_pos, 0, discard, 'fly')
     elif player.get_role() == OE:
-        action = game.move(new_pos, index, discard, 'station-fly')
+        action = game.move(new_pos, 0, discard, 'station-fly')
     actions.append(action)
 
     can_build = player.can_build(new_pos, game.research_stations)
     can_cure = player.can_cure(game.research_stations)
-    available, new_dispatch, origin, player_id = game.set_available(is_airlift)
+    available, new_dispatch, origin, player_id = game.set_available(0)
     can_take, can_give, team_hands = game.set_share()
 
     session['actions'] = actions
     session['game'] = pickle.dumps(game)
     return jsonify( available=available,
                     player_id=player_id,
-                    move=move,
+                    move=action['act'],
                     origin=action['origin'],
                     cures=cures,
                     cubes_left=cubes_left,
@@ -135,7 +137,7 @@ def select_move_card():
                     team_hands=team_hands,
                     can_take=can_take,
                     can_give=can_give,
-                    num_cards=len(owner.hand) )
+                    num_cards=len(player.hand) )
 
 
 @movement.route('/_select_player')

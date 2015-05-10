@@ -56,11 +56,11 @@ def undo_action():
     return jsonify(result=action)
 
 def undo_move(data, player, game):
-    if player.get_id() != data['id']:
+    if player.get_id() != data['mover']:
         for p in game.players:
-            if p.get_id() == data['id']:
+            if p.get_id() == data['mover']:
                 p.position = data['origin']
-                if data['id'] == 'qs':
+                if data['mover'] == 'qs':
                     game.quarantined = game.board.get_neighbors(p.get_position())
                     game.quarantined.append(p.get_position())
     else:
@@ -94,6 +94,7 @@ def undo_station(data, player, game):
         owner.add_card(int(data['discard']))
 
 def undo_treatment(data, game):
+    print(data['cubes'])
     game.cubes_left[int(data['color'])] -= data['removed']
     game.cubes[int(data['origin'])][int(data['color'])] = data['cubes']
     game.board.rows[int(data['origin'])] = data['rows']

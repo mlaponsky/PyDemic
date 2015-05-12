@@ -28,7 +28,7 @@ function move(new_pos, data, is_airlift) {
             set_cities(data.available);
             $("#undo-action").prop('disabled', ACTIONS === 0);
             if (data.player_id === ACTIVE) {
-                set_treatable(new_pos);
+                set_treatable(data.origin);
                 $("#build-station").prop('disabled', !data.can_build);
                 $("#make-cure").prop('disabled', !data.can_cure);
             } else {
@@ -64,7 +64,7 @@ function execute_move(event) {
     var new_pos = city.attr("id");
     var is_airlift = 0;
     var select = 0;
-    if ( $('.event-card').hasClass('down') ){
+    if ( $('.event-card').hasClass('down') || $('#cp-store').hasClass('down')){
         is_airlift = 1
         if ( $('.card.down').length !== 0 ) {
             select  = $('.event-card.down').parent().parent().index();
@@ -90,11 +90,11 @@ function execute_move(event) {
                 PHASE++;
             } else if (data.move === "airlift") {
                 $('#logger').html("Airlifted "+ROLES[data.mover_id]+" from "+CARDS[data.origin].bold()+".");
-                if ( STORE === 0 ) {
+                if ( !$('#cp-store').hasClass('down') ) {
                     discard(data.discard);
                 } else {
                     $('#cp-store').hide(200);
-                    $('#pl-discard-'+data.discard).off().show(200).attr('class', 'graveyard');
+                    $('#pl-discard-48').off().show(200).attr('class', 'graveyard');
                     STORE = 0;
                 }
                 if ( TRASHING === 1 ) {

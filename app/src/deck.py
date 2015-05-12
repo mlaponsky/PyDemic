@@ -30,6 +30,9 @@ class Deck:
     def remove_from_discard(self, card):
         self.discard.remove(card)
 
+    def remove_from_graveyard(self, card):
+        self.graveyard.remove(card)
+
     def shuffle_deck(self):
         shuffle(self.deck)
 

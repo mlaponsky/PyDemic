@@ -2,6 +2,7 @@ function select_store(event) {
     var card = $('#cp-store');
     card.removeClass('giveable');
     var card_id = card.attr('class').split('-')[1];
+    card.addClass('down');
     if ( card_id === '48' ) {
         select_airlift(card);
     } else if ( card_id === '49' ) {

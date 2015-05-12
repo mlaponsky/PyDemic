@@ -67,6 +67,7 @@ function initial_load() {
                 }
             }
             if (data.store !== null) {
+                STORE = 1;
                 $('#cp-store').attr('src', 'static/img/player_cards/pl-'+String(data.store)+'.svg');
                 $('#cp-store').attr('class', 'store-'+String(data.store)).show();
             }

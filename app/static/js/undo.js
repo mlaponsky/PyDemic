@@ -42,8 +42,9 @@ function undo() {
 }
 
 function undo_discard(card, owner) {
-    console.log(card, owner);
-    if ($('.active-player').attr('id').split('-')[1] !== owner) {
+    if ($('#pl-discard-'+String(card)).hasClass('graveyard')) {
+        $('#cp-store').off().on('click', select_store).show(200).attr('class', '.store-'+String(card)).addClass('giveable');
+    } else if ($('.active-player').attr('id').split('-')[1] !== owner) {
         $('#'+owner+"-card-"+card).show(200);
     } else {
         $('#card-'+card).show(200);

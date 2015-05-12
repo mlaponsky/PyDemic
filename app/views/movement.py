@@ -73,7 +73,7 @@ def set_move():
         else:
             actions[-1]['trash'] = action
 
-        available, new_dispatch, origin, player_id = game.set_available(is_airlift)
+        available, new_dispatch, origin, player_id = game.set_available(0)
         can_take, can_give, team_hands = game.set_share()
 
         cubes_left = copy(game.cubes_left)
@@ -149,7 +149,6 @@ def select_player():
     is_airlift = request.args.get('airlift', 0, type=int)
     player = game.players[game.active]
     selected = game.select_player(index)
-    print(selected.get_id())
     position = selected.get_position()
     if is_airlift == 1:
         available = []

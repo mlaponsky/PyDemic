@@ -50,9 +50,7 @@ class Game:
         self.active = self.set_order()
         self.selected = self.active
 
-        self.infect(SF, BLUE, 1)
-        self.infect(SF, RED, 1)
-
+        self.player_cards.discard.append(AIRLIFT)
     ## Manage game phase
     def get_phase(self):
         return self.phase
@@ -440,7 +438,7 @@ player.hand or player.get_role() == OE)
                     'owner': owner.get_id() }
         return action
 
-    def store_on_cp(card):
+    def store_on_cp(self, card):
         player = self.players[self.active]
         player.get_event_from_discard(card, self.player_cards)
         action = { 'act': 'store',

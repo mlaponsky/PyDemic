@@ -22,11 +22,12 @@ def forecast():
     card4 = request.args.get('card0', infect[4], type=int)
     card5 = request.args.get('card0', infect[5], type=int)
     index = request.args.get('index', 0, type=int)
+    is_stored = request.args.get('is_stored', 0, type=int)
     forecast = [ card0, card1, card2, card3, card4, card5 ]
 
-    game.play_forecast(index, forecast)
+    owner = game.play_forecast(index, forecast, is_stored)
 
-    available, dispatch, origin, player_id = game.set_available(player)
+    available, dispatch, origin, player_id = game.set_available(0)
     session['game'] = pickle.dumps(game)
     return jsonify( available=available,
                     owner=owner.get_id(),
@@ -41,8 +42,9 @@ def rp():
     card = request.args.get('remove', -1, type=int)
     index = request.args.get('index', 0, type=int)
     trashing = request.args.get('trashing', 0, type=int)
+    is_stored = request.args.get('is_stored', 0, type=int)
 
-    action = game.play_rp(card, index)
+    action = game.play_rp(card, index, is_stored)
 
     if trashing == 0:
         actions.append(action)
@@ -59,14 +61,15 @@ def oqn():
 
     index = request.args.get('index', 0, type=int)
     trashing = request.args.get('trashing', 0, type=int)
-    action = game.play_oqn(index)
+    is_stored = request.args.get('is_stored', 0, type=int)
+    action = game.play_oqn(index, is_stored)
     if trashing == 0:
         actions.append(action)
     else:
         actions[-1]['trash'] = action
     session['actions'] = actions
     session['game'] = pickle.dumps(game)
-    return jsonify( owner=owner.get_id() )
+    return jsonify( owner=action['owner'] )
 
 @events.route('/_store_on_cp')
 def store_on_cp():

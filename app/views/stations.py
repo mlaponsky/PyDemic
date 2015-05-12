@@ -19,9 +19,10 @@ def select_station():
     position = request.args.get('position', -1, type=int)
     index = request.args.get('index', 0, type=int)
     trashing = request.args.get('trashing', 0, type=int)
+    is_gg = request.args.get('is_gg', 0, type=int)
     is_stored = request.args.get('is_stored', 0, type=int)
-
-    if position != -1:
+    print(position)
+    if is_gg != 0:
         action = game.play_gg(position, index, to_remove, is_stored)
     else:
         action = game.build(to_remove)
@@ -31,7 +32,7 @@ def select_station():
     else:
         actions[-1]['trash'] = action
     available, new_dispatch, origin, player_id = game.set_available(player)
-
+    print(position)
     session['actions'] = actions
     session['game'] = pickle.dumps(game)
     return jsonify( position=player.get_position(),
@@ -63,16 +64,24 @@ def build_station():
             actions.append(action)
         else:
             actions[-1]['trash'] = action
-    available, new_dispatch, origin, player_id = game.set_available(0)
-    session['actions'] = actions
-    session['game'] = pickle.dumps(game)
-    return jsonify( position=player.get_position(),
-                    station=position,
-                    can_build=action['can_build'],
-                    num_stations=num_stations,
-                    discard=action['discard'],
-                    owner=action['owner'],
-                    available=available )
+        available, new_dispatch, origin, player_id = game.set_available(0)
+        session['actions'] = actions
+        session['game'] = pickle.dumps(game)
+        return jsonify( position=player.get_position(),
+                        station=position,
+                        can_build=action['can_build'],
+                        num_stations=num_stations,
+                        discard=action['discard'],
+                        owner=action['owner'],
+                        available=available )
+    else:
+        position = position if position != -1 else player.get_position()
+        available, new_dispatch, origin, player_id = game.set_available(0)
+        session['actions'] = actions
+        session['game'] = pickle.dumps(game)
+        return jsonify( station=position,
+                        available=available,
+                        position=player.get_position())
 
 @stations.route('/_escape_gg')
 def escape_gg():

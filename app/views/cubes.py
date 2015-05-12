@@ -45,5 +45,5 @@ def get_treatment_color():
     actions.append(action)
     session['actions'] = actions
     session['game'] = pickle.dumps(game)
-    return jsonify( num_cubes=action['cubes_removed'],
+    return jsonify( num_cubes=action['removed'],
                     cubes_left=game.cubes_left )

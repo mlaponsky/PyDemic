@@ -38,13 +38,21 @@ function select_station(event) {
     var to_remove = city.attr("id");
     var position = Number($('.building').attr('id'));
     var select = 0;
-    if ( $('.card.down').length !== 0 ) {
+    var is_gg = 0;
+    var is_stored = 0;
+    if ( $('.event-card.down').length !== 0 ) {
         select  = $('.down').parent().parent().index();
+        is_gg = 1;
+    } else if ( $('#cp-store').hasClass('down') ) {
+        is_gg = 1;
+        is_stored = 1;
     }
     $.getJSON( $SCRIPT_ROOT + '/_select_station', { id: Number(to_remove),
                                                     position: position,
                                                     index: select,
-                                                    trashing: TRASHING }).success(
+                                                    trashing: TRASHING,
+                                                    is_gg: is_gg,
+                                                    is_stored: is_stored }).success(
         function(data) {
             $("#station-"+to_remove).hide(200).attr('class', 'unbuilt');
             $("#station-"+String(data.station)).show(200).attr('class', 'built');
@@ -54,14 +62,15 @@ function select_station(event) {
                 PHASE++;
             }
             $('.holding.down').removeClass('hold down').hide(200);
-            board_on();
+            console.log(data.discard === -1)
             if (data.discard === 50) {
                 $('.down').off().on('click', select_gg);
                 PHASE--;
             }
             if (data.discard !== -1) {
-                discard(data.discard);
+                discard(String(data.discard));
             }
+            board_on();
             set_cities(data.available);
             set_treatable(data.position);
             if ( data.can_build && data.station !== data.position ) {
@@ -142,7 +151,7 @@ function build_station() {
             }
             $('#logger').html('There are already 6 stations. Either cancel action or select a station to remove.');
             $('html').off().on('click', function(e) {
-                if ( $(e.target).attr('id') !== 'build-station' ) {
+                if ( $(e.target).attr('id') === 'build-station' ) {
                     escape_station_select( data.available, data.position);
                 }
             });

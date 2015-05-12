@@ -42,7 +42,7 @@ class Player:
         return shuttle
 
     def can_fly_direct(self, hand, board):
-        can_fly = hand
+        can_fly = copy(hand)
         neighbors = board.get_neighbors(self.position)
         if self.position in can_fly:
             can_fly.remove(self.position)
@@ -108,8 +108,8 @@ class Player:
         else:
             cubes_left[color] += cubes[self.position][color]
             cubes[self.position][color] = 0
-        if cubes[self.position][color] == 0:
-            board.delete_row(self.position, color)
+        if all(cubes[self.position][color] == 0 for color in COLORS):
+            board.delete_rows(self.position)
 
     # Cure
     def can_cure(self, research_stations):
@@ -254,15 +254,26 @@ class Medic(Player):
                 if cures[color]:
                     cubes_left[color] += cubes[self.position][color]
                     cubes[self.position][color] = 0
-                    board.delete_row(self.position, color)
+                    if all(cubes[self.position][c] == 0 for c in COLORS):
+                        board.delete_rows(self.position)
         else:
             self.selected.move(new_pos, board, cures, cubes, cubes_left, quarantined)
 
     def treat(self, color, cures, cubes, cubes_left, board):
-        if not cures[color]:
-            cubes_left[color] += cubes[self.position][color]
-            cubes[self.position][color] = 0
-            board.get_row(self.position, color)
+        cubes_left[color] += cubes[self.position][color]
+        cubes[self.position][color] = 0
+        if all(cubes[self.position][color] == 0 for color in COLORS):
+            board.delete_rows(self.position)
+
+    def make_cure(self, cards, cures, deck):
+        cure_color = cards[0] // CITIES_PER_COLOR
+        for card in cards:
+            self.discard(card, deck)
+        cures[cure_color] = CURED
+        cubes_left[color] += cubes[self.position][color]
+        cubes[self.position][color] = 0
+        if all(cubes[self.position][c] == 0 for c in COLORS):
+            board.delete_rows(self.position)
 
 class OperationsExpert(Player):
     def __init__(self):
@@ -300,11 +311,11 @@ class OperationsExpert(Player):
                     can_station.remove(n)
         return can_station
 
-    def can_move(self, research_stations, board):
+    def can_move(self, hand, research_stations, board):
+        available = self.can_drive(board) + self.can_shuttle(research_stations) + self.can_fly_direct(hand, board) + self.can_charter(hand, board)
         if not self.has_stationed:
-            return self.can_drive(board) + self.can_shuttle(research_stations) + self.can_fly_direct(board) + self.can_charter(research_stations, board) + self.can_station_fly(research_stations, board)
-        else:
-            return self.can_drive(board) + self.can_shuttle(research_stations) + self.can_fly_direct(board) + self.can_charter(research_stations, board)
+            return available + self.can_station_fly(research_stations, board)
+        return available
 
     def can_build(self, city, research_stations):
         return (self.position == city and city not in research_stations)

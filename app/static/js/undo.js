@@ -42,6 +42,7 @@ function undo() {
 }
 
 function undo_discard(card, owner) {
+    console.log(card, owner);
     if ($('.active-player').attr('id').split('-')[1] !== owner) {
         $('#'+owner+"-card-"+card).show(200);
     } else {
@@ -58,7 +59,7 @@ function undo_move(data) {
     var city_h = city_dims.height;
     var city_l = city_dims.left;
     var city_t = city_dims.top;
-    var index = $('#'+data['id']).parent().parent().index();
+    var index = $('#'+data['mover']).parent().parent().index();
     var menu_on = 0;
     if ( $('body').hasClass('menu-push-toright') ) {
         menu_on = -1;
@@ -81,7 +82,6 @@ function undo_move(data) {
 
     $(".available").off();
     $(".available").attr("class", "unavailable");
-    //Animate movement and set availability.
     $("#"+data['mover']+"-piece").offset({left: player_l, top: player_t});
     set_cities(data['available']);
     if ( $('#'+data['mover']).length === 0 ) {
@@ -132,7 +132,6 @@ function undo_treatment(data) {
 }
 
 function undo_cure(data) {
-    $('#logger').html('(UNDO) Removed '+COLORS[data['color']]+' cure. Returned cards to hand.');
     set_cure(String(data['color']), data['cured']);
     for ( var i=0; i<data['cards'].length; i++ ) {
         undo_discard(data['cards'][i], data['id']);
@@ -147,6 +146,7 @@ function undo_cure(data) {
 
         document.getElementById(data['color']+"-cnt").getElementsByTagName('tspan')[0].textContent = cubes_left - data['cubes'];
     }
+    $('#logger').html('(UNDO) Removed '+COLORS[data['color']]+' cure. Returned cards to hand.');
     $('#make-cure').prop('disabled', false);
     $('#make-cure').attr('class', 'action');
 }

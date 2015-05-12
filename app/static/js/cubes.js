@@ -101,7 +101,7 @@ function medic_with_cure(data, position) {
 }
 
 function treat(event) {
-    var city = event.target.getAttribute('id');
+    var city = $(event.target).attr('id');
     $.getJSON( $SCRIPT_ROOT + '/_treat_disease').success( function(data) {
         if (typeof data.c !== 'undefined') {
             remove_cubes(city, data.c, data.num_cubes, data.cubes_left);
@@ -115,15 +115,19 @@ function treat(event) {
             $(".city-"+city).css('border-radius', 4);
             $(".city-"+city).css("pointer-events", '');
             $(".city-"+city).off().on('click', function(e) { select_cube_color(e) });
-
             $(".available").off().attr("class", "unavailable marked");
             $(".treatable").off().attr("class", "treating");
             board_off();
+            $('#logger').html('(TREATING) Choose a disease color to treat.');
             $('html').on( 'click', function( e ) {
-                if ($( e.target ).closest($(".treating").length === 0 )) {
-                    escape_cube_select( $(".city-"+city), city ) }} );
+                if ( $(e.target).attr('class') === 'treating' ) {
+                    escape_cube_select( $(".city-"+city), city )
+                }
+            });
             $('html').keyup( function( e ) {
-                if (e.keyCode === 27) { escape_cube_select( $(".city-"+city), city ) };
+                if (e.keyCode === 27) {
+                    escape_cube_select( $(".city-"+city), city )
+                };
             });
         }
     }).error(function(error){console.log(error);});
@@ -146,6 +150,17 @@ function select_cube_color(event) {
             $("."+class_array[0]).css("fill", '')
             $("."+class_array[0]).off();
             $("."+class_array[0]).css('pointer-events', 'none');
-
         }).error(function(error){console.log(error);});
+}
+
+function escape_cube_select(objects, city) {
+    $(".marked").attr("class", "available");
+    $(".selected").attr("class", "available");
+    $(".available").off().on("click", execute_move);
+    set_treatable(city);
+    objects.css("border", '');
+    objects.off();
+    objects.css("pointer-events", "none");
+    buttons_on();
+    $('html').off();
 }

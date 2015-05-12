@@ -166,15 +166,3 @@ function escape_card_select(objects) {
     buttons_on();
     $('html').off();
 }
-
-function escape_cube_select(objects, city) {
-    $(".holding").attr("class", "available");
-    $(".selected").attr("class", "available");
-    $(".available").off().on("click", execute_move);
-    set_treatable(city);
-    objects.css("border", '');
-    objects.off();
-    objects.css("pointer-events", "none");
-    buttons_on();
-    $('html').off();
-}

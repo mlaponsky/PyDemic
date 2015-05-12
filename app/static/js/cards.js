@@ -52,7 +52,7 @@ function set_active_trash() {
 }
 
 function discard(card) {
-    if ( $('.event-card').hasClass('down') ) {
+    if ( $('.event-card.down').length !== 0 ) {
         $('.down').removeClass('.down').hide(200);
     } else {
         $("#card-"+card).attr('class', 'pl-card').hide(200);
@@ -73,6 +73,7 @@ function board_on() {
     $('.trashable').off().removeClass('trashable');
     $('.giveable').off().removeClass('giveable');
     $('.takeable').off().removeClass('takeable');
+    $('.down.curing').off().removeClass('down curing');
     $('.pl-card.down').off().removeClass('down').addClass('giveable');
     $('.card.down').off().removeClass('down').addClass('takeable');
     $('.pl-card.holding').removeClass('holding').addClass('giveable');

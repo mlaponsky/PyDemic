@@ -26,6 +26,7 @@ def make_cure():
         action = game.make_cure(cure_cards)
 
         available, new_dispatch, origin, player_id = game.set_available(player)
+        actions.append(action)
         session['actions'] = actions
         session['game'] = pickle.dumps(game)
         return jsonify( c=cure_color,
@@ -61,6 +62,7 @@ def select_cure():
     cure_color = cure_cards[0] // CITIES_PER_COLOR
     action = game.make_cure(cure_cards)
     available, new_dispatch, origin, player_id = game.set_available(player)
+    actions.append(action)
     session['actions'] = actions
     session['game'] = pickle.dumps(game)
     return jsonify( c=cure_color,

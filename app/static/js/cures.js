@@ -24,12 +24,12 @@ function make_cure() {
                 $('.available').off().attr('class', 'unavailable marked');
                 $('.treatable').off().attr('class', 'unavailable marked-t');
                 for ( var i=0; i<data.cards.length; i++ ) {
-                    $("#card-"+data.cards[i]).off().on('click', { needed: data.needed }, toggle_select ).removeClass('giveable holding').addClass('down');
+                    $("#card-"+data.cards[i]).off().on('click', toggle_select ).removeClass('giveable').addClass('down curingo');
+                    $("#card-"+data.cards[i]).children('div').off().css('pointer-events', 'none');
                 }
                 $('#make-cure').attr('class', 'action activated');
                 $('html').off().on( 'click', function( e ) {
-                    if ( $( e.target ).attr('id') === 'make-cure' ||
-                        !( $( e.target ).hasClass('down') ) ) {
+                    if ( $( e.target ).attr('id') === 'make-cure' ) {
                         escape_cure_select();
                     }});
                 $('html').keyup( function( e ) {
@@ -40,14 +40,17 @@ function make_cure() {
 }
 
 function toggle_select(event) {
+    var active = $('.active-player').attr('id').split('-')[1];
+    var needed = 5;
+    if (active == 'scientist') {
+      needed = 4;
+    }
     if ( $(event.target).hasClass('down') ) {
         $(event.target).removeClass('down').addClass('giveable');
     } else {
         $(event.target).removeClass('giveable').addClass('down');
     }
-    if ( $('.down').length === event.data.needed) {
-        $('#next-phase').off().on('click', execute_cure).prop('disabled', false);
-    }
+    $('#next-phase').off().on('click', execute_cure).prop('disabled', $('.down').length !== needed);
 }
 
 function execute_cure() {
@@ -86,16 +89,19 @@ function execute_cure() {
             PHASE++;
             set_cities(data.available);
             set_treatable(data.position);
-            $('#undo-action').prop('disabled', ACTIONS === 0)
+            $('#undo-action').prop('disabled', ACTIONS === 0);
+            $('#next-phase').prop('disabled', true);
+            board_on();
         }).error(function(error){console.log(error)});
 }
 
 
 function escape_cure_select() {
-    board_on();
     $('.marked').off().on('click', execute_move).attr('class','available');
     $('.marked-t').off().on('click', treat).attr('class','treatable')
     buttons_on();
     $('#make-cure').attr('class', 'action');
+    $('#next-phase').prop('disabled', true);
+    board_on();
     $('html').off();
 }

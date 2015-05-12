@@ -5,7 +5,7 @@ function move(new_pos, data, is_airlift) {
     var city_h = city_dims.height;
     var city_l = city_dims.left;
     var city_t = city_dims.top;
-    var index = $('#'+data.player_id).parent().parent().index();
+    var index = $('#'+data.mover_id).parent().parent().index();
     var menu_on = 0;
     if ( $('body').hasClass('menu-push-toright') ) {
         menu_on = -1;
@@ -22,7 +22,7 @@ function move(new_pos, data, is_airlift) {
     $(".available").attr("class", "unavailable");
     ACTIONS++;
     //Animate movement and set availability.
-    $("#"+data.player_id+"-piece").stop().animate({left: player_l, top: player_t},
+    $("#"+data.mover_id+"-piece").stop().animate({left: player_l, top: player_t},
         function() {
             medic_with_cure(data, new_pos);
             set_cities(data.available);
@@ -89,7 +89,7 @@ function execute_move(event) {
                 discard(data.discard);
                 PHASE++;
             } else if (data.move === "airlift") {
-                $('#logger').html("Airlifted "+ROLES[data.player_id]+" from "+CARDS[data.origin].bold()+".");
+                $('#logger').html("Airlifted "+ROLES[data.mover_id]+" from "+CARDS[data.origin].bold()+".");
                 if ( STORE === 0 ) {
                     discard(data.discard);
                 } else {

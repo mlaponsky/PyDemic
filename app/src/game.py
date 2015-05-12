@@ -50,6 +50,9 @@ class Game:
         self.active = self.set_order()
         self.selected = self.active
 
+        self.infect(SF, BLUE, 1)
+        self.infect(SF, RED, 1)
+
     ## Manage game phase
     def get_phase(self):
         return self.phase
@@ -89,7 +92,7 @@ class Game:
     def select_player(self, index):
         self.selected = (index + self.active) % self.num_players
         selected = self.players[self.selected]
-        if selected.get_id() == OE:
+        if selected.get_role() == OE:
             selected.has_stationed = True
         return selected
 
@@ -113,7 +116,7 @@ class Game:
         if is_airlift == 1:
             available = []
             for city in range(NUM_CITIES):
-                if city != position:
+                if city != selected.get_position():
                     available.append(str(city))
         else:
             if player.get_id() == 'dispatcher':
@@ -138,10 +141,15 @@ class Game:
                 can_give[p.get_id()].append(player.can_give(card, p))
         return can_take, can_give, team_hands
 
-    ## The procedures for adding cubes.
-    '''
-    The below function is a generic cube adding function. It takes the color and number of cubes to be added, and the city to infect. This function is implemented in all situations in which a city would be infected. A normal infect city action will just call the function directly with numCubes = 1. The other cube-adding scenarios are outbreak and epidemic. Notice the recursive coupling between infect and outbreak below, and infect will call outbreak when it would go over the cube limit, and outbreaks will infect, potentially chaining into other outbreaks. The outbreak function handles all conditions for outbreaks, and tracks outbreaks that have already occurred on a turn so as not to repeat. The function to reset the outbreak array is called after each epidemic AND each infect stage.
-    '''
+    ## The procedures for adding cubes.     '''     The below function is a generic cube adding
+## function. It takes the color and number of cubes to be added, and the city to infect. This
+## function is implemented in all situations in which a city would be infected. A normal infect city
+## action will just call the function directly with numCubes = 1. The other cube-adding scenarios
+## are outbreak and epidemic. Notice the recursive coupling between infect and outbreak below, and
+## infect will call outbreak when it would go over the cube limit, and outbreaks will infect,
+## potentially chaining into other outbreaks. The outbreak function handles all conditions for
+## outbreaks, and tracks outbreaks that have already occurred on a turn so as not to repeat. The
+## function to reset the outbreak array is called after each epidemic AND each infect stage.     '''
     def initial_infect(self):
         for i in reversed(range(9)):
             city = self.infect_cards.draw_card(0)
@@ -248,13 +256,14 @@ class Game:
         num_stations = len(self.research_stations)
         prev_avail, dispatch, origin, player_id = self.set_available(0)
 
-        can_build = player.get_position() not in self.research_stations and (player.get_position() in player.hand or player.get_role() == OE)
+        can_build = player.get_position() not in self.research_stations and (player.get_position() in
+player.hand or player.get_role() == OE)
         discard = player.get_position() if player.get_role() != OE else -1
 
         action = { 'act': "build",
                    'origin': str(player.get_position()),
                    'can_build': can_build,
-                   'discard': str(discard),
+                   'discard': discard,
                    'removed': str(to_remove),
                    'owner': player.get_id(),
                    'card_data': CARDS[discard],
@@ -268,7 +277,6 @@ class Game:
         player = self.players[self.active]
         city = player.get_position()
         orig_cubes = copy(self.cubes[city][color])
-        print(orig_cubes)
         orig_rows = copy(self.board.rows[city])
         player.treat(color, self.cures, self.cubes, self.cubes_left, self.board)
         cubes_removed = orig_cubes - self.cubes[city][color]
@@ -282,21 +290,16 @@ class Game:
 
     def make_cure(self, cards):
         player = self.players[self.active]
-        prev_avail, dispatch, origin, player_id = self.set_available(0)
-        orig_cubes = game.cubes[player.get_position()][cure_color]
-        orig_rows = copy(game.board.get_all_rows(player.get_position()))
-
         cure_color = cards[0] // CITIES_PER_COLOR
+        prev_avail, dispatch, origin, player_id = self.set_available(0)
+        orig_cubes = self.cubes[player.get_position()][cure_color]
+        orig_rows = copy(self.board.get_all_rows(player.get_position()))
+
         player.make_cure(cards, self.cures, self.player_cards)
-        orig_cubes = game.cubes[player.get_position()][cure_color]
-        orig_rows = copy(game.board.get_all_rows(player.get_position()))
 
         medic_pos = -1
         for p in self.players:
             if p.get_role() == MEDIC:
-                self.cubes_left[cure_color] += self.cubes[p.get_position()][cure_color]
-                self.cubes[p.get_position()][cure_color] = 0
-                self.board.delete_row(p.get_position(), cure_color)
                 medic_pos = p.get_position()
                 break
 
@@ -304,8 +307,9 @@ class Game:
             self.cures[ cure_color ] = ERADICATED
 
         action = { 'act': 'cure',
+                    'id': player.get_id(),
                     'color': cure_color,
-                    'cards': [str(card) for card in cure_cards],
+                    'cards': [str(card) for card in cards],
                     'origin': str(player.get_position()),
                     'medic_pos': medic_pos,
                     'cubes': orig_cubes,
@@ -338,10 +342,10 @@ class Game:
         return action
 
 # Event card handling
-    def play_airlift(self, owner_index, new_pos):
+    def play_airlift(self, owner_index, new_pos, is_stored):
+        player = self.players[self.active]
         owner = self.players[(self.active + owner_index) % self.num_players]
         mover = self.players[self.selected]
-        owner = self.players[(self.active + index) % self.num_players]
 
         prev_avail, dispatch, origin, player_id = self.set_available(0)
         prev_hand = copy(player.hand)
@@ -350,13 +354,14 @@ class Game:
         prev_cure = player.can_cure(self.research_stations)
         orig_cubes = copy(self.cubes[new_pos])
         orig_rows = copy(self.board.rows[new_pos])
-        action = { 'act': method,
+        action = { 'act': 'airlift',
                     'id': player.get_id(),
-                    'is_stored': 1,
+                    'owner': owner.get_id(),
+                    'mover': mover.get_id(),
+                    'is_stored': is_stored,
                     'origin': origin,
                     'destination': new_pos,
-                    'cards': discard,
-                    'owner': owner.get_id(),
+                    'cards': AIRLIFT,
                     'available': prev_avail,
                     'can_build': prev_build,
                     'can_cure': prev_cure,
@@ -367,9 +372,8 @@ class Game:
                     'give': prev_give,
                     'take': prev_take }
         mover.move(new_pos, self.board, self.cures, self.cubes, self.cubes_left, self.quarantined)
-
         if is_stored == 0:
-            owner.discard(AIRLIFT, self.plater_cards)
+            owner.discard(AIRLIFT, self.player_cards)
         else:
             owner.play_event(self.player_cards)
         self.selected = self.active
@@ -379,9 +383,10 @@ class Game:
         player = self.players[self.active]
         owner = self.players[(self.active + index) % self.num_players]
         can_build = player.get_position() not in self.research_stations and (player.get_position() in player.hand or player.get_role() == OE)
+        prev_avail, dispatch, origin, player_id = self.set_available(0)
 
         action = { 'act': "gg",
-                   'origin': str(position),
+                   'origin': str(city),
                    'can_build': can_build,
                    'discard': str(GG),
                    'removed': str(to_remove),
@@ -392,7 +397,7 @@ class Game:
             owner.discard(GG, self.player_cards)
         else:
             owner.play_event(self.player_cards)
-        self.research_stations(city)
+        self.research_stations.append(city)
         if to_remove != -1:
             self.research_stations.remove(to_remove)
         return action
@@ -400,18 +405,19 @@ class Game:
 
     def play_forecast(self, index, reorded, is_stored):
         owner = self.players[(self.active + index) % self.num_players]
-        self.infect_cards.set_deck(reorded + self.infect_cards.deck[:6])
+        self.infect_cards.deck = reorded + self.infect_cards.deck[:6]
         if is_stored == 0:
-            owner.discard(FORECAST, self.plater_cards)
+            owner.discard(FORECAST, self.player_cards)
         else:
             owner.play_event(self.player_cards)
+        return owner
 
-    def play_rp(card, index, is_stored):
+    def play_rp(self, card, index, is_stored):
         owner = self.players[(self.active + index) % self.num_players]
         self.infect_cards.remove_from_discard(card)
         self.infect_cards.add_to_graveyard(card)
         if is_stored == 0:
-            owner.discard(RP, self.plater_cards)
+            owner.discard(RP, self.player_cards)
         else:
             owner.play_event(self.player_cards)
 
@@ -421,11 +427,11 @@ class Game:
                     'deleted': card }
         return action
 
-    def play_oqn(index, is_stored):
+    def play_oqn(self, index, is_stored):
         owner = self.players[(self.active + index) % self.num_players]
         self.oqn = True
         if is_stored == 0:
-            owner.discard(OQN, self.plater_cards)
+            owner.discard(OQN, self.player_cards)
         else:
             owner.play_event(self.player_cards)
 

@@ -50,7 +50,7 @@ class Game:
         self.active = self.set_order()
         self.selected = self.active
 
-        self.player_cards.discard.append(AIRLIFT)
+        self.player_cards.discard.append(OQN)
     ## Manage game phase
     def get_phase(self):
         return self.phase
@@ -261,7 +261,7 @@ player.hand or player.get_role() == OE)
         action = { 'act': "build",
                    'origin': str(player.get_position()),
                    'can_build': can_build,
-                   'discard': discard,
+                   'cards': discard,
                    'removed': str(to_remove),
                    'owner': player.get_id(),
                    'card_data': CARDS[discard],
@@ -340,7 +340,7 @@ player.hand or player.get_role() == OE)
         return action
 
 # Event card handling
-    def play_airlift(self, owner_index, new_pos, is_stored):
+    def play_airlift(self, owner_index, new_pos):
         player = self.players[self.active]
         owner = self.players[(self.active + owner_index) % self.num_players]
         mover = self.players[self.selected]
@@ -352,6 +352,7 @@ player.hand or player.get_role() == OE)
         prev_cure = player.can_cure(self.research_stations)
         orig_cubes = copy(self.cubes[new_pos])
         orig_rows = copy(self.board.rows[new_pos])
+        is_stored = AIRLIFT in owner.hand
         action = { 'act': 'airlift',
                     'id': player.get_id(),
                     'owner': owner.get_id(),
@@ -370,28 +371,28 @@ player.hand or player.get_role() == OE)
                     'give': prev_give,
                     'take': prev_take }
         mover.move(new_pos, self.board, self.cures, self.cubes, self.cubes_left, self.quarantined)
-        if is_stored == 0:
+        if is_stored:
             owner.discard(AIRLIFT, self.player_cards)
         else:
             owner.play_event(self.player_cards)
         self.selected = self.active
         return action
 
-    def play_gg(self, city, index, to_remove, is_stored):
+    def play_gg(self, city, index, to_remove):
         player = self.players[self.active]
         owner = self.players[(self.active + index) % self.num_players]
         can_build = player.get_position() not in self.research_stations and (player.get_position() in player.hand or player.get_role() == OE)
         prev_avail, dispatch, origin, player_id = self.set_available(0)
-
+        is_stored = GG in owner.hand
         action = { 'act': "gg",
                    'origin': str(city),
                    'can_build': can_build,
-                   'discard': str(GG),
+                   'cards': str(GG),
                    'removed': str(to_remove),
                    'owner': owner.get_id(),
                    'card_data': CARDS[GG],
-                   'available': prev_avail }
-        if is_stored == 0:
+                   'available': prev_avail}
+        if is_stored:
             owner.discard(GG, self.player_cards)
         else:
             owner.play_event(self.player_cards)
@@ -401,40 +402,42 @@ player.hand or player.get_role() == OE)
         return action
 
 
-    def play_forecast(self, index, reorded, is_stored):
+    def play_forecast(self, index, reorded):
         owner = self.players[(self.active + index) % self.num_players]
         self.infect_cards.deck = reorded + self.infect_cards.deck[:6]
-        if is_stored == 0:
+        if FORECAST in owner.hand:
             owner.discard(FORECAST, self.player_cards)
         else:
             owner.play_event(self.player_cards)
         return owner
 
-    def play_rp(self, card, index, is_stored):
+    def play_rp(self, card, index):
         owner = self.players[(self.active + index) % self.num_players]
         self.infect_cards.remove_from_discard(card)
         self.infect_cards.add_to_graveyard(card)
-        if is_stored == 0:
+        is_stored = RP in owner.hand
+        if is_stored:
             owner.discard(RP, self.player_cards)
         else:
             owner.play_event(self.player_cards)
 
         action = { 'act': 'rp',
                     'owner': owner.get_id(),
-                    'store': is_stored,
+                    'is_stored': is_stored,
                     'deleted': card }
         return action
 
-    def play_oqn(self, index, is_stored):
+    def play_oqn(self, index):
         owner = self.players[(self.active + index) % self.num_players]
         self.oqn = True
-        if is_stored == 0:
+        is_stored = OQN in owner.hand
+        if is_stored:
             owner.discard(OQN, self.player_cards)
         else:
             owner.play_event(self.player_cards)
 
         action = { 'act': 'oqn',
-                    'store': is_stored,
+                    'is_stored': is_stored,
                     'owner': owner.get_id() }
         return action
 

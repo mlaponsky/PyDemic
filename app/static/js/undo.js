@@ -35,6 +35,8 @@ function undo() {
             undo_rp(data);
         } else if (data['act'] === "oqn") {
             undo_oqn(data);
+        } else if (data['act'] === "store") {
+            undo_store(data);
         }
         ACTIONS--;
         $('#undo-action').prop('disabled', ACTIONS === 0);
@@ -43,7 +45,7 @@ function undo() {
 
 function undo_discard(card, owner) {
     if ($('#pl-discard-'+String(card)).hasClass('graveyard')) {
-        $('#cp-store').off().on('click', select_store).show(200).attr('class', '.store-'+String(card)).addClass('giveable');
+        $('#cp-store').off().on('click', select_store).show(200).attr('class', '.store-'+String(card)).addClass('giveable').attr('src', 'static/img/player_cards/pl-'+String(card)+'.svg');
     } else if ($('.active-player').attr('id').split('-')[1] !== owner) {
         $('#'+owner+"-card-"+card).show(200);
     } else {
@@ -97,18 +99,17 @@ function undo_move(data) {
 
 function undo_station(data) {
     var city = Number(data['origin']);
-    console.log($('#station-'+data['origin']));
     $('#station-'+data['origin']).attr('class', 'unbuilt').hide();
     $('#logger').html('(UNDO) Removed station from '+CARDS[city].bold()+'.');
-    if ( data['removed'] !== 'none' ) {
+    if ( data['removed'] !== '-1' ) {
         $('#station-'+data['removed']).attr('class', 'built').show();
         $('#logger').html($('#logger').html()+' Returned station to '+CARDS[Number(data['removed'])].bold()+'.')
     }
-    if ( data['discard'] !== '-1') {
-        undo_discard(data['discard'], data['owner']);
+    if ( data['cards'] !== '-1') {
+        undo_discard(data['cards'], data['owner']);
     }
     set_cities(data['available']);
-    if (data['discard'] !== '50' || data['can_build']) {
+    if (data['cards'] !== '50' || data['can_build']) {
         $("#build-station").prop('disabled', false);
     }
     if ( data['removed'] === 'none' ) {
@@ -175,6 +176,12 @@ function undo_rp(data) {
 function undo_oqn(data) {
     $('#logger').html('(UNDO) ');
     undo_discard('51', data['owner']);
+}
+
+function undo_store(data) {
+    $('#logger').html('(UNDO) Return '+CARDS[data['card']]+' to the discard pile.');
+    $('#cp-store').off().hide();
+    $('#pl-discard-'+String(data['card'])).off().on('click', store_on_cp).addClass('pl-discard takeable').show();
 }
 
 function undo_trash(data) {

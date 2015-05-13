@@ -17,9 +17,9 @@ def give():
 
     card = request.args.get('card', -1, type=int)
     recip = request.args.get('recip', 0, type=int)
+    recip_id = (game.active + recip) % game.num_players
     player = game.players[game.active]
     team = game.players[game.active+1:] + game.players[:game.active]
-    print(team)
 
     recipients = []
     for t in team:
@@ -28,7 +28,7 @@ def give():
     if recip != game.active:
         recipients = [t for t in team if player.can_give(card, t)]
     if len(recipients) == 1:
-        action = game.give_card(recip, card)
+        action = game.give_card(recip_id, card)
         actions.append(action)
         available, new_dispatch, origin, player_id = game.set_available(player)
         session['game'] = pickle.dumps(game)
@@ -36,7 +36,7 @@ def give():
         return jsonify( card=str(card),
                         recipient=recipients[0].get_id(),
                         available=available,
-                        num_cards=len(recitients[0].hand) )
+                        num_cards=len(recipients[0].hand) )
 
     else:
         session['game'] = pickle.dumps(game)

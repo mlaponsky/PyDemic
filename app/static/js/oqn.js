@@ -2,14 +2,20 @@ function select_oqn(target) {
     var select = 0;
     if ( target.hasClass('card') ) {
         select = target.parent().parent().index();
-        console.log(select);
     }
     target.addClass('down').removeClass('giveable takeable trashable');
     board_off();
     $.getJSON( $SCRIPT_ROOT + '/_execute_oqn', { index: select,
                                                  trashing: TRASHING }).success(
         function(data) {
-            discard('51');
+            if (target.attr('id') !== 'cp-store') {
+                discard('51');
+            } else {
+                $('#cp-store').hide(200);
+                $('#pl-discard-51').off().show(200).attr('class', 'graveyard');
+                STORE = 0;
+            }
+            $('.holding.down').removeClass('down').hide(200);
             board_on();
             if (TRASHING === 0) {
                 ACTIONS++;

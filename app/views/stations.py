@@ -20,10 +20,9 @@ def select_station():
     index = request.args.get('index', 0, type=int)
     trashing = request.args.get('trashing', 0, type=int)
     is_gg = request.args.get('is_gg', 0, type=int)
-    is_stored = request.args.get('is_stored', 0, type=int)
-    print(position)
+
     if is_gg != 0:
-        action = game.play_gg(position, index, to_remove, is_stored)
+        action = game.play_gg(position, index, to_remove)
     else:
         action = game.build(to_remove)
 
@@ -32,12 +31,11 @@ def select_station():
     else:
         actions[-1]['trash'] = action
     available, new_dispatch, origin, player_id = game.set_available(player)
-    print(position)
     session['actions'] = actions
     session['game'] = pickle.dumps(game)
     return jsonify( position=player.get_position(),
                     station=position,
-                    discard=action['discard'],
+                    discard=action['cards'],
                     can_build=action['can_build'],
                     owner=action['owner'],
                     available=available )
@@ -50,12 +48,11 @@ def build_station():
     position = request.args.get('position', -1, type=int)
     trashing = request.args.get('trashing', 0, type=int)
     index = request.args.get('index', 0, type=int)
-    is_stored = request.args.get('is_stored', 0, type=int)
     num_stations = len(game.research_stations)
 
     if num_stations < MAX_STATIONS:
         if position != -1:
-            action = game.play_gg(position, index, -1, is_stored)
+            action = game.play_gg(position, index, -1)
         else:
             position = player.get_position()
             action = game.build(-1)
@@ -71,7 +68,7 @@ def build_station():
                         station=position,
                         can_build=action['can_build'],
                         num_stations=num_stations,
-                        discard=action['discard'],
+                        discard=action['cards'],
                         owner=action['owner'],
                         available=available )
     else:

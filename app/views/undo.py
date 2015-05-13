@@ -29,10 +29,10 @@ def undo_action():
             if p.get_id() == data['owner']:
                 owner = p
         undo_move(data, player, game)
-        undo_discard(data, owner, game)
+        undo_discard(int(data['cards']), owner, game)
     elif action['act'] == "station-fly":
         undo_move(data, player, game)
-        undo_discard(data, player, game)
+        undo_discard(int(data['cards']), player, game)
         player.has_stationed = False
     elif action['act'] == "build" or action['act'] == "gg":
         undo_station(data, player, game)
@@ -48,6 +48,8 @@ def undo_action():
         undo_rp(data, game)
     elif action['act'] == "oqn":
         undo_oqn(data, game)
+    elif action['act'] == "store":
+        undo_store(data, game)
 
     undo_trash(data, game, player)
 
@@ -75,26 +77,24 @@ def undo_move(data, player, game):
             game.cubes[data['destination']][color] = number
             game.cubes_left[color] += number
     game.board.rows[data['destination']] = data['rows']
-    if 'trash' in data:
-        undo_trash
 
-def undo_discard(data, player, game):
-    if int(data['cards']) in game.player_cards.discard:
-        game.player_cards.remove_from_discard(int(data['cards']))
-        player.add_card(int(data['cards']))
-    elif int(data['cards']) in game.player_cards.graveyard:
-        game.player_cards.remove_from_graveyard(int(data['cards']))
-        player.event = int(data['cards'])
+def undo_discard(card, player, game):
+    if card in game.player_cards.discard:
+        game.player_cards.remove_from_discard(card)
+        player.add_card(card)
+    elif card in game.player_cards.graveyard:
+        game.player_cards.remove_from_graveyard(card)
+        player.event = card
 
 def undo_station(data, player, game):
     game.research_stations.remove(int(data['origin']))
-    if data['removed'] != 'none':
+    if data['removed'] != '-1':
         game.research_stations.append(int(data['removed']))
-    if data['discard'] != -1:
+    if data['cards'] != -1:
         for p in game.players:
             if p.get_id() == data['owner']:
                 owner = p
-        undo_discard(int(data['discard']), owner, game)
+        undo_discard(int(data['cards']), owner, game)
 
 def undo_treatment(data, game):
     game.cubes_left[int(data['color'])] -= data['removed']
@@ -119,6 +119,7 @@ def undo_take(data, game):
     giver.take_card(int(data['card']), taker)
 
 def undo_give(data, game):
+    print(data['taker'], data['giver'])
     for p in game.players:
         if p.get_id() == data['taker']:
             taker = p
@@ -141,6 +142,11 @@ def undo_oqn(data, game):
             owner = p
     undo_discard(OQN, owner, game)
 
+def undo_store(data, game):
+    player = game.players[game.active]
+    player.event = None
+    game.player_cards.add_to_discard(data['card'])
+
 def undo_trash(data, game, player):
     if 'trash' in data:
         trash = data['trash']
@@ -150,7 +156,7 @@ def undo_trash(data, game, player):
                     owner = p
         if trash['act'] == 'airlift':
             undo_move(trash, player, game)
-            undo_discard(trash, owner, game)
+            undo_discard(AIRLIFT, owner, game)
         elif trash['act'] == 'gg':
             undo_station(trash, player, game)
         elif trash['act'] == 'rp':
@@ -158,4 +164,4 @@ def undo_trash(data, game, player):
         elif trash['act'] == 'oqn':
             undo_oqn(trash, game)
         else:
-            undo_discard(trash, owner, game)
+            undo_discard(int(trash['card']), owner, game)

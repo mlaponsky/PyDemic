@@ -61,15 +61,19 @@ function select_station(event) {
                 ACTIONS++;
                 PHASE++;
             }
-            $('.holding.down').removeClass('hold down').hide(200);
-            console.log(data.discard === -1)
-            if (data.discard === 50) {
-                $('.down').off().on('click', select_gg);
+            if ( data.discard === 50 ) {
+                if ( !$('#cp-store').hasClass('down') ) {
+                    $('.down').off().on('click', select_gg);
+                } else {
+                    $('#cp-store').hide(200);
+                    $('#pl-discard-50').off().show(200).attr('class', 'graveyard');
+                    STORE = 0;
+                }
                 PHASE--;
-            }
-            if (data.discard !== -1) {
+            } else {
                 discard(String(data.discard));
             }
+            $('.holding.down').removeClass('down').hide(200);
             board_on();
             set_cities(data.available);
             set_treatable(data.position);
@@ -98,8 +102,7 @@ function build_station() {
 
     $.getJSON( $SCRIPT_ROOT + '/_build_station', { position:  position,
                                                    index: select,
-                                                   trashing: TRASHING,
-                                                   is_stored: STORE}).success(
+                                                   trashing: TRASHING}).success(
     function(data) {
         if (data.num_stations < 6) {
             $("#station-"+String(data.station)).show(200).attr('class', 'built');
@@ -108,25 +111,22 @@ function build_station() {
                 ACTIONS++;
                 PHASE++;
             }
-            if ( data.discard === 50 ) {
-                if ( STORE === 0 ) {
+            if ( data.discard === '50' ) {
+                if ( !$('#cp-store').hasClass('down') ) {
                     $('.down').off().on('click', select_gg);
                 } else {
                     $('#cp-store').hide(200);
-                    $('#pl-discard-'+data.discard).off().show(200).attr('class', 'graveyard');
+                    $('#pl-discard-50').off().show(200).attr('class', 'graveyard');
                     STORE = 0;
                 }
                 PHASE--;
-            }
-
-            if ( data.discard !== -1 ) {
+            } else {
                 discard(data.discard);
             }
             document.getElementById("research-cnt").getElementsByTagName('tspan')[0].textContent = String(6-data.num_stations-1);
             set_cities(data.available);
             set_treatable(data.position);
             $('.holding.down').removeClass('down').hide(200);
-
             board_on();
             TRASHING = 0;
             if ( data.can_build && data.station !== data.position ) {

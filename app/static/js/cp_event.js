@@ -26,6 +26,7 @@ function store_on_cp(event) {
             $('#cp-store').attr('class', '.store-'+card_id).addClass('giveable').show(200);
             ACTIONS++;
             STORE = 1;
+            $('#undo-action').prop('disabled', ACTIONS === 0);
         }
     ).error(function(error) {console.log(errors)} )
 }

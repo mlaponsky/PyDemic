@@ -21,7 +21,6 @@ def set_move():
     origin = player.get_position()
     new_pos = request.args.get('id', 0, type=int)
     is_airlift = request.args.get('airlift', 0, type=int)
-    is_cp = request.args.get('store', 0, type=int)
     index = request.args.get('index', 0, type=int)
     trashing = request.args.get('trashing', 0, type=int)
     owner = game.players[(game.active + index) % game.num_players ]
@@ -38,7 +37,7 @@ def set_move():
     prev_avail, dispatch, origin, player_id = game.set_available(0)
 
     if is_airlift == 1:
-        action = game.play_airlift(index, new_pos, is_cp)
+        action = game.play_airlift(index, new_pos)
     elif new_pos in player.can_drive(board):
         action = game.move(new_pos, index, '', 'drive')
     elif new_pos in dispatch:

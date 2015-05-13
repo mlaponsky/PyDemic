@@ -27,7 +27,14 @@ function execute_rp() {
                                                 index: select,
                                                 trashing: TRASHING } ).success(
         function(data) {
-            discard('52');
+            if ( !$('#cp-store').hasClass('down') ) {
+                $('.down').off().on('click', select_rp);
+                discard('52');
+            } else {
+                $('#cp-store').hide(200);
+                $('#pl-discard-52').off().show(200).attr('class', 'graveyard');
+                STORE = 0;
+            }
             $('#infect-discard-'+String(data.deleted)).off().attr('class', 'graveyard');
             if (TRASHING === 0) {
                 ACTIONS++;

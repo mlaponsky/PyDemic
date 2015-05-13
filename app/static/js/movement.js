@@ -73,7 +73,6 @@ function execute_move(event) {
     $.getJSON($SCRIPT_ROOT + '/_move', { id: Number(new_pos),
                                          airlift: is_airlift,
                                          index: select,
-                                         store: STORE,
                                          trashing: TRASHING
                                        }).success(function(data) {
         if (typeof data.available !== 'undefined') {
@@ -97,6 +96,7 @@ function execute_move(event) {
                     $('#pl-discard-48').off().show(200).attr('class', 'graveyard');
                     STORE = 0;
                 }
+                $('.holding.down').removeClass('down').hide(200);
                 if ( TRASHING === 1 ) {
                     ACTIONS--;
                 }

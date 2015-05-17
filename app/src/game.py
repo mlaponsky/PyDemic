@@ -39,6 +39,7 @@ class Game:
         self.num_players = len(roles)
         self.research_stations.append(ATL)
         self.infect_cards = InfectCards()
+        self.infection = {}
 
         self.initial_infect()
         self.oqn = False
@@ -50,7 +51,8 @@ class Game:
         self.active = self.set_order()
         self.selected = self.active
 
-        self.player_cards.discard.append(OQN)
+        self.player_cards.discard.append(RP)
+
     ## Manage game phase
     def get_phase(self):
         return self.phase
@@ -160,6 +162,10 @@ class Game:
         self.reset_outbreaks()
         return card
 
+    def execute_infect(self, city, color, num_cubes):
+        self.reset_outbreaks()
+        self.infect(city, color, num_cubes)
+
     def infect(self, city, color, num_cubes):
         if city not in self.quarantined and self.cures[color] != ERADICATED:
             if self.cubes[city][color] == 0:
@@ -167,9 +173,12 @@ class Game:
             if self.cubes[city][color] + num_cubes <= MAX_CUBES:
                 self.cubes[city][color] += num_cubes
                 self.cubes_left[color] -= num_cubes
+                self.infection[city] = num_cubes
             else:
+                self.cubes_left[color] -= num_cubes - self.cubes[city][color]
                 self.cubes[city][color] = MAX_CUBES
-                self.cubes_left[color] -= MAX_CUBES - num_cubes
+                self.infection[city] = num_cubes
+
                 self.outbreak(city, color)
 
     def outbreak(self, city, color):
@@ -186,12 +195,13 @@ class Game:
         self.outbreaks = []
 
     def epidemic(self):
+        self.reset_outbreaks()
         self.num_epidemics += 1
         card = self.infect_cards.draw_card(-1)
         self.infect_cards.add_to_discard(card)
-        self.infect(card, card // CITIES_PER_COLOR, MAX_CUBES)
-        self.reset_outbreaks()
-        self.infect_cards.recombine_decks()
+        self.execute_infect(card, card // CITIES_PER_COLOR, MAX_CUBES)
+        self.infect_cards.recombine()
+        return card
 
     def remove_cubes(self, color, number, city):
         game.cubes_left[color] += number;
@@ -241,6 +251,7 @@ class Game:
                     'give': prev_give,
                     'take': prev_take }
         mover.move(new_pos, self.board, self.cures, self.cubes, self.cubes_left, self.quarantined)
+        self.phase += 1
         if discard != '':
             owner.discard(discard, self.player_cards)
         if player.get_role() != DISPATCHER:
@@ -267,6 +278,7 @@ player.hand or player.get_role() == OE)
                    'card_data': CARDS[discard],
                    'available': prev_avail }
         self.research_stations.append(player.get_position())
+        self.phase += 1
         if discard != -1:
             player.discard(discard, self.player_cards)
         return action
@@ -277,6 +289,7 @@ player.hand or player.get_role() == OE)
         orig_cubes = copy(self.cubes[city][color])
         orig_rows = copy(self.board.rows[city])
         player.treat(color, self.cures, self.cubes, self.cubes_left, self.board)
+        self.phase += 1
         cubes_removed = orig_cubes - self.cubes[city][color]
         action = { 'act': "treat",
                    'origin': str(city),
@@ -293,7 +306,8 @@ player.hand or player.get_role() == OE)
         orig_cubes = self.cubes[player.get_position()][cure_color]
         orig_rows = copy(self.board.get_all_rows(player.get_position()))
 
-        player.make_cure(cards, self.cures, self.player_cards)
+        player.make_cure(cards, self.cures, self.cubes, self.cubes_left, self.player_cards, self.board)
+        self.phase += 1
 
         medic_pos = -1
         for p in self.players:
@@ -320,6 +334,7 @@ player.hand or player.get_role() == OE)
         receiver = self.players[(recipient + self.active) % self.num_players]
         prev_avail, dispatch, origin, player_id = self.set_available(0)
         giver.give_card(card, receiver)
+        self.phase += 1
         action = { 'act': 'give',
                     'card': str(card),
                     'giver': giver.get_id(),
@@ -332,6 +347,7 @@ player.hand or player.get_role() == OE)
         source = self.players[(giver + self.active) % self.num_players]
         prev_avail, dispatch, origin, player_id = self.set_available(0)
         taker.take_card(card, source)
+        self.phase += 1
         action = { 'act': 'take',
                     'card': str(card),
                     'taker': taker.get_id(),
@@ -391,7 +407,8 @@ player.hand or player.get_role() == OE)
                    'removed': str(to_remove),
                    'owner': owner.get_id(),
                    'card_data': CARDS[GG],
-                   'available': prev_avail}
+                   'available': prev_avail,
+                   'is_stored': is_stored}
         if is_stored:
             owner.discard(GG, self.player_cards)
         else:
@@ -444,6 +461,7 @@ player.hand or player.get_role() == OE)
     def store_on_cp(self, card):
         player = self.players[self.active]
         player.get_event_from_discard(card, self.player_cards)
+        self.phase += 1
         action = { 'act': 'store',
                     'card': card }
         return action

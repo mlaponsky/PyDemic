@@ -48,7 +48,7 @@ function set_active_trash() {
     buttons_off();
     board_off();
     $('.pl-card').off().on('click', trash).addClass('trashable');
-    $('#logger').html( $('#logger').html() + ' Over the hand limit; please choose discard a card.');
+    $('#logger').html( $('#logger').html() + ' You are over the hand limit. Discard down to 7 cards.');
 }
 
 function discard(card) {
@@ -118,6 +118,7 @@ function trash(event) {
                 set_cities(data.available);
                 set_treatable(data.origin);
                 buttons_on();
+                TRASHING = 0;
                 if ( !body.hasClass('selecting') ) {
                     team_toggle();
                 } else {
@@ -126,7 +127,6 @@ function trash(event) {
             }
         ).error(function(error){console.log(error)});
     }
-    TRASHING = 0;
 }
 
 function give(card, data) {
@@ -174,7 +174,7 @@ function give_card(event) {
                                 setTimeout( function() {
                                     team_toggle();
                                     buttons_on();
-                                }, 1500);
+                                }, 1200);
                             }
                         }, 200);
                     } else {
@@ -196,7 +196,6 @@ function give_card(event) {
                     } else {
                         body.addClass('selecting');
                     }
-                    console.log(data.recipients)
                     for (var i=0; i<data.recipients.length; i++) {
                         $("#"+data.recipients[i]).parent().parent().attr('class', 'can-give');
                         $("#"+data.recipients[i]).off().on('click', select_recipient);
@@ -261,6 +260,7 @@ function take_card(event) {
                 PHASE++;
                 if ( data.num_cards > 7 ) {
                     set_active_trash();
+                    console.log(TRASHING);
                 }
                 $('#undo-action').prop('disabled', ACTIONS===0);
             }).error(function(error) {console.log(errors)} );

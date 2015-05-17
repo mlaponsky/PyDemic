@@ -11,7 +11,7 @@ from copy import copy
 
 phase = Blueprint('phase', __name__)
 
-@app.route('/_end_turn')
+@phase.route('/_end_turn')
 def end_turn():
     game = pickle.loads(session['game'])
     player = game.players[game.active]
@@ -30,3 +30,25 @@ def end_turn():
                     draw_1=draw1,
                     num_cards=len(player.hand),
                     forecast=player_deck[:6] )
+
+@phase.route('/_epidemic')
+def execute_epidemic():
+    game = pickle.loads(session['game'])
+    player = game.players[game.active]
+    orig_cubes = copy(game.cubes)
+    card = game.epidemic()
+    color = card // CITIES_PER_COLOR
+    orig = orig_cubes[card][color]
+    row = game.board.get_row(card, color)
+    session['game'] = pickle.dumps(game)
+    return jsonify( card=card,
+                    color=color,
+                    row=row,
+                    outbreak=game.outbreak,
+                    cure=game.cures[color],
+                    added=MAX_CUBES-orig,
+                    outbreaks=game.num_outbreaks )
+
+@phase.route('/_infect_phase')
+def infect_phase():
+    game = pickle.loads

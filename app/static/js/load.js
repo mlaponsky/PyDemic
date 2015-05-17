@@ -43,6 +43,8 @@ function initial_load() {
         PHASE = data.phase;
         ACTIVE = roles[0];
 
+        $('.draw-card').hide();
+        $('#mask').hide();
         set_stations(48, rs);
         for (var k=0; k<53; k++ ) {
             $("#card-"+String(k)).children('div').css('background', "url(static/img/player_cards/pl-"+String(k)+".svg) no-repeat center center");

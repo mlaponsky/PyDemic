@@ -39,13 +39,11 @@ function select_station(event) {
     var position = Number($('.building').attr('id'));
     var select = 0;
     var is_gg = 0;
-    var is_stored = 0;
     if ( $('.event-card.down').length !== 0 ) {
         select  = $('.down').parent().parent().index();
         is_gg = 1;
     } else if ( $('#cp-store').hasClass('down') ) {
         is_gg = 1;
-        is_stored = 1;
     }
     $.getJSON( $SCRIPT_ROOT + '/_select_station', { id: Number(to_remove),
                                                     position: position,

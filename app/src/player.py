@@ -29,6 +29,8 @@ class Player:
 
     # Movement
     def can_move(self, hand, research_stations, board):
+        print(self.can_drive(board))
+        print(self.can_drive(board) + self.can_shuttle(research_stations) + self.can_fly_direct(hand, board) + self.can_charter(hand, board))
         return self.can_drive(board) + self.can_shuttle(research_stations) + self.can_fly_direct(hand, board) + self.can_charter(hand, board)
 
     def can_drive(self, board):
@@ -134,7 +136,7 @@ class Player:
         cards = [ card for card in self.hand if card // CITIES_PER_COLOR == cure_color ]
         return cards
 
-    def make_cure(self, cards, cures, deck):
+    def make_cure(self, cards, cures, cubes, cubes_left, deck, board):
         cure_color = cards[0] // CITIES_PER_COLOR
         for card in cards:
             self.discard(card, deck)
@@ -265,13 +267,13 @@ class Medic(Player):
         if all(cubes[self.position][color] == 0 for color in COLORS):
             board.delete_rows(self.position)
 
-    def make_cure(self, cards, cures, deck):
+    def make_cure(self, cards, cures, cubes, cubes_left, deck, board):
         cure_color = cards[0] // CITIES_PER_COLOR
         for card in cards:
             self.discard(card, deck)
         cures[cure_color] = CURED
-        cubes_left[color] += cubes[self.position][color]
-        cubes[self.position][color] = 0
+        cubes_left[cure_color] += cubes[self.position][cure_color]
+        cubes[self.position][cure_color] = 0
         if all(cubes[self.position][c] == 0 for c in COLORS):
             board.delete_rows(self.position)
 

@@ -143,10 +143,14 @@ function escape_select_player(target) {
 }
 
 function buttons_on() {
-    $('#build-station').attr('class', 'action').off().on('click', build_station);
-    $('#make-cure').attr('class', 'action').off().on('click', make_cure);
-    $('#undo-action').attr('class', 'action').off().on('click', undo);
-    // $('#next-phase').attr('class', 'action').off().on('click', advance);
+    if ( PHASE < 4 || PHASE > 7 ) {
+        $('.action').prop('disabled', true)
+    } else {
+        $('#build-station').attr('class', 'action').off().on('click', build_station);
+        $('#make-cure').attr('class', 'action').off().on('click', make_cure);
+    }
+    $('#undo-action').attr('class', 'action').off().on('click', undo).prop('disabled', false);
+    $('#next-phase').attr('class', 'action').off().on('click', end_turn).prop('disabled', false);
     $('#cp-store').off().on('click', select_store).removeClass('down').addClass('giveable');
 }
 

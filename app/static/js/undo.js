@@ -8,11 +8,11 @@ function undo() {
         } else if ((data['act'] === "charter") ||
                    (data['act'] === "fly") ||
                    (data['act'] === "station-fly")) {
-            undo_discard(data['cards'], data['owner']);
+            undo_discard(data['cards'], data, data['owner']);
             undo_move(data);
             PHASE--;
         } else if (data['act'] === "airlift") {
-            undo_discard(data['cards'], data['owner']);
+            undo_discard(data['cards'], data, data['owner']);
             undo_move(data);
         } else if (data['act'] === "build") {
             undo_station(data);
@@ -43,8 +43,8 @@ function undo() {
     }).error(function(error){console.log(error)});
 }
 
-function undo_discard(card, owner) {
-    if ($('#pl-discard-'+String(card)).hasClass('graveyard')) {
+function undo_discard(card, data, owner) {
+    if (data.is_stored) {
         $('#cp-store').off().on('click', select_store).show(200).attr('class', '.store-'+String(card)).addClass('giveable').attr('src', 'static/img/player_cards/pl-'+String(card)+'.svg');
     } else if ($('.active-player').attr('id').split('-')[1] !== owner) {
         $('#'+owner+"-card-"+card).show(200);
@@ -106,7 +106,7 @@ function undo_station(data) {
         $('#logger').html($('#logger').html()+' Returned station to '+CARDS[Number(data['removed'])].bold()+'.')
     }
     if ( data['cards'] !== '-1') {
-        undo_discard(data['cards'], data['owner']);
+        undo_discard(data['cards'], data, data['owner']);
     }
     set_cities(data['available']);
     if (data['cards'] !== '50' || data['can_build']) {
@@ -123,9 +123,8 @@ function undo_station(data) {
 function undo_treatment(data) {
     var city = document.getElementById(data['origin']);
     var dims = city.getBoundingClientRect();
-    console.log(data['cubes'])
     add_cubes(data['origin'], dims, data['color'],
-                data['rows'][Number(data['color'])], data['cubes']);
+                data['rows'][Number(data['color'])], data['removed']);
 
     var cubes_left = Number(document.getElementById(data['color']+"-cnt").getElementsByTagName('tspan')[0].textContent)
     document.getElementById(data['color']+"-cnt").getElementsByTagName('tspan')[0].textContent = cubes_left - data['removed'];
@@ -136,17 +135,16 @@ function undo_treatment(data) {
 function undo_cure(data) {
     set_cure(String(data['color']), data['cured']);
     for ( var i=0; i<data['cards'].length; i++ ) {
-        undo_discard(data['cards'][i], data['id']);
+        undo_discard(data['cards'][i], data, data['id']);
     }
     var city = document.getElementById(String(data['origin']));
     var dims = city.getBoundingClientRect();
-    add_cubes(String(data['origin']), dims, String(data['color']),
-                data['color'], data['rows'][Number(data['color'])], data['cubes']);
-
-    if ( $("#medic").length !== 0) {
-        var cubes_left = Number(document.getElementById(data['color']+"-cnt").getElementsByTagName('tspan')[0].textContent)
-
-        document.getElementById(data['color']+"-cnt").getElementsByTagName('tspan')[0].textContent = cubes_left - data['cubes'];
+    if ($(".city-"+String(data['origin'])+".cube-"+String(data['color'])).length !== data['cubes']) {
+        var cube_counter = document.getElementById(String(data['color'])+"-cnt").getElementsByTagName('tspan')[0].textContent;
+        var cubes_left = Number(cube_counter);
+        add_cubes(String(data['origin']), dims, String(data['color']), data['rows'][data['color']], data['cubes']);
+        cubes_left += data['cubes'];
+        document.getElementById(String(data['color'])+"-cnt").getElementsByTagName('tspan')[0].textContent = String(cubes_left);
     }
     $('#logger').html('(UNDO) Removed '+COLORS[data['color']]+' cure. Returned cards to hand.');
     $('#make-cure').prop('disabled', false);
@@ -170,12 +168,12 @@ function undo_give(data) {
 function undo_rp(data) {
     $('#infect-discard-'+String(data['deleted'])).off().attr('class', 'infect-discard');
     $('#logger').html('(UNDO) Returned '+CARDS[data['deleted']].bold()+' from the graveyard.')
-    undo_discard('52', data['owner']);
+    undo_discard('52', data, data['owner']);
 }
 
 function undo_oqn(data) {
     $('#logger').html('(UNDO) ');
-    undo_discard('51', data['owner']);
+    undo_discard('51', data, data['owner']);
 }
 
 function undo_store(data) {
@@ -188,7 +186,7 @@ function undo_trash(data) {
     var trash = data['trash'];
     if (typeof trash !== 'undefined') {
         if (trash['act'] === 'airlift') {
-            undo_discard(trash['cards'], trash['owner']);
+            undo_discard(trash['cards'], data, trash['owner']);
             undo_move(trash);
         } else if (trash['act'] === 'rp') {
             undo_rp(trash);
@@ -197,7 +195,7 @@ function undo_trash(data) {
         } else if (trash['act'] === 'oqn') {
             undo_oqn(trash);
         } else if (trash['act'] === 'trash') {
-            undo_discard(trash['cards'], trash['owner']);
+            undo_discard(trash['cards'], data, trash['owner']);
             set_cities(trash['available']);
         }
     }

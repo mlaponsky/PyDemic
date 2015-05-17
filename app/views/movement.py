@@ -85,6 +85,7 @@ def set_move():
                         mover_id=action['mover'],
                         move=action['act'],
                         origin=action['origin'],
+                        player_pos=player.get_position(),
                         discard=discard,
                         cures=cures,
                         cubes_left=cubes_left,

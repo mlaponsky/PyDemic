@@ -56,7 +56,6 @@ def build_station():
         else:
             position = player.get_position()
             action = game.build(-1)
-
         if trashing == 0:
             actions.append(action)
         else:

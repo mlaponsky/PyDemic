@@ -21,28 +21,23 @@ def give():
     player = game.players[game.active]
     team = game.players[game.active+1:] + game.players[:game.active]
 
-    recipients = []
-    for t in team:
-        if player.can_give(card, t):
-            recipients.append(t)
-    if recip != game.active:
-        recipients = [t for t in team if player.can_give(card, t)]
+    recipients = [game.players.index(t) for t in team if player.can_give(card, t)]
     if len(recipients) == 1:
-        action = game.give_card(recip_id, card)
+        action = game.give_card(recipients[0], card)
         actions.append(action)
         available, new_dispatch, origin, player_id = game.set_available(player)
         session['game'] = pickle.dumps(game)
         session['actions'] = actions
         return jsonify( card=str(card),
-                        recipient=recipients[0].get_id(),
+                        recipient=game.players[recipients[0]].get_id(),
                         available=available,
-                        num_cards=len(recipients[0].hand) )
+                        num_cards=len(game.players[recipients[0]].hand) )
 
     else:
         session['game'] = pickle.dumps(game)
         session['actions'] = actions
         return jsonify( card=str(card),
-                        recipients=[r.get_id() for r in recipients] )
+                        recipients=[game.players[r].get_id() for r in recipients] )
 
 @cards.route('/_select_recipient')
 def select_recipient():

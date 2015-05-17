@@ -24,6 +24,7 @@
 		<script charset="utf-8" src="static/js/modernizr.custom.js"></script>
 		<script charset="utf-8" src="static/js/jquery-1.11.2.js"></script>
 		<script charset="utf-8" src="static/js/jquery-ui.js"></script>
+		<script charset="utf-8" src="static/js/velocity.js"></script>
 		<script charset="utf-8" type="text/javascript">
 			$SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
 		</script>
@@ -40,6 +41,7 @@
 		<script charset="utf-8" src="static/js/oqn.js"></script>
 		<script charset="utf-8" src="static/js/rp.js"></script>
 		<script charset="utf-8" src="static/js/cp_event.js"></script>
+		<script charset="utf-8" src="static/js/phase.js"></script>
 		<script charset="utf-8" src="static/js/undo.js"></script>
 		<script charset="utf-8" src="static/js/load.js"></script>
 		<script charset="utf-8" src="static/js/image_size.js"></script>
@@ -51,19 +53,19 @@
 		{% include 'player_cards.html' %}
 		<div class="container">
 			<div id="map" class="main">
-				<div id='mask' hidden>
+				<div id='mask'>
 					<span id="stage-name">INFECT STAGE</span>
 					<ul id="draw-cards">
-						<li id="draw-0" class="draw-card" >
+						<li id="draw-0" class="draw-card">
 			                <div></div>
 			            </li>
-						<li id="draw-1" class="draw-card" >
+						<li id="draw-1" class="draw-card">
 			                <div></div>
 			            </li>
-						<li id="draw-2" class="draw-card" >
+						<li id="draw-2" class="draw-card">
 			                <div></div>
 			            </li>
-						<li id="draw-3" class="draw-card" >
+						<li id="draw-3" class="draw-card">
 			                <div></div>
 			            </li>
 					</ul>

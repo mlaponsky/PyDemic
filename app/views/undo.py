@@ -22,6 +22,7 @@ def undo_action():
     if 'trash' in data:
         trash = data['trash']
 
+    undo_trash(data, game, player)
     if action['act'] == "drive" or action['act'] == "shuttle" or action['act'] == "dispatch":
         undo_move(data, player, game)
     elif action['act'] == "charter" or action['act'] == "fly" or action['act'] == "airlift":
@@ -51,8 +52,6 @@ def undo_action():
     elif action['act'] == "store":
         undo_store(data, game)
 
-    undo_trash(data, game, player)
-
     session['actions'] = actions
     session['game'] = pickle.dumps(game)
     return jsonify(result=action)
@@ -75,7 +74,7 @@ def undo_move(data, player, game):
         number = data['cubes'][color]
         if number != game.cubes[data['destination']][color]:
             game.cubes[data['destination']][color] = number
-            game.cubes_left[color] += number
+            game.cubes_left[color] -= number
     game.board.rows[data['destination']] = data['rows']
 
 def undo_discard(card, player, game):
@@ -164,4 +163,4 @@ def undo_trash(data, game, player):
         elif trash['act'] == 'oqn':
             undo_oqn(trash, game)
         else:
-            undo_discard(int(trash['card']), owner, game)
+            undo_discard(int(trash['cards']), owner, game)

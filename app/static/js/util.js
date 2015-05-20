@@ -1,3 +1,15 @@
+function pulse_svg(city) {
+    $('#'+String(city))
+        .velocity({'stroke-width': 10 }, 800)
+        .velocity({'stroke-width': 1 }, 800, function() { pulse_svg(city) });
+}
+
+function pulse_log() {
+    $('#logger-box')
+        .animate({'border-color': '#fffff0' }, 800)
+        .animate({'border-color': '#222222' }, 800, function() { pulse_log() });
+}
+
 function init_cities() {
     for (var i=0; i<48; i++) {
         $("#"+String(i)).click(execute_move);
@@ -148,9 +160,9 @@ function buttons_on() {
     } else {
         $('#build-station').attr('class', 'action').off().on('click', build_station);
         $('#make-cure').attr('class', 'action').off().on('click', make_cure);
+        $('#next-phase').attr('class', 'action').off().on('click', end_turn).prop('disabled', false);
     }
-    $('#undo-action').attr('class', 'action').off().on('click', undo).prop('disabled', false);
-    $('#next-phase').attr('class', 'action').off().on('click', end_turn).prop('disabled', false);
+    $('#undo-action').attr('class', 'action').off().on('click', undo).prop('disabled', ACTIONS === 0);
     $('#cp-store').off().on('click', select_store).removeClass('down').addClass('giveable');
 }
 
@@ -158,6 +170,7 @@ function buttons_off() {
     $('#build-station').attr('class', 'paused').off();
     $('#make-cure').attr('class', 'paused').off();
     $('#undo-action').attr('class', 'paused').off();
+    $('#next-phase').prop('disabled', true);
     $('#cp-store').off().removeClass('giveable');
 }
 

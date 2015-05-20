@@ -67,10 +67,11 @@ def set_move():
         session['game'] = pickle.dumps(game)
         return jsonify(selectable=selectable)
     else:
-        if trashing == 0:
-            actions.append(action)
-        else:
-            actions[-1]['trash'] = action
+        if game.phase != 8 and game.phase != 9:
+            if trashing == 0:
+                actions.append(action)
+            else:
+                actions[-1]['trash'] = action
 
         available, new_dispatch, origin, player_id = game.set_available(0)
         can_take, can_give, team_hands = game.set_share()
@@ -95,7 +96,8 @@ def set_move():
                         can_cure=can_cure,
                         can_take=can_take,
                         can_give=can_give,
-                        num_cards=len(owner.hand) )
+                        num_cards=len(owner.hand),
+                        phase=game.phase )
 
 @movement.route('/_select_card_for_move')
 def select_move_card():
@@ -139,7 +141,8 @@ def select_move_card():
                     team_hands=team_hands,
                     can_take=can_take,
                     can_give=can_give,
-                    num_cards=len(player.hand) )
+                    num_cards=len(player.hand),
+                    phase=game.phase )
 
 
 @movement.route('/_select_player')
@@ -164,4 +167,5 @@ def select_player():
                     role=selected.get_id(),
                     position=position,
                     can_build=can_build,
-                    can_cure=can_cure )
+                    can_cure=can_cure,
+                    phase=game.phase )

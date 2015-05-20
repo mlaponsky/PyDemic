@@ -52,6 +52,14 @@ function execute_rp() {
             buttons_on();
             $('html').off();
             $('#logger').html('Moved '+CARDS[data.deleted].bold()+' from the Infection discard to the graveyard.');
+            if ( data.num_cards <= 7 ) {
+                TRASHING = 0;
+                if (data.phase === 8 || data.phase === 9 ) {
+                    infect_phase();
+                }
+            } else {
+                set_active_trash();
+            }
         }
     )
 }

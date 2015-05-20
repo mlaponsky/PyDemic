@@ -11,7 +11,7 @@ function check_phase() {
 
 function end_turn() {
     PHASE++;
-    var EPIDEMIC = 0;
+    ACTIONS = 0;
     board_off();
     $('.available').off().attr('class', 'unavailable');
     $('.treatable').off().attr('class', 'unavailable');
@@ -39,12 +39,16 @@ function end_turn() {
                 }
                 setTimeout( function () {
                     $('#mask').fadeOut(300);
+                    setTimeout( function() {
+                        if ( EPIDEMIC > 0 ) {
+                            epidemic();
+                        } else if (TRASHING === 1) {
+                            set_active_trash();
+                        } else {
+                            infect_phase();
+                        }
+                    }, 500);
                 }, 1000);
-                if ( EPIDEMIC > 0 ) {
-                    epidemic();
-                } else if (TRASHING === 1) {
-                    set_active_trash();
-                }
             }, 1000);
         }).error(function(errors){console.log(error);});
 }
@@ -60,14 +64,26 @@ function epidemic() {
                 $('#mask').fadeIn(500);
                 setTimeout( function() {
                     $('#mask').fadeOut(300);
-                    for ( var city in data.infected ) {
-                        if ( data.infected.hasOwnProperty(city) ) {
-                            var city_obj = document.getElementById(String(city));
-                            var dims = city_obj.getBoundingClientRect();
-                            add_cubes(String(city), dims, String(data.color), data.row, data.added);
+                    $('.infect-discard').off().hide();
+                    var cities = Object.keys(data.infected);
+                    for ( var i=0; i<cities.length; i++) {
+                        var city_obj = document.getElementById(String(data.card));
+                        var dims = city_obj.getBoundingClientRect();
+                        for ( var j=0; j<4; j++ ) {
+                            if ( data.infected[cities[i]][j] !== 0 ) {
+                                add_cubes(String(cities[i]), dims, String(j), data.rows[cities[i]][j], data.infected[cities[i]][j], data.at_risk);
+                            }
                         }
                     }
-                    if (data.infected.length != 0) {
+                    for ( var i=0; i<7; i++ ) {
+                        if ( $('#rate-'+String(i)).attr('class') === 'on') {
+                            $('#rate-'+String(i)).attr('class', 'off');
+                            $('#rate-'+String(i+1)).attr('class', 'on');
+                            break;
+                        };
+                    }
+
+                    if (data.infected.length !== 0) {
                         $('#logger').html('(EPIDEMIC)'.bold()+' Infected '+CARDS[data.card].bold()+' with 3 '+COLORS[data.color].bold()+' cubes.');
                     } else if ( data.cure === 2 ) {
                         $('#logger').html('(EPIDEMIC)'.bold()+' Drew '+CARDS[data.card].bold()+' , but '+COLOR(data.color).bold()+' has been eradicated.');
@@ -77,13 +93,68 @@ function epidemic() {
                     if (data.infected.length > 1) {
                         $('#logger').html($('#logger').html() + ' OUTBREAK.'.bold())
                     }
-
-                    if ( EPIDEMIC > 0 ) {
-                        epidemic();
-                    } else if ( TRASHING === 1 ) {
-                        set_active_trash();
-                    }
-                }, 2000);
-            }, 1000)
+                    setTimeout( function() {
+                        if ( EPIDEMIC > 0 ) {
+                            epidemic();
+                        } else if ( TRASHING === 1 ) {
+                            set_active_trash();
+                        } else {
+                            infect_phase();
+                        }
+                    }, 500);
+                }, 1000);
+            }, 1000);
         }).error(function(errors){console.log(error);});
+    }
+
+function infect_phase() {
+    $.getJSON( $SCRIPT_ROOT + '/_infect' ).success( function(data) {
+        var cities = Object.keys(data.infected);
+        for (var i=0; i<4; i++) {
+            if (i<data.cards.length) {
+                $('#draw-'+String(i)).show().children('div').css('background', 'url(/static/img/infect_cards/inf-'+String(data.cards[i])+'.svg) no-repeat center center');
+                $('#infect-discard-'+String(data.cards[i])).off().show();
+            } else {
+                $('#draw-'+String(i)).hide();
+            }
+        }
+        setTimeout( function() {
+            $('#mask').fadeIn(500);
+            setTimeout( function() {
+                $('#mask').fadeOut(300);
+                for ( var i=0; i<cities.length; i++ ) {
+                    var city_obj = document.getElementById(String(cities[i]));
+                    var dims = city_obj.getBoundingClientRect();
+                    for (var j=0; j<4; j++) {
+                        if (data.infected[cities[i]][j] !== 0) {
+                            add_cubes(String(cities[i]), dims, String(j), data.rows[cities[i]][j], data.infected[cities[i]][j], data.at_risk);
+                        }
+                    }
+                }
+            }, 2000);
+        }, 1000);
+        PHASE = 4;
+    }).error(function(errors){console.log(error);});
+}
+
+function events_on() {
+    $('#cp-store').addClass('giveable').off().on('click', select_store);
+    for ( var i=48; i<53; i++ ) {
+        $('#card-'+String(i)).addClass('giveable').off().on('click', give_card);
+        for (var j=0; j<$('.role').length; j++) {
+            var id= $('.role')[j].attr('id');
+            $('#'+id+'-card-'+String(i)).addClass('takeable').off().on('click', take_card);
+        }
+    }
+}
+
+function has_rp() {
+    $.getJSON( $SCRIPT_ROOT + '/_has_rp').success(
+        function(data) {
+            if (data.has_rp) {
+                $('#logger').html('Would you like to play the Resilient Population event?');
+                $('.choice').show(200);
+            }
+        }
+    )
 }

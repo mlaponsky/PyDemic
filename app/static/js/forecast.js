@@ -37,6 +37,13 @@ function execute_forecast() {
             set_cities(data.available);
             set_treatable(data.position);
             $('.holding.down').removeClass('down').hide(200);
-            TRASHING = 0;
+            if (data.num_cards <= 7) {
+                TRASHING = 0;
+                if (data.phase === 8 || data.phase === 9) {
+                    infect_phase();
+                }
+            } else {
+                set_active_trash();
+            }
         }).error( function(error) {console.log(error) });
 }

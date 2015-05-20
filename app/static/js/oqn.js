@@ -22,6 +22,14 @@ function select_oqn(target) {
             }
             $('#logger').html('(One Quient Night) You will skip the next Infection Phase.');
             $('#undo-action').prop('disabled', ACTIONS === 0);
+            if (data.num_cards <= 7) {
+                TRASHING = 0;
+                if (data.phase === 8 || data.phase === 9) {
+                    infect_phase();
+                }
+            } else {
+                set_active_trash();
+            }
         }
     ).error(function(error){console.log(error)});
 }

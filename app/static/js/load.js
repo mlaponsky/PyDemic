@@ -21,6 +21,7 @@ var ROLES = { 'cp': "CONTINGENCY PLANNER",
 var COLORS = ['BLUE', 'YELLOW', 'BLACK', 'RED', 'EVENT'];
 var TRASHING = 0;
 var ACTIONS = 0;
+var EPIDEMIC = 0;
 var PHASE = 0;
 var STORE = 0;
 var ACTIVE;
@@ -56,7 +57,7 @@ function initial_load() {
         set_giveable(data.hand, data.can_give);
         set_takeable(data.team_hands, data.can_take);
         $(".players li:first").hide();
-        init_cubes(cubes, rows);
+        init_cubes(cubes, rows, data.at_risk);
         init_cities();
         set_cities(available);
         set_treatable(positions[0])

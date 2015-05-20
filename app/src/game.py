@@ -39,7 +39,8 @@ class Game:
         self.num_players = len(roles)
         self.research_stations.append(ATL)
         self.infect_cards = InfectCards()
-        self.infection = {}
+        self.infected = {}
+        self.at_risk = []
 
         self.initial_infect()
         self.oqn = False
@@ -51,11 +52,20 @@ class Game:
         self.active = self.set_order()
         self.selected = self.active
 
-        self.player_cards.discard.append(RP)
+        self.players[self.active].hand.append(AIRLIFT)
+        self.players[self.active].hand.append(BEI)
+        self.players[self.active].hand.append(TOK)
+        self.players[self.active].hand.append(BOG)
+
 
     ## Manage game phase
     def get_phase(self):
         return self.phase
+
+    def get_infect_number(self):
+        if self.drawn_epidemics == 0:
+            return 2
+        return ( (self.drawn_epidemics-1) // 2 ) + 2
 
     def set_phase(self, phase):
         self.phase = phase
@@ -152,14 +162,12 @@ class Game:
 ## function to reset the outbreak array is called after each epidemic AND each infect stage.     '''
     def initial_infect(self):
         for i in reversed(range(9)):
-            city = self.infect_cards.draw_card(0)
-            self.infect(city, city//CITIES_PER_COLOR, i//3 + 1)
+            self.draw_infect_card(i//3 + 1)
 
-    def draw_infect_card(self):
+    def draw_infect_card(self, number):
         card = self.infect_cards.draw_card(0)
         self.infect_cards.add_to_discard(card)
-        self.infect(card, card // CITIES_PER_COLOR, 1)
-        self.reset_outbreaks()
+        self.execute_infect(card, card // CITIES_PER_COLOR, number)
         return card
 
     def execute_infect(self, city, color, num_cubes):
@@ -173,12 +181,20 @@ class Game:
             if self.cubes[city][color] + num_cubes <= MAX_CUBES:
                 self.cubes[city][color] += num_cubes
                 self.cubes_left[color] -= num_cubes
-                self.infection[city] = num_cubes
+                if city in self.infected:
+                    self.infected[city][color] += num_cubes
+                else:
+                    self.infected[city] = [0]*4
+                    self.infected[city][color] = num_cubes
+                risk = self.risk(city)
             else:
                 self.cubes_left[color] -= num_cubes - self.cubes[city][color]
+                if city in self.infected:
+                    self.infected[city][color] += num_cubes - self.cubes[city][color]
+                else:
+                    self.infected[city] = [0]*4
+                    self.infected[city][color] = num_cubes - self.cubes[city][color]
                 self.cubes[city][color] = MAX_CUBES
-                self.infection[city] = num_cubes
-
                 self.outbreak(city, color)
 
     def outbreak(self, city, color):
@@ -194,13 +210,18 @@ class Game:
     def reset_outbreaks(self):
         self.outbreaks = []
 
+    def reset_infection(self):
+        self.infected = {}
+
     def epidemic(self):
         self.reset_outbreaks()
-        self.num_epidemics += 1
+        self.reset_infection()
+        self.drawn_epidemics += 1
         card = self.infect_cards.draw_card(-1)
         self.infect_cards.add_to_discard(card)
         self.execute_infect(card, card // CITIES_PER_COLOR, MAX_CUBES)
-        self.infect_cards.recombine()
+        for city in range(NUM_CITIES):
+            risk = self.risk(city)
         return card
 
     def remove_cubes(self, color, number, city):
@@ -208,6 +229,17 @@ class Game:
         game.cubes[city][color] -= number
         if game.cubes[city][color] == 0:
             board.delete_row(city, color)
+
+    def risk(self, city):
+        at_risk = False
+        for c in COLORS:
+            if self.cubes[city][c] == MAX_CUBES and city not in self.infect_cards.discard:
+                at_risk = True
+        if not at_risk and city in self.at_risk:
+            self.at_risk.remove(city)
+        elif at_risk and city not in self.at_risk:
+            self.at_risk.append(city)
+        return at_risk
 
     # Handles all functions relating to research stations.
     def check_num_stations(self):
@@ -246,11 +278,13 @@ class Game:
                     'can_cure': prev_cure,
                     'cubes': orig_cubes,
                     'rows': orig_rows,
+                    'at_risk': self.at_risk,
                     'hand': prev_hand,
                     'team_hands': prev_hands,
                     'give': prev_give,
                     'take': prev_take }
         mover.move(new_pos, self.board, self.cures, self.cubes, self.cubes_left, self.quarantined)
+        self.risk(new_pos)
         self.phase += 1
         if discard != '':
             owner.discard(discard, self.player_cards)
@@ -291,6 +325,7 @@ player.hand or player.get_role() == OE)
         player.treat(color, self.cures, self.cubes, self.cubes_left, self.board)
         self.phase += 1
         cubes_removed = orig_cubes - self.cubes[city][color]
+        self.risk(city)
         action = { 'act': "treat",
                    'origin': str(city),
                     'color': str(color),
@@ -307,13 +342,14 @@ player.hand or player.get_role() == OE)
         orig_rows = copy(self.board.get_all_rows(player.get_position()))
 
         player.make_cure(cards, self.cures, self.cubes, self.cubes_left, self.player_cards, self.board)
-        self.phase += 1
-
         medic_pos = -1
         for p in self.players:
             if p.get_role() == MEDIC:
                 medic_pos = p.get_position()
+                cubes[medic_pos][cure_color] = 0
+                self.risk(medic_pos)
                 break
+        self.phase += 1
 
         if self.is_eradicated(cure_color):
             self.cures[ cure_color ] = ERADICATED

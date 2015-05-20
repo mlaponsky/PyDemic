@@ -26,7 +26,7 @@ function create_card(city, data) {
     });
 }
 
-function set_team_trash(data) {
+function set_team_trash(owner) {
     TRASHING = 1;
     $('.can-give').off().removeClass('can-give');
     $('.available').off().attr('class', 'unavailable marked');
@@ -34,8 +34,8 @@ function set_team_trash(data) {
     $('.role').off().attr('class', 'role');
     buttons_off();
     board_off();
-    $('#'+data.recipient).parent().parent().attr('class', 'team-trashing');
-    $('#'+data.recipient+"-box li.card").off().on('click', trash).addClass('trashable');
+    $('#'+owner).parent().parent().attr('class', 'team-trashing');
+    $('#'+owner+"-box li.card").off().on('click', trash).addClass('trashable');
     $('#logger').html( $('#logger').html() + ' Over the hand limit; please choose discard a card.');
 }
 
@@ -105,7 +105,8 @@ function trash(event) {
         select_rp(card);
     } else {
         $.getJSON( $SCRIPT_ROOT + '/_trash', { card: Number(card_id),
-                                               action: 1 }).success(
+                                               action: 1,
+                                               phase: PHASE }).success(
             function(data) {
                 $('#logger').html('');
                 if ( card.hasClass('pl-card') ) {
@@ -118,8 +119,20 @@ function trash(event) {
                 set_cities(data.available);
                 set_treatable(data.origin);
                 buttons_on();
-                TRASHING = 0;
-                if ( !body.hasClass('selecting') ) {
+                if ( data.num_cards <= 7 ) {
+                    TRASHING = 0;
+                    body.removeClass('selecting');
+                    if ( data.phase === 8 || data.phase === 9 ) {
+                        infect_phase();
+                    }
+                } else {
+                    if ( ACTIVE === data.owner ) {
+                        set_active_trash();
+                    } else {
+                        set_team_trash(data.owner)
+                    }
+                }
+                if ( !body.hasClass('selecting') && data.phase !== 8 && data.phase !== 9 ) {
                     team_toggle();
                 } else {
                     body.removeClass('selecting');
@@ -169,7 +182,7 @@ function give_card(event) {
                             give(card, data);
                             if ( data.num_cards > 7 ) {
                                 $('#'+data.recipient).parent().parent().addClass('can_give');
-                                set_team_trash(data);
+                                set_team_trash(data.recipient);
                             } else {
                                 setTimeout( function() {
                                     team_toggle();
@@ -181,7 +194,7 @@ function give_card(event) {
                         give(card, data);
                         if ( data.num_cards > 7 ) {
                             $('#'+data.recipient).parent().parent().addClass('can_give');
-                            set_team_trash(data);
+                            set_team_trash(data.recipient);
                         }
                         buttons_on();
                     }
@@ -228,7 +241,7 @@ function select_recipient(event) {
             card.off();
             give(card, data);
             if (data.num_cards > 7) {
-                set_team_trash(data);
+                set_team_trash(data.recipient);
             }
         }).error(function(error) {console.log(errors)} );
 }
@@ -260,7 +273,6 @@ function take_card(event) {
                 PHASE++;
                 if ( data.num_cards > 7 ) {
                     set_active_trash();
-                    console.log(TRASHING);
                 }
                 $('#undo-action').prop('disabled', ACTIONS===0);
             }).error(function(error) {console.log(errors)} );

@@ -82,8 +82,15 @@ function select_station(event) {
             }
             $("#undo-action").prop('disabled', ACTIONS === 0);
             buttons_on();
-            TRASHING = 0;
             $('html').off();
+            if ( data.num_cards <= 7) {
+                TRASHING = 0;
+                if (data.phase === 8 || data.phase === 9) {
+                    infect_phase();
+                }
+            } else {
+                set_active_trash();
+            }
         }
     ).error(function(error){console.log(error);});
 }
@@ -126,7 +133,6 @@ function build_station() {
             set_treatable(data.position);
             $('.holding.down').removeClass('down').hide(200);
             board_on();
-            TRASHING = 0;
             if ( data.can_build && data.station !== data.position ) {
                 $("#build-station").attr('class', 'action').prop('disabled', false);
             } else {
@@ -134,6 +140,15 @@ function build_station() {
             }
             $("#undo-action").prop('disabled', ACTIONS === 0);
             buttons_on();
+            $('html').off();
+            if ( data.num_cards <= 7 ) {
+                TRASHING = 0;
+                if (data.phase === 8 || data.phase === 9) {
+                    infect_phase();
+                }
+            } else {
+                set_active_trash();
+            }
         } else {
             buttons_off();
             $("#build-station").attr('class', 'action activated');

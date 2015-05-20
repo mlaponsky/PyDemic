@@ -87,6 +87,8 @@ def set_game():
     if player.get_role() == CP:
         store = player.event
 
+    print(game.at_risk)
+
     session['actions'] = actions
     session['game'] = pickle.dumps(game)
     return jsonify( available=available,
@@ -110,6 +112,7 @@ def set_game():
                     player_grave=game.player_cards.graveyard,
                     infect_discard=game.infect_cards.discard,
                     infect_grave=game.infect_cards.graveyard,
+                    at_risk=game.at_risk,
                     actions=actions,
                     phase=game.phase )
 

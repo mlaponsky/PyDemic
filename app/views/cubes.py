@@ -33,7 +33,8 @@ def remove_cubes():
         session['game'] = pickle.dumps(game)
         return jsonify( c=str(color),
                         num_cubes=action['removed'],
-                        cubes_left=game.cubes_left[color] )
+                        cubes_left=game.cubes_left[color],
+                        at_risk=game.at_risk )
 
 @disease.route('/_select_color')
 def get_treatment_color():
@@ -46,4 +47,5 @@ def get_treatment_color():
     session['actions'] = actions
     session['game'] = pickle.dumps(game)
     return jsonify( num_cubes=action['removed'],
-                    cubes_left=game.cubes_left )
+                    cubes_left=game.cubes_left,
+                    at_risk=game.at_risk )

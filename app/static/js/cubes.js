@@ -14,12 +14,6 @@ function set_cube_dimensions(cube, dims, row, num) {
     cube.css('pointer-events', 'none');
 }
 
-function pulse(city) {
-    $('#'+city)
-        .velocity({'stroke-width': 9 }, 800)
-        .velocity({'stroke-width': 2 }, 800, function() { pulse(city) });
-}
-
 function create_cube(position, dims, color, row, num) {
     var cube = $('<img/>');
     var class_name = "city-"+position + " " + "cube-"+color + " " + "row-"+String(row);
@@ -47,27 +41,32 @@ function set_cube_row(position, dims, color, row, total) {
     }
 }
 
-function add_cubes(position, dims, color, row, added) {
+function add_cubes(position, dims, color, row, added, at_risk) {
     var class_name = ".city-"+position+".cube-"+color+".row-"+String(row);
     var cubes = $(class_name);
     var orig_cubes = cubes.length;
     for (var i=orig_cubes; i<orig_cubes+added; i++) {
         create_cube(position, dims, color, row, i);
     }
+    for (var i=0; i<at_risk.length; i++) {
+        pulse_svg(at_risk[i]);
+    }
+    var cubes_left = document.getElementById(color+"-cnt").getElementsByTagName('tspan')[0].textContent;
+    document.getElementById(color+"-cnt").getElementsByTagName('tspan')[0].textContent = cubes_left - added;
 };
 
-function init_cubes(cubes, rows) {
-    positions = Object.keys(cubes);
+function init_cubes(cubes, rows, at_risk) {
+    var positions = Object.keys(cubes);
     for (var i=0; i<positions.length; i++ ) {
         var cube_set = cubes[positions[i]];
+        if ( at_risk.indexOf(Number(positions[i])) !== -1 ) {
+            pulse_svg(positions[i]);
+        }
         for (var color=0; color<cube_set.length; color++) {
             if (cube_set[color] !== 0) {
                 var city = document.getElementById(positions[i]);
                 var dims = city.getBoundingClientRect();
                 create_cube_row(positions[i], dims, color, rows[positions[i]][color], cube_set[color]);
-            }
-            if (cube_set[color] === 3) {
-                pulse(positions[i]);
             }
         }
     }
@@ -87,14 +86,17 @@ function set_cubes(cubes, rows) {
     }
 }
 
-function remove_cubes(city, color, num_cubes, cubes_left) {
+function remove_cubes(city, color, num_cubes, cubes_left, at_risk) {
     var cubes = $(".city-"+city+".cube-"+color);
     var to_remove = cubes.slice(cubes.length-num_cubes, cubes.length);
     for (var i=0; i<to_remove.length; i++) {
         $(to_remove[i]).hide(200, function() { this.remove() });
     }
     set_treatable(city);
-        document.getElementById(color+"-cnt").getElementsByTagName('tspan')[0].textContent = String(cubes_left);
+    document.getElementById(color+"-cnt").getElementsByTagName('tspan')[0].textContent = String(cubes_left);
+    if ( !at_risk.contains(Number(city)) ) {
+        $('#'+city).stop();
+    }
     $('#logger').html('Removed '+String(num_cubes)+' '+COLORS[color].bold()+' cube(s) from '+CARDS[Number(city)].bold()+' ('+String(cubes.length-num_cubes)+' remaining).');
 }
 

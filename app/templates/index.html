@@ -113,7 +113,8 @@
 				<div id="logger-box">
 					<div id="logger">This is the actions log.</div>
 				</div>
-				<button hidden='true' id="finish">DONE</button>
+				<button class="choice" hidden='true' id="accept">DONE</button>
+				<button class="choice" hidden='true' id="decline">DONE</button>
 				<ul hidden='true' id="forecast">
 					FORECAST
 					{% for card in game.infect_cards.deck %}

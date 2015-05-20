@@ -31,28 +31,33 @@ def forecast():
     session['game'] = pickle.dumps(game)
     return jsonify( available=available,
                     owner=owner.get_id(),
-                    position=origin )
+                    position=origin,
+                    num_cards=len(owner.hand),
+                    phase=game.phase )
 
 @events.route('/_execute_rp')
 def rp():
     game = pickle.loads(session['game'])
     actions = session['actions']
 
-    player = game.players[game.active]
     card = request.args.get('remove', -1, type=int)
     index = request.args.get('index', 0, type=int)
     trashing = request.args.get('trashing', 0, type=int)
     is_stored = request.args.get('is_stored', 0, type=int)
 
+    owner = game.players[(game.active + index) % game.num_players]
     action = game.play_rp(card, index)
 
-    if trashing == 0:
-        actions.append(action)
-    else:
-        actions[-1]['trash'] = action
+    if game.phase != 8 and game.phase != 9:
+        if trashing == 0:
+            actions.append(action)
+        else:
+            actions[-1]['trash'] = action
     session['actions'] = actions
     session['game'] = pickle.dumps(game)
-    return jsonify( deleted=card )
+    return jsonify( deleted=card,
+                    num_cards=len(owner.hand),
+                    phase=game.phase )
 
 @events.route('/_execute_oqn')
 def oqn():
@@ -62,14 +67,18 @@ def oqn():
     index = request.args.get('index', 0, type=int)
     trashing = request.args.get('trashing', 0, type=int)
     is_stored = request.args.get('is_stored', 0, type=int)
+    owner = game.players[(game.active+index) % game.num_players]
     action = game.play_oqn(index)
-    if trashing == 0:
-        actions.append(action)
-    else:
-        actions[-1]['trash'] = action
+    if game.phase != 8 and game.phase != 9:
+        if trashing == 0:
+            actions.append(action)
+        else:
+            actions[-1]['trash'] = action
     session['actions'] = actions
     session['game'] = pickle.dumps(game)
-    return jsonify( owner=action['owner'] )
+    return jsonify( owner=action['owner'],
+                    num_cards=len(owner.hand),
+                    phase=game.phase )
 
 @events.route('/_store_on_cp')
 def store_on_cp():

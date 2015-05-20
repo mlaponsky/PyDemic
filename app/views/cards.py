@@ -86,6 +86,7 @@ def trash():
     actions = session['actions']
 
     card = request.args.get('card', -1, type=int)
+    phase = request.args.get('phase', -1, type=int)
     player = game.players[game.active]
     for p in game.players:
         if card in p.hand:
@@ -95,12 +96,16 @@ def trash():
     action = { 'act': 'trash',
                'cards': str(card),
                'owner': owner.get_id(),
-               'available': prev_avail }
-    actions[-1]['trash'] = action
+               'available': prev_avail}
+    if game.phase != 8 and game.phase != 9:
+        actions[-1]['trash'] = action
     owner.discard(card, game.player_cards)
     available, dispatch, origin, player_id = game.set_available(player)
     session['actions'] = actions
     session['game'] = pickle.dumps(game)
     return jsonify( available=available,
                     origin=str(origin),
-                    card=str(card) )
+                    owner=owner.get_id(),
+                    card=str(card),
+                    num_cards=len(owner.hand),
+                    phase=game.phase )

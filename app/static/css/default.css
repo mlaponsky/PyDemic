@@ -369,9 +369,8 @@ a:hover {
     }
 }
 
-#finish {
+.choice {
 	position: absolute;
-	left: 79.5%;
 	bottom: 18.5%;
 	width: 4%;
 	height: 4%;
@@ -388,10 +387,18 @@ a:hover {
 	opacity: 0.75;
 }
 
-#finish:hover {
+.choice:hover {
 	opacity: 1;
 	background: #fffff0;
 	color: #222222;
+}
+
+#accept {
+	left: 79.5%;
+}
+
+#decline {
+	left: 85%;
 }
 
 #forecast {

@@ -75,6 +75,7 @@ def undo_move(data, player, game):
         if number != game.cubes[data['destination']][color]:
             game.cubes[data['destination']][color] = number
             game.cubes_left[color] -= number
+            game.risk(data['destination'])
     game.board.rows[data['destination']] = data['rows']
 
 def undo_discard(card, player, game):
@@ -99,6 +100,7 @@ def undo_treatment(data, game):
     game.cubes_left[int(data['color'])] -= data['removed']
     game.cubes[int(data['origin'])][int(data['color'])] = data['cubes']
     game.board.rows[int(data['origin'])] = data['rows']
+    game.risk(int(data['origin']))
 
 def undo_cure(data, player, game):
     for card in data['cards']:
@@ -106,8 +108,10 @@ def undo_cure(data, player, game):
         player.add_card(int(card))
     game.cures[data['color']] = LIVE
     game.cubes_left[data['color']] -= data['cubes']
-    game.cubes[player.get_position()][data['color']] = data['cubes']
-    game.board.rows[player.get_position()] = data['rows']
+    if medic_pos != -1:
+        game.cubes[medic_pos][data['color']] = data['cubes']
+        game.board.rows[medic_pos] = data['rows']
+        game.risk(medic_pos)
 
 def undo_take(data, game):
     for p in game.players:

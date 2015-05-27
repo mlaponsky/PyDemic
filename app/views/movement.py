@@ -21,7 +21,7 @@ def set_move():
     origin = player.get_position()
     new_pos = request.args.get('id', 0, type=int)
     is_airlift = request.args.get('airlift', 0, type=int)
-    index = request.args.get('index', 0, type=int)
+    index = (request.args.get('index', 0, type=int) + game.active) % game.num_players
     trashing = request.args.get('trashing', 0, type=int)
     owner = game.players[(game.active + index) % game.num_players ]
     discard = ""
@@ -67,7 +67,8 @@ def set_move():
         session['game'] = pickle.dumps(game)
         return jsonify(selectable=selectable)
     else:
-        if game.phase != 8 and game.phase != 9:
+        print(game.phase)
+        if game.phase <= DRAW:
             if trashing == 0:
                 actions.append(action)
             else:
@@ -148,7 +149,7 @@ def select_move_card():
 @movement.route('/_select_player')
 def select_player():
     game = pickle.loads(session['game'])
-    index = request.args.get('index', 0, type=int)
+    index = (request.args.get('index', 0, type=int) + game.active) % game.num_players
     is_airlift = request.args.get('airlift', 0, type=int)
     player = game.players[game.active]
     selected = game.select_player(index)

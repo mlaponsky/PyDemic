@@ -5,16 +5,16 @@ function select_gg(target) {
     buttons_off();
     for (var i=0; i<48; i++) {
         if ( $('#station-'+String(i)).attr('class') === 'built' ) {
-            if ( $('#'+String(i)).attr('class') === 'available' ) {
-                $('#'+String(i)).off().attr('class', 'unavailable marked');
+            if ( $('#city-'+String(i)).attr('class') === 'available' ) {
+                $('#city-'+String(i)).off().attr('class', 'unavailable marked');
             } else {
-                $('#'+String(i)).off().attr('class', 'unavailable');
+                $('#city-'+String(i)).off().attr('class', 'unavailable');
             }
         } else {
-            if ( $('#'+String(i)).attr('class') === 'available' ) {
-                $('#'+String(i)).off().on('click', build_station).attr('class', 'selectable marked');
+            if ( $('#city-'+String(i)).attr('class') === 'available' ) {
+                $('#city-'+String(i)).off().on('click', build_station).attr('class', 'selectable marked');
             } else {
-                $('#'+String(i)).off().on('click', build_station).attr('class', 'selectable');
+                $('#city-'+String(i)).off().on('click', build_station).attr('class', 'selectable');
             }
         }
     }

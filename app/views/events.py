@@ -46,9 +46,9 @@ def rp():
     is_stored = request.args.get('is_stored', 0, type=int)
 
     owner = game.players[(game.active + index) % game.num_players]
-    action = game.play_rp(card, index)
+    action = game.play_rp(card, (game.active + index) % game.num_players)
 
-    if game.phase != 8 and game.phase != 9:
+    if game.phase < DRAW:
         if trashing == 0:
             actions.append(action)
         else:
@@ -68,8 +68,8 @@ def oqn():
     trashing = request.args.get('trashing', 0, type=int)
     is_stored = request.args.get('is_stored', 0, type=int)
     owner = game.players[(game.active+index) % game.num_players]
-    action = game.play_oqn(index)
-    if game.phase != 8 and game.phase != 9:
+    action = game.play_oqn((game.active+index) % game.num_players)
+    if game.phase < DRAW:
         if trashing == 0:
             actions.append(action)
         else:

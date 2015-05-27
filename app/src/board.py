@@ -75,7 +75,6 @@ class Board:
         self.add_neighbor(BOG, SP)
 
         self.add_neighbor(LIM, SAN)
-        self.add_neighbor(LIM, BA)
 
         self.add_neighbor(SP, BA)
         self.add_neighbor(SP, LAG)

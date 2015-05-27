@@ -56,7 +56,6 @@ def set_game():
     positions = []
 
     team = game.players[game.active:] + game.players[:game.active]
-    game.players[game.active].selected = game.players[game.active]
     if game.players[game.active].get_role() == DISPATCHER:
         for p in team:
             if p != game.players[game.active] and p.get_position() != game.players[game.active].get_position():
@@ -84,10 +83,9 @@ def set_game():
             rows[city] = board.get_all_rows(city)
 
     store = None
-    if player.get_role() == CP:
-        store = player.event
-
-    print(game.at_risk)
+    for p in game.players:
+        if p.get_role() == CP:
+            store = p.event
 
     session['actions'] = actions
     session['game'] = pickle.dumps(game)
@@ -135,4 +133,5 @@ def start_game():
                             cards = CARDS,
                             cities = CITIES,
                             colors = COLOR_STRINGS,
-                            num_cities=NUM_CITIES )
+                            num_cities=NUM_CITIES,
+                            num_epidemics=game.num_epidemics )

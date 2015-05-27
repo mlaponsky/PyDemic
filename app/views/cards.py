@@ -16,12 +16,9 @@ def give():
     actions = session['actions']
 
     card = request.args.get('card', -1, type=int)
-    recip = request.args.get('recip', 0, type=int)
-    recip_id = (game.active + recip) % game.num_players
     player = game.players[game.active]
-    team = game.players[game.active+1:] + game.players[:game.active]
 
-    recipients = [game.players.index(t) for t in team if player.can_give(card, t)]
+    recipients = [game.players.index(p) for p in game.players if player.can_give(card, p)]
     if len(recipients) == 1:
         action = game.give_card(recipients[0], card)
         actions.append(action)
@@ -46,8 +43,8 @@ def select_recipient():
 
     player = game.players[game.active]
     card = request.args.get('card', -1, type=int)
-    recip = request.args.get('selected', 0, type=int)
-    recipient = game.players[(game.active + recip) % game.num_players]
+    recip = ( request.args.get('selected', 0, type=int) + game.active) % game.num_players
+    recipient = game.players[recip]
 
     action = game.give_card(recip, card)
     available, new_dispatch, origin, player_id = game.set_available(0)
@@ -67,7 +64,7 @@ def take():
 
     player = game.players[game.active]
     card = request.args.get('card', -1, type=int)
-    source = request.args.get('id', 0, type=int)
+    source = (request.args.get('id', 0, type=int) + game.active) % game.num_players
 
     action = game.take_card(source, card)
     actions.append(action)
@@ -97,7 +94,7 @@ def trash():
                'cards': str(card),
                'owner': owner.get_id(),
                'available': prev_avail}
-    if game.phase != 8 and game.phase != 9:
+    if game.phase != DRAW:
         actions[-1]['trash'] = action
     owner.discard(card, game.player_cards)
     available, dispatch, origin, player_id = game.set_available(player)

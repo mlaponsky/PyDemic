@@ -53,20 +53,15 @@
 	padding: 0.2%;
 }
 
-#infect-button:hover {
+#infect-button:hover, #player-button:hover {
 	border: 4px solid #fffff0;
 	padding: 0.1%;
 }
 
-#infect-button.active {
+#infect-button.active, #player-button.active {
 	background: #fffff0;
 	border: 4px solid #fffff0;
 	color: #434343;
-	padding: 0.1%;
-}
-
-#player-button:hover {
-	border: 4px solid #fffff0;
 	padding: 0.1%;
 }
 

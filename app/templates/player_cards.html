@@ -1,8 +1,11 @@
 <div class="menu menu-vertical menu-left" id="player-menu">
     <h3>PLAYER DISCARD</h3>
     <ul id="player-discard">
-        {% for card in range(cards|length) %}
+        {% for card in range(cards|length - 1) %}
         <li id="pl-discard-{{ card }}" class="pl-discard"><div class="{{ colors[card // 12] }}"></div> <p>{{ cards[card]['name'] }}</p> </li>
+        {% endfor %}
+        {% for i in range(num_epidemics) %}
+        <li id="epidemic-{{ i+1 }}" class="epidemic"><div class="green"></div> <p>{{ cards[53]['name'] }}</p> </li>
         {% endfor %}
     </ul>
 </div>

@@ -17,7 +17,7 @@ def select_station():
     player = game.players[game.active]
     to_remove = request.args.get('id', -1, type=int)
     position = request.args.get('position', -1, type=int)
-    index = request.args.get('index', 0, type=int)
+    index = (request.args.get('index', 0, type=int) + game.active) % game.num_players
     trashing = request.args.get('trashing', 0, type=int)
     is_gg = request.args.get('is_gg', 0, type=int)
     owner = game.players[(game.active+index) % game.num_players]
@@ -27,7 +27,7 @@ def select_station():
     else:
         action = game.build(to_remove)
 
-    if game.phase != 8 and game.phase != 9:
+    if game.phase <= DRAW:
         if trashing == 0:
             actions.append(action)
         else:
@@ -51,17 +51,17 @@ def build_station():
     player = game.players[game.active]
     position = request.args.get('position', -1, type=int)
     trashing = request.args.get('trashing', 0, type=int)
-    index = request.args.get('index', 0, type=int)
+    index = (request.args.get('index', 0, type=int) + game.active) % game.num_players
     num_stations = len(game.research_stations)
 
-    owner = game.players[(game.active+index) % game.num_players]
+    owner = game.players[index]
     if num_stations < MAX_STATIONS:
         if position != -1:
             action = game.play_gg(position, index, -1)
         else:
             position = player.get_position()
             action = game.build(-1)
-        if game.phase != 8 and game.phase != 9:
+        if game.phase <= DRAW:
             if trashing == 0:
                 actions.append(action)
             else:

@@ -19,6 +19,7 @@ var ROLES = { 'cp': "CONTINGENCY PLANNER",
               'scientist': "SCIENTIST" };
 
 var COLORS = ['BLUE', 'YELLOW', 'BLACK', 'RED', 'EVENT'];
+var COLOR_CODES = ["#75a4ff", "#BCAC68", "#3d3d3d", "#ff6666"]
 var TRASHING = 0;
 var ACTIONS = 0;
 var EPIDEMIC = 0;
@@ -44,8 +45,7 @@ function initial_load() {
         PHASE = data.phase;
         ACTIVE = roles[0];
 
-        $('.draw-card').hide();
-        $('#mask').hide();
+        $('#stage-name').hide();
         set_stations(48, rs);
         for (var k=0; k<53; k++ ) {
             $("#card-"+String(k)).children('div').css('background', "url(static/img/player_cards/pl-"+String(k)+".svg) no-repeat center center");
@@ -63,31 +63,30 @@ function initial_load() {
         set_treatable(positions[0])
         set_selectable_players(roles[0]);
         $('#cp-store').hide();
-        if ( ACTIVE === 'cp' ) {
+        if (data.store !== null) {
+            STORE = 1;
+            $('#cp-store').attr('src', 'static/img/player_cards/pl-'+String(data.store)+'.svg');
+            $('#cp-store').attr('class', 'store-'+String(data.store)).show();
+        } else if ( ACTIVE === 'cp' ) {
             for (var l=48; l<53; l++) {
                 if ( !$('#pl-discard-'+String(l)).hasClass('graveyard') ) {
                     $('#pl-discard-'+String(l)).off().on('click', store_on_cp).addClass('takeable');
                 }
             }
-            if (data.store !== null) {
-                STORE = 1;
-                $('#cp-store').attr('src', 'static/img/player_cards/pl-'+String(data.store)+'.svg');
-                $('#cp-store').attr('class', 'store-'+String(data.store)).show();
-            }
-            $('#cp-store').off().on('click', select_store).addClass('giveable').css('z-index', 1000);
         }
+        $('#cp-store').off().on('click', select_store).addClass('giveable').css('z-index', 1000);
 
         for (var i=0; i<cures.length; i++) {
             set_cure(String(i), cures[i]);
         }
 
         $('#forecast').sortable().disableSelection();
+        $('#forecast>li').hide();
         for (var n=0; n<data.forecast.length; n++) {
             $('#forecast-'+String(data.forecast[n])).show();
         }
 
         $('.pl-name').css('background', "url("+data.role_img+") no-repeat center center");
-
         buttons_on();
         $('#build-station').prop('disabled', !can_build);
         $('#make-cure').prop('disabled', !can_cure);
@@ -97,7 +96,7 @@ function initial_load() {
             var player = $('<img/>');
             player.attr('id', roles[j]+"-piece" );
             player.attr('src', pieces[j]);
-            var city = document.getElementById(positions[j]);
+            var city = document.getElementById('city-'+positions[j]);
             var city_dims = city.getBoundingClientRect();
             set_position(player, roles[j], positions[j], city_dims);
             player.css('z-index', 500-j);
@@ -113,6 +112,9 @@ function initial_load() {
             var card = data.player_grave[i];
             $('#pl-discard-'+String(card)).attr('class', 'graveyard').show();
         }
+        for ( var i=0; i<data.drawn_epidemics; i++ ) {
+            $('#epidemic-'+String(i)).show();
+        }
         for ( var j=0; j<data.infect_discard.length; j++) {
             var card = data.infect_discard[j];
             $('#infect-discard-'+String(card)).show();
@@ -121,6 +123,5 @@ function initial_load() {
             var card = data.infect_grave[j];
             $('#infect-discard-'+String(card)).attr('class', 'graveyard').show();
         }
-
     }).error(function(error){console.log(error);});
 };

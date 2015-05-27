@@ -15,7 +15,7 @@
    viewBox="0 0 4378 2185"
    id="svg2"
    inkscape:version="0.48.4 r9939"
-   sodipodi:docname="map_test.svg">
+   sodipodi:docname="map.svg">
   <sodipodi:namedview
      pagecolor="#ffffff"
      bordercolor="#666666"
@@ -33,8 +33,8 @@
      inkscape:snap-object-midpoints="true"
      inkscape:object-nodes="false"
      inkscape:zoom="0.79077085"
-     inkscape:cx="1800.2532"
-     inkscape:cy="1384.5955"
+     inkscape:cx="1376.6159"
+     inkscape:cy="878.75996"
      inkscape:window-x="0"
      inkscape:window-y="24"
      inkscape:window-maximized="1"
@@ -3014,6 +3014,22 @@
          in="SourceGraphic"
          operator="over" />
     </filter>
+    <filter
+       id="filter15360"
+       inkscape:label="Glow"
+       inkscape:menu="Shadows and Glows"
+       inkscape:menu-tooltip="Glow of object's own color at the edges"
+       color-interpolation-filters="sRGB">
+      <feGaussianBlur
+         id="feGaussianBlur15362"
+         stdDeviation="5"
+         result="result91" />
+      <feComposite
+         id="feComposite15364"
+         in2="result91"
+         in="SourceGraphic"
+         operator="over" />
+    </filter>
   </defs>
   <metadata
      id="metadata7">
@@ -3132,11 +3148,6 @@
        transform="translate(0.02856,-49.997805)"
        id="path5037"
        style="opacity:0.6;fill:none;stroke:#fffff0;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;filter:url(#filter5289)" />
-    <path
-       d="M 1370.8,1681.3 1150.7,1371.1"
-       transform="translate(0.02856,-49.997805)"
-       id="path5035"
-       style="opacity:0.6;fill:none;stroke:#fffff0;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;filter:url(#filter5283)" />
     <path
        d="m 1113.1,1676.8 37.567,-305.68"
        transform="translate(0.02856,-49.997805)"
@@ -3559,6 +3570,11 @@
        style="fill:none;stroke:#fffff0;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none;opacity:0.59999999999999998;filter:url(#filter12540)"
        d="m 2276.4687,454.61219 -55.04,-193.742"
        id="path12538"
+       inkscape:connector-curvature="0" />
+    <path
+       style="fill:none;stroke:#fffff0;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;opacity:0.59999999999999998;stroke-miterlimit:4;stroke-dasharray:none;filter:url(#filter15360)"
+       d="m 796.17265,1003.3128 354.46295,317.8094"
+       id="path14850"
        inkscape:connector-curvature="0" />
   </g>
   <g

@@ -1,19 +1,51 @@
 function pulse_svg(city) {
-    $('#'+String(city))
-        .velocity({'stroke-width': 10 }, 800)
-        .velocity({'stroke-width': 1 }, 800, function() { pulse_svg(city) });
+    var map = Snap.select('#cities');
+    var icon = map.select('#city-'+String(city));
+    icon.stop().attr({'fill': COLOR_CODES[Math.floor(city/12)],
+               'stroke-width': 2})
+               .animate({'stroke-width': 10}, 800, function() {
+                    icon.animate({'stroke-width': 2}, 800, function() {
+                        pulse_svg(city);
+                    });
+               });
 }
 
 function pulse_log() {
     $('#logger-box')
-        .animate({'border-color': '#fffff0' }, 800)
-        .animate({'border-color': '#222222' }, 800, function() { pulse_log() });
+        .animate({'border-color': '#222222' }, 1000)
+        .animate({'border-color': '#fffff0' }, 1000, function() { pulse_log() });
+}
+
+function flash_svg(city, loop) {
+    var map = Snap.select('#cities');
+    var icon = map.select('#city-'+String(city));
+    icon.stop().attr({'fill': COLOR_CODES[Math.floor(city/12)],
+               'stroke-width': 2})
+               .animate({'fill': '#fffff0'}, 800, function() {
+                   icon.animate({'fill': COLOR_CODES[Math.floor(city/12)]}, 800, function() {
+                       if (loop) {
+                           flash_svg(city, true);
+                       }
+                   });
+               });
+}
+
+function stop_svg(city) {
+    var map = Snap.select('#cities');
+    var icon = map.select('#city-'+String(city));
+    icon.stop().attr({'fill': COLOR_CODES[Math.floor(city/12)],
+               'stroke-width': 2});
+}
+
+function stop_pulse(city) {
+    $('#city-'+String(city)).velocity("finish");
+    $('#city-'+String(city)).css({'stroke-width': 2 });
 }
 
 function init_cities() {
     for (var i=0; i<48; i++) {
-        $("#"+String(i)).click(execute_move);
-        $("#"+String(i)).click(treat);
+        $("#city-"+String(i)).click(execute_move);
+        $("#city-"+String(i)).click(treat);
     }
 }
 
@@ -22,18 +54,18 @@ function set_cities(cities) {
     $(".selectable").off().attr('class', 'unavailable');
     $(".selected").off().attr('class', 'unavailable');
     for (var i=0; i<cities.length; i++) {
-        $("#"+cities[i]).attr('class', 'available').off().on("click", execute_move);
+        $("#city-"+cities[i]).attr('class', 'available').off().on("click", execute_move);
     }
     $(".unavailable").off('click');
 }
 
 function set_treatable(position) {
     if ( $(".city-"+position).length !== 0 ) {
-        $("#"+position).attr("class", "treatable");
-        $("#"+position).off().on("click", treat);
+        $("#city-"+position).attr("class", "treatable");
+        $("#city-"+position).off().on("click", treat);
     } else {
-        $("#"+position).attr("class", "unavailable");
-        $("#"+position).off();
+        $("#city-"+position).attr("class", "unavailable");
+        $("#city-"+position).off();
     }
 }
 
@@ -50,6 +82,13 @@ function set_position(player, role, position, dims) {
 
     player.offset({ left: player_l,
                     top: player_t }).css("position", "absolute");
+}
+
+function animate_position(index, roles, position, dims) {
+    var city_w = dims.width;
+    var city_l = dims.left;
+    var player_l = city_l + (index+1)*3*city_w/8 - left_offset;
+    $("#"+roles[index]+"-piece").css({'z-index': 500-index}).stop().velocity({left: player_l}, 300);
 }
 
 function set_cure(color, cured) {
@@ -76,7 +115,7 @@ function set_giveable(hand, can_give) {
     var roles = Object.keys(can_give);
     $('.pl-card').off().attr('class', 'pl-card');
     for (var n=0; n<hand.length; n++) {
-        $("#card-"+String(hand[n])).show();
+        $("#card-"+String(hand[n])).show(200);
         for (var m=0; m<roles.length; m++) {
             if ( can_give[roles[m]][n] || hand[n] > 47 ) {
                 $("#card-"+String(hand[n])).off().on('click', give_card).addClass('giveable');
@@ -155,14 +194,14 @@ function escape_select_player(target) {
 }
 
 function buttons_on() {
-    if ( PHASE < 4 || PHASE > 7 ) {
-        $('.action').prop('disabled', true)
+    if ( PHASE >= 4 ) {
+        $('.action').prop('disabled', true);
     } else {
         $('#build-station').attr('class', 'action').off().on('click', build_station);
         $('#make-cure').attr('class', 'action').off().on('click', make_cure);
-        $('#next-phase').attr('class', 'action').off().on('click', end_turn).prop('disabled', false);
     }
     $('#undo-action').attr('class', 'action').off().on('click', undo).prop('disabled', ACTIONS === 0);
+    $('#next-phase').attr('class', 'action').off().on('click', end_turn).prop('disabled', false);
     $('#cp-store').off().on('click', select_store).removeClass('down').addClass('giveable');
 }
 

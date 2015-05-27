@@ -11,7 +11,7 @@ class Game:
     def __init__(self, roles, epidemics):
         self.lose = False
         self.day = 0
-        self.phase = 4
+        self.phase = ACTION_0
         self.id = uuid4()
 
         self.num_outbreaks = 0
@@ -51,11 +51,6 @@ class Game:
         self.player_cards = PlayerCards(self.players, self.num_epidemics)
         self.active = self.set_order()
         self.selected = self.active
-
-        self.players[self.active].hand.append(AIRLIFT)
-        self.players[self.active].hand.append(BEI)
-        self.players[self.active].hand.append(TOK)
-        self.players[self.active].hand.append(BOG)
 
 
     ## Manage game phase
@@ -100,7 +95,7 @@ class Game:
         return first_player_index
 
     def select_player(self, index):
-        self.selected = (index + self.active) % self.num_players
+        self.selected = index
         selected = self.players[self.selected]
         if selected.get_role() == OE:
             selected.has_stationed = True
@@ -166,8 +161,9 @@ class Game:
 
     def draw_infect_card(self, number):
         card = self.infect_cards.draw_card(0)
-        self.infect_cards.add_to_discard(card)
         self.execute_infect(card, card // CITIES_PER_COLOR, number)
+        if card in self.at_risk:
+            self.at_risk.remove(card)
         return card
 
     def execute_infect(self, city, color, num_cubes):
@@ -214,15 +210,29 @@ class Game:
         self.infected = {}
 
     def epidemic(self):
+        print(self.infect_cards.deck[-1])
         self.reset_outbreaks()
         self.reset_infection()
         self.drawn_epidemics += 1
         card = self.infect_cards.draw_card(-1)
-        self.infect_cards.add_to_discard(card)
         self.execute_infect(card, card // CITIES_PER_COLOR, MAX_CUBES)
+        if not self.has_rp():
+            self.infect_cards.recombine()
+            for city in range(NUM_CITIES):
+                risk = self.risk(city)
+        return card
+
+    def finish_epidemic(self):
+        self.infect_cards.recombine()
         for city in range(NUM_CITIES):
             risk = self.risk(city)
-        return card
+
+    def has_rp(self):
+        has_rp = False
+        for p in self.players:
+            if RP in p.hand or (p.get_role() == CP and p.event == RP):
+                return True
+        return has_rp
 
     def remove_cubes(self, color, number, city):
         game.cubes_left[color] += number;
@@ -255,7 +265,7 @@ class Game:
     def move(self, new_pos, index, discard, method):
         player = self.players[self.active]
         mover = self.players[self.selected]
-        owner = self.players[(self.active + index) % self.num_players]
+        owner = self.players[index]
 
         prev_avail, dispatch, origin, player_id = self.set_available(0)
         prev_hand = copy(player.hand)
@@ -287,7 +297,7 @@ class Game:
         self.risk(new_pos)
         self.phase += 1
         if discard != '':
-            owner.discard(discard, self.player_cards)
+            owner.discard(int(discard), self.player_cards)
         if player.get_role() != DISPATCHER:
             self.selected = self.active
         if method == 'station-fly':
@@ -367,7 +377,7 @@ player.hand or player.get_role() == OE)
 
     def give_card(self, recipient, card):
         giver = self.players[self.active]
-        receiver = self.players[(recipient + self.active) % self.num_players]
+        receiver = self.players[recipient]
         prev_avail, dispatch, origin, player_id = self.set_available(0)
         giver.give_card(card, receiver)
         self.phase += 1
@@ -380,7 +390,7 @@ player.hand or player.get_role() == OE)
 
     def take_card(self, giver, card):
         taker = self.players[self.active]
-        source = self.players[(giver + self.active) % self.num_players]
+        source = self.players[giver]
         prev_avail, dispatch, origin, player_id = self.set_available(0)
         taker.take_card(card, source)
         self.phase += 1
@@ -394,7 +404,7 @@ player.hand or player.get_role() == OE)
 # Event card handling
     def play_airlift(self, owner_index, new_pos):
         player = self.players[self.active]
-        owner = self.players[(self.active + owner_index) % self.num_players]
+        owner = self.players[owner_index]
         mover = self.players[self.selected]
 
         prev_avail, dispatch, origin, player_id = self.set_available(0)
@@ -404,7 +414,7 @@ player.hand or player.get_role() == OE)
         prev_cure = player.can_cure(self.research_stations)
         orig_cubes = copy(self.cubes[new_pos])
         orig_rows = copy(self.board.rows[new_pos])
-        is_stored = AIRLIFT in owner.hand
+        is_stored = AIRLIFT not in owner.hand
         action = { 'act': 'airlift',
                     'id': player.get_id(),
                     'owner': owner.get_id(),
@@ -423,7 +433,7 @@ player.hand or player.get_role() == OE)
                     'give': prev_give,
                     'take': prev_take }
         mover.move(new_pos, self.board, self.cures, self.cubes, self.cubes_left, self.quarantined)
-        if is_stored:
+        if not is_stored:
             owner.discard(AIRLIFT, self.player_cards)
         else:
             owner.play_event(self.player_cards)
@@ -432,10 +442,10 @@ player.hand or player.get_role() == OE)
 
     def play_gg(self, city, index, to_remove):
         player = self.players[self.active]
-        owner = self.players[(self.active + index) % self.num_players]
+        owner = self.players[index]
         can_build = player.get_position() not in self.research_stations and (player.get_position() in player.hand or player.get_role() == OE)
         prev_avail, dispatch, origin, player_id = self.set_available(0)
-        is_stored = GG in owner.hand
+        is_stored = GG not in owner.hand
         action = { 'act': "gg",
                    'origin': str(city),
                    'can_build': can_build,
@@ -445,7 +455,7 @@ player.hand or player.get_role() == OE)
                    'card_data': CARDS[GG],
                    'available': prev_avail,
                    'is_stored': is_stored}
-        if is_stored:
+        if not is_stored:
             owner.discard(GG, self.player_cards)
         else:
             owner.play_event(self.player_cards)
@@ -458,18 +468,18 @@ player.hand or player.get_role() == OE)
     def play_forecast(self, index, reorded):
         owner = self.players[(self.active + index) % self.num_players]
         self.infect_cards.deck = reorded + self.infect_cards.deck[:6]
-        if FORECAST in owner.hand:
+        if FORECAST not in owner.hand:
             owner.discard(FORECAST, self.player_cards)
         else:
             owner.play_event(self.player_cards)
         return owner
 
     def play_rp(self, card, index):
-        owner = self.players[(self.active + index) % self.num_players]
+        owner = self.players[index]
         self.infect_cards.remove_from_discard(card)
         self.infect_cards.add_to_graveyard(card)
-        is_stored = RP in owner.hand
-        if is_stored:
+        is_stored = RP not in owner.hand
+        if not is_stored:
             owner.discard(RP, self.player_cards)
         else:
             owner.play_event(self.player_cards)
@@ -481,10 +491,10 @@ player.hand or player.get_role() == OE)
         return action
 
     def play_oqn(self, index):
-        owner = self.players[(self.active + index) % self.num_players]
+        owner = self.players[index]
         self.oqn = True
-        is_stored = OQN in owner.hand
-        if is_stored:
+        is_stored = OQN not in owner.hand
+        if not is_stored:
             owner.discard(OQN, self.player_cards)
         else:
             owner.play_event(self.player_cards)

@@ -24,7 +24,7 @@ function select_oqn(target) {
             $('#undo-action').prop('disabled', ACTIONS === 0);
             if (data.num_cards <= 7) {
                 TRASHING = 0;
-                if (data.phase === 8 || data.phase === 9) {
+                if (data.phase === 4) {
                     infect_phase();
                 }
             } else {

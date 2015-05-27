@@ -122,7 +122,7 @@ function trash(event) {
                 if ( data.num_cards <= 7 ) {
                     TRASHING = 0;
                     body.removeClass('selecting');
-                    if ( data.phase === 8 || data.phase === 9 ) {
+                    if ( data.phase === 4 ) {
                         infect_phase();
                     }
                 } else {
@@ -132,7 +132,7 @@ function trash(event) {
                         set_team_trash(data.owner)
                     }
                 }
-                if ( !body.hasClass('selecting') && data.phase !== 8 && data.phase !== 9 ) {
+                if ( !body.hasClass('selecting') && data.phase !== 4 ) {
                     team_toggle();
                 } else {
                     body.removeClass('selecting');

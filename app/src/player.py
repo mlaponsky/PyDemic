@@ -29,8 +29,6 @@ class Player:
 
     # Movement
     def can_move(self, hand, research_stations, board):
-        print(self.can_drive(board))
-        print(self.can_drive(board) + self.can_shuttle(research_stations) + self.can_fly_direct(hand, board) + self.can_charter(hand, board))
         return self.can_drive(board) + self.can_shuttle(research_stations) + self.can_fly_direct(hand, board) + self.can_charter(hand, board)
 
     def can_drive(self, board):

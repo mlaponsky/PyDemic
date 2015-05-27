@@ -56,7 +56,7 @@ function undo_discard(card, data, owner) {
 }
 
 function undo_move(data) {
-    var city = document.getElementById(String(data['origin']));
+    var city = document.getElementById('city-'+String(data['origin']));
     var city_dims = city.getBoundingClientRect();
     var city_w = city_dims.width;
     var city_h = city_dims.height;
@@ -75,7 +75,7 @@ function undo_move(data) {
         if ($(".city-"+String(data['destination'])+".cube-"+String(i)).length !== data['cubes'][i]) {
             var cube_counter = document.getElementById(String(i)+"-cnt").getElementsByTagName('tspan')[0].textContent;
             var cubes_left = Number(cube_counter);
-            var prev_city = document.getElementById(String(data['destination']));
+            var prev_city = document.getElementById('city-'+String(data['destination']));
             var prev_dims = prev_city.getBoundingClientRect();
             add_cubes(String(data['destination']), prev_dims, String(i), data['rows'][i], data['cubes'][i]);
             cubes_left += data['cubes'][i];
@@ -121,7 +121,7 @@ function undo_station(data) {
 }
 
 function undo_treatment(data) {
-    var city = document.getElementById(data['origin']);
+    var city = document.getElementById('city-'+data['origin']);
     var dims = city.getBoundingClientRect();
     add_cubes(data['origin'], dims, data['color'],
                 data['rows'][Number(data['color'])], data['removed']);
@@ -137,7 +137,7 @@ function undo_cure(data) {
     for ( var i=0; i<data['cards'].length; i++ ) {
         undo_discard(data['cards'][i], data, data['id']);
     }
-    var city = document.getElementById(String(data['origin']));
+    var city = document.getElementById('city-'+String(data['origin']));
     var dims = city.getBoundingClientRect();
     if ($(".city-"+String(data['origin'])+".cube-"+String(data['color'])).length !== data['cubes']) {
         var cube_counter = document.getElementById(String(data['color'])+"-cnt").getElementsByTagName('tspan')[0].textContent;

@@ -42,17 +42,21 @@ function set_cube_row(position, dims, color, row, total) {
 }
 
 function add_cubes(position, dims, color, row, added, at_risk) {
-    var class_name = ".city-"+position+".cube-"+color+".row-"+String(row);
-    var cubes = $(class_name);
-    var orig_cubes = cubes.length;
-    for (var i=orig_cubes; i<orig_cubes+added; i++) {
-        create_cube(position, dims, color, row, i);
+    if (added > 0) {
+        $('#city-'+position).css({'stroke-width': 2});
+        var class_name = ".city-"+position+".cube-"+color+".row-"+String(row);
+        var cubes = $(class_name);
+        var orig_cubes = cubes.length;
+        for (var i=orig_cubes; i<orig_cubes+added; i++) {
+            create_cube(position, dims, color, row, i);
+        }
+        var cubes_left = document.getElementById(color+"-cnt").getElementsByTagName('tspan')[0].textContent;
+        document.getElementById(color+"-cnt").getElementsByTagName('tspan')[0].textContent = cubes_left - added;
+        flash_svg(position, true);
+        for (var i=0; i<at_risk.length; i++) {
+            pulse_svg(at_risk[i]);
+        }
     }
-    for (var i=0; i<at_risk.length; i++) {
-        pulse_svg(at_risk[i]);
-    }
-    var cubes_left = document.getElementById(color+"-cnt").getElementsByTagName('tspan')[0].textContent;
-    document.getElementById(color+"-cnt").getElementsByTagName('tspan')[0].textContent = cubes_left - added;
 };
 
 function init_cubes(cubes, rows, at_risk) {
@@ -64,7 +68,7 @@ function init_cubes(cubes, rows, at_risk) {
         }
         for (var color=0; color<cube_set.length; color++) {
             if (cube_set[color] !== 0) {
-                var city = document.getElementById(positions[i]);
+                var city = document.getElementById('city-'+positions[i]);
                 var dims = city.getBoundingClientRect();
                 create_cube_row(positions[i], dims, color, rows[positions[i]][color], cube_set[color]);
             }
@@ -78,7 +82,7 @@ function set_cubes(cubes, rows) {
         var cube_set = cubes[positions[i]];
         for (var color=0; color<cube_set.length; color++) {
             if (cube_set[color] !== 0) {
-                var city = document.getElementById(positions[i]);
+                var city = document.getElementById('city-'+positions[i]);
                 var dims = city.getBoundingClientRect();
                 set_cube_row(positions[i], dims, color, rows[positions[i]][color], cube_set[color]);
             }
@@ -94,8 +98,8 @@ function remove_cubes(city, color, num_cubes, cubes_left, at_risk) {
     }
     set_treatable(city);
     document.getElementById(color+"-cnt").getElementsByTagName('tspan')[0].textContent = String(cubes_left);
-    if ( !at_risk.contains(Number(city)) ) {
-        $('#'+city).stop();
+    if ( $.inArray(Number(city), at_risk) === -1 ) {
+        $('#city'+city).stop();
     }
     $('#logger').html('Removed '+String(num_cubes)+' '+COLORS[color].bold()+' cube(s) from '+CARDS[Number(city)].bold()+' ('+String(cubes.length-num_cubes)+' remaining).');
 }
@@ -112,10 +116,10 @@ function medic_with_cure(data, position) {
 }
 
 function treat(event) {
-    var city = $(event.target).attr('id');
+    var city = $(event.target).attr('id').split('-')[1];
     $.getJSON( $SCRIPT_ROOT + '/_treat_disease').success( function(data) {
         if (typeof data.c !== 'undefined') {
-            remove_cubes(city, data.c, data.num_cubes, data.cubes_left);
+            remove_cubes(city, data.c, data.num_cubes, data.cubes_left, data.at_risk);
             ACTIONS++;
             PHASE++;
             $("#undo-action").prop('disabled', ACTIONS === 0);

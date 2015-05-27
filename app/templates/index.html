@@ -29,6 +29,8 @@
 			$SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
 		</script>
 		<script charset="utf-8" src="/static/js/classie.js"></script>
+		<script charset="utf-8" src="/static/js/svg.min.js"></script>
+		<script charset="utf-8" src="/static/js/snap.svg-min.js"></script>
 		<script charset="utf-8" src="static/js/util.js"></script>
 		<script charset="utf-8" src="static/js/cubes.js"></script>
 		<script charset="utf-8" src="static/js/cures.js"></script>
@@ -53,23 +55,7 @@
 		{% include 'player_cards.html' %}
 		<div class="container">
 			<div id="map" class="main">
-				<div id='mask'>
-					<span id="stage-name">INFECT STAGE</span>
-					<ul id="draw-cards">
-						<li id="draw-0" class="draw-card">
-			                <div></div>
-			            </li>
-						<li id="draw-1" class="draw-card">
-			                <div></div>
-			            </li>
-						<li id="draw-2" class="draw-card">
-			                <div></div>
-			            </li>
-						<li id="draw-3" class="draw-card">
-			                <div></div>
-			            </li>
-					</ul>
-				</div>
+				<div id="stage-name" hidden>INFECT STAGE</div>
 				{% with messages = get_flashed_messages() %}
 				  {% if messages %}
 				    <ul class=flashes>
@@ -106,15 +92,15 @@
 				{% include 'stats.html' %}
 
 				<img id="player-color" src="{{ active_player.piece }}">
-				<img id="cp-store" class=".store-48" src="static/img/player_cards/pl-48.svg">
+				<img id="cp-store" hidden class=".store-48" src="static/img/player_cards/pl-48.svg">
 
 				{% include 'player.html' %}
 
 				<div id="logger-box">
 					<div id="logger">This is the actions log.</div>
 				</div>
-				<button class="choice" hidden='true' id="accept">DONE</button>
-				<button class="choice" hidden='true' id="decline">DONE</button>
+				<button class="choice" hidden id="accept">YES</button>
+				<button class="choice" hidden id="decline">NO</button>
 				<ul hidden='true' id="forecast">
 					FORECAST
 					{% for card in game.infect_cards.deck %}
@@ -124,6 +110,10 @@
 					</li>
 					{% endfor %}
 				</ul>
+				<div id="stage-text" hidden>CARDS</div>
+				<img id="draw-0" hidden class="draw-card" src='static/img/infect_cards/inf-0.svg'/>
+				<img id="draw-1" hidden class="draw-card" src='static/img/infect_cards/inf-0.svg'/>
+				<img id="infect" hidden src='static/img/infect_cards/inf-0.svg'/>
 			</div>
 
 		</div>

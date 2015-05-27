@@ -19,6 +19,7 @@ def undo_action():
     action = actions.pop(-1)
     data = action
 
+    game.phase -= 1
     if 'trash' in data:
         trash = data['trash']
 
@@ -31,12 +32,16 @@ def undo_action():
                 owner = p
         undo_move(data, player, game)
         undo_discard(int(data['cards']), owner, game)
+        if action['act'] == 'airlift':
+            game.phase += 1
     elif action['act'] == "station-fly":
         undo_move(data, player, game)
         undo_discard(int(data['cards']), player, game)
         player.has_stationed = False
     elif action['act'] == "build" or action['act'] == "gg":
         undo_station(data, player, game)
+        if action['act'] == "gg":
+            game.phase += 1
     elif action['act'] == "treat":
         undo_treatment(data, game)
     elif action['act'] == "cure":
@@ -47,8 +52,10 @@ def undo_action():
         undo_give(data, game)
     elif action['act'] == "rp":
         undo_rp(data, game)
+        game.phase += 1
     elif action['act'] == "oqn":
         undo_oqn(data, game)
+        game.phase += 1
     elif action['act'] == "store":
         undo_store(data, game)
 

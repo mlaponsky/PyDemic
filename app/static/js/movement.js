@@ -1,5 +1,5 @@
 function move(new_pos, data, is_airlift) {
-    var city = document.getElementById(new_pos);
+    var city = document.getElementById('city-'+new_pos);
     var city_dims = city.getBoundingClientRect();
     var city_w = city_dims.width;
     var city_h = city_dims.height;
@@ -41,7 +41,7 @@ function move(new_pos, data, is_airlift) {
                 if ( $('#active-dispatcher').length !== 0 ) {
                     $('.role').off().on('click', select_player).attr('class', 'role choosable')
                 }
-                if (!body.hasClass('selecting') || data.phase === 8 || data.phase === 9 ) {
+                if (!body.hasClass('selecting') || data.phase === 4 ) {
                     team_toggle();
                 } else {
                     body.removeClass('selecting');
@@ -49,7 +49,7 @@ function move(new_pos, data, is_airlift) {
             }
             if (data.num_cards <= 7) {
                 buttons_on();
-                if ( data.phase === 8 || data.phase === 9 ) {
+                if ( data.phase === 4 ) {
                     infect_phase();
                 }
             } else {
@@ -64,7 +64,7 @@ function move(new_pos, data, is_airlift) {
 
 function execute_move(event) {
     var city = $(event.target);
-    var new_pos = city.attr("id");
+    var new_pos = city.attr("id").split('-')[1];
     var is_airlift = 0;
     var select = 0;
     if ( $('.event-card').hasClass('down') || $('#cp-store').hasClass('down')){
@@ -114,7 +114,6 @@ function execute_move(event) {
                 check_phase();
             }
             move(new_pos, data, is_airlift);
-            pulse_log();
         } else {
             // If there are multiple ways to move to new_pos
             city.attr("class", "selected");
@@ -147,7 +146,7 @@ function select_discard(event) {
     var card_id = card_obj.attr('id');
     var card_id_array = card_id.split('-');
     var card = card_id_array[1];
-    var city_id = $(".selected").attr("id");
+    var city_id = $(".selected").attr("id").split('-')[1];
 
     $.getJSON($SCRIPT_ROOT+'/_select_card_for_move', { card: Number(card), city_id: Number(city_id) }).success(function (data) {
                 escape_card_select( $('.pl-card.down') );

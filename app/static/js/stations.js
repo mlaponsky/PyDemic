@@ -1,5 +1,5 @@
 function create_station(loc) {
-    var city = document.getElementById(String(loc));
+    var city = document.getElementById('city-'+String(loc));
     var dims = city.getBoundingClientRect();
 
     var station = $('<img/>');
@@ -35,8 +35,8 @@ function set_stations(num_cities, rs) {
 
 function select_station(event) {
     var city = $(event.target);
-    var to_remove = city.attr("id");
-    var position = Number($('.building').attr('id'));
+    var to_remove = city.attr("id").split('-')[1];
+    var position = Number($('.building').attr('id').split('-')[1]);
     var select = 0;
     var is_gg = 0;
     if ( $('.event-card.down').length !== 0 ) {
@@ -85,7 +85,7 @@ function select_station(event) {
             $('html').off();
             if ( data.num_cards <= 7) {
                 TRASHING = 0;
-                if (data.phase === 8 || data.phase === 9) {
+                if ( data.phase === 4 ) {
                     infect_phase();
                 }
             } else {
@@ -99,7 +99,7 @@ function build_station() {
     var position;
     var select;
     if ( $(this).attr('id') !== 'build-station' ) {
-        position = Number($(this).attr('id'));
+        position = Number($(this).attr('id').split('-')[1]);
     }
     if ( $('.card.down').length !== 0 ) {
         select  = $('.down').parent().parent().index();
@@ -143,7 +143,7 @@ function build_station() {
             $('html').off();
             if ( data.num_cards <= 7 ) {
                 TRASHING = 0;
-                if (data.phase === 8 || data.phase === 9) {
+                if (data.phase === 4) {
                     infect_phase();
                 }
             } else {

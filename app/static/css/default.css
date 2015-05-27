@@ -126,7 +126,7 @@ a:hover {
 	left: auto;
 	top: auto;
 	margin: 0 auto;
-	background: url('../img/map.png') no-repeat center center;
+	background: url('../img/map2.png') no-repeat center center;
 	-webkit-background-size: contain;
     -moz-background-size: contain;
     -o-background-size: contain;
@@ -145,47 +145,69 @@ a:hover {
     position: relative;
 }
 
-#mask {
-	width: 40%;
-	height: 25%;
+#stage-name {
+	width: 25%;
+	height: auto;
 	color: #fffff0;
 	background-color: #222222;
 	z-index: 1000;
 	position: absolute;
-	left: 30%;
-	top: 40%;
+	left: 37.5%;
+	top: 35%;
 	opacity: 0.9;
 	border: 3px solid #fffff0;
-	border-top-left-radius: 7% 20%;
-	border-top-right-radius: 7% 20%;
-	border-bottom-left-radius: 7% 20%;
-	border-bottom-right-radius: 7% 20%;
+	border-top-left-radius: 8% 35%;
+	border-top-right-radius: 8% 35%;
+	border-bottom-left-radius: 8% 35%;
+	border-bottom-right-radius: 8% 35%;
+    padding-top: 1%;
+	padding-bottom: 1%;
 	text-align: center;
-}
-
-#stage-name {
-	font-size: 2vw;
+	font-size: 2.5vw;
 	font-weight: bold;
 	display: inline-block;
 }
 
-#draw-cards {
-	height: 64%;
-	width: 100%;
-	margin-top: 1%;
-	margin-left: -2.5%;
-
+#stage-text {
+	position: absolute;
+	width: 7.5%;
+	height: auto;
+	left: 62.5%;
+	bottom: 41.5%;
+	text-align: center;
+	font-size: 1.0vw;
+	background-color: #222222;
+	border: 2px solid #fffff0;
+	border-top-left-radius: 10% 45%;
+	border-top-right-radius: 10% 45%;
+	border-bottom-left-radius: 10% 45%;
+	border-bottom-right-radius: 10% 45%;
+	padding: 0.2%;
+	opacity: 0.9;
+	color: #fffff0;
 }
+
+#infect {
+	position: absolute;
+	left: 63%;
+	bottom: 24%;
+	width: 6.5%;
+}
+
 .draw-card {
-	width: 18%;
-	height: 100%;
-	display: inline-block;
+	width: 6.5%;
 }
 
-.draw-card > div {
-	background: #fffff0;
-	width: 100%;
-	height: 100%;
+#draw-0 {
+	position: absolute;
+	left: 59.5%;
+	bottom: 24%;
+}
+
+#draw-1 {
+	position: absolute;
+	left: 66.5%;
+	bottom: 24%;
 }
 
 #cities {
@@ -372,7 +394,7 @@ a:hover {
 .choice {
 	position: absolute;
 	bottom: 18.5%;
-	width: 4%;
+	width: 3.5%;
 	height: 4%;
 	background: #222222;
 	border: 2px solid #fffff0;
@@ -394,11 +416,11 @@ a:hover {
 }
 
 #accept {
-	left: 79.5%;
+	left: 76.3%;
 }
 
 #decline {
-	left: 85%;
+	left: 80%;
 }
 
 #forecast {
@@ -407,7 +429,6 @@ a:hover {
 	bottom: 21.5%;
 	width: 10.5%;
 	background-color: #2c2c2c;
-	border-radius: 10px;
 	border: 2px solid #ffa319;
 	padding-top: 0.5%;
 	padding-bottom: 0.3%;

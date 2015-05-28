@@ -28,7 +28,8 @@ def give():
         return jsonify( card=str(card),
                         recipient=game.players[recipients[0]].get_id(),
                         available=available,
-                        num_cards=len(game.players[recipients[0]].hand) )
+                        num_cards=len(game.players[recipients[0]].hand),
+                        phase=game.phase )
 
     else:
         session['game'] = pickle.dumps(game)
@@ -55,7 +56,8 @@ def select_recipient():
                     recipient=action['taker'],
                     recipients=[r.get_id() for r in game.players[game.active+1:] + game.players[:game.active]],
                     available=available,
-                    num_cards=len(recipient.hand) )
+                    num_cards=len(recipient.hand),
+                    phase=game.phase )
 
 @cards.route('/_take')
 def take():
@@ -75,7 +77,8 @@ def take():
     return jsonify( card=str(card),
                     source_id=action['giver'],
                     available=available,
-                    num_cards=len(player.hand) )
+                    num_cards=len(player.hand),
+                    phase=game.phase )
 
 @cards.route('/_trash')
 def trash():

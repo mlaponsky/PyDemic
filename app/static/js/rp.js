@@ -1,9 +1,16 @@
 function select_rp(target) {
+    var map = Snap.select('#cities');
     target.off().on('click', escape_rp).addClass('down').removeClass('giveable takeable trashable');
     board_off();
     buttons_off();
-    $('.available').off().attr('class', 'unavailable marked');
-    $('.treatable').off().attr('class', 'unavailable marked-t');
+    map.selectAll('.available').forEach( function(el) {
+		el.unavailable();
+        el.addClass('marked');
+	});
+    map.selectAll('.treatable').forEach( function(el) {
+		el.unavailable();
+        el.addClass('marked-t');
+	});
     if (!body.hasClass('menu-push-toright')) {
         infect_toggle();
     } else {
@@ -18,6 +25,7 @@ function select_rp(target) {
 }
 
 function execute_rp() {
+    var map = Snap.select('#cities');
     var card_id = $(this).attr('id').split('-')[2];
     var select = 0;
     if ( $('.card.down').length !== 0 ) {
@@ -41,8 +49,12 @@ function execute_rp() {
             }
             $('.holding.down').removeClass('down').hide(200);
             board_on();
-            $('.marked').off().on('click', execute_move).attr('class', 'available');
-            $('.marked-t').off().on('click', treat).attr('class', 'treatable');
+            map.selectAll('.marked').forEach( function(el) {
+        		el.available();
+        	});
+            map.selectAll('.marked-t').forEach( function(el) {
+        		el.treatable();
+        	});
             if ( !body.hasClass('selecting') ) {
                 infect_toggle();
             } else {
@@ -65,12 +77,17 @@ function execute_rp() {
 }
 
 function escape_rp() {
+    var map = Snap.select('#cities');
     $('html').off();
     $('#logger').html('Cancelled <b>RESILIENT POPULATION</b>.');
     if ( TRASHING === 0 ) {
         board_on();
-        $('.marked').off().on('click', execute_move).attr('class', 'available');
-        $('.marked-t').off().on('click', treat).attr('class', 'treatable');
+        map.selectAll('.marked').forEach( function(el) {
+    		el.available();
+    	});
+        map.selectAll('.marked-t').forEach( function(el) {
+    		el.treatable();
+    	});
         $('#undo-action').off().on('click', undo).prop('disabled', ACTIONS === 0);
         buttons_on();
     } else if ( TRASHING === 1 ) {

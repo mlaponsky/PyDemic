@@ -1,72 +1,7 @@
-function pulse_svg(city) {
-    var map = Snap.select('#cities');
-    var icon = map.select('#city-'+String(city));
-    icon.stop().attr({'fill': COLOR_CODES[Math.floor(city/12)],
-               'stroke-width': 2})
-               .animate({'stroke-width': 10}, 800, function() {
-                    icon.animate({'stroke-width': 2}, 800, function() {
-                        pulse_svg(city);
-                    });
-               });
-}
-
 function pulse_log() {
     $('#logger-box')
         .animate({'border-color': '#222222' }, 1000)
         .animate({'border-color': '#fffff0' }, 1000, function() { pulse_log() });
-}
-
-function flash_svg(city, loop) {
-    var map = Snap.select('#cities');
-    var icon = map.select('#city-'+String(city));
-    icon.stop().attr({'fill': COLOR_CODES[Math.floor(city/12)],
-               'stroke-width': 2})
-               .animate({'fill': '#fffff0'}, 800, function() {
-                   icon.animate({'fill': COLOR_CODES[Math.floor(city/12)]}, 800, function() {
-                       if (loop) {
-                           flash_svg(city, true);
-                       }
-                   });
-               });
-}
-
-function stop_svg(city) {
-    var map = Snap.select('#cities');
-    var icon = map.select('#city-'+String(city));
-    icon.stop().attr({'fill': COLOR_CODES[Math.floor(city/12)],
-               'stroke-width': 2});
-}
-
-function stop_pulse(city) {
-    $('#city-'+String(city)).velocity("finish");
-    $('#city-'+String(city)).css({'stroke-width': 2 });
-}
-
-function init_cities() {
-    for (var i=0; i<48; i++) {
-        $("#city-"+String(i)).click(execute_move);
-        $("#city-"+String(i)).click(treat);
-    }
-}
-
-function set_cities(cities) {
-    $(".available").off().attr('class', 'unavailable');
-    $(".selectable").off().attr('class', 'unavailable');
-    $(".selected").off().attr('class', 'unavailable');
-    for (var i=0; i<cities.length; i++) {
-        $("#city-"+cities[i]).attr('class', 'available').off().on("click", execute_move);
-    }
-    $(".unavailable").off('click');
-}
-
-function set_treatable(position) {
-    if ( $(".city-"+position).length !== 0 ) {
-        $("#city-"+position).attr("class", "treatable");
-        $("#city-"+position).off().on("click", treat);
-    } else {
-        $("#city-"+position).attr("class", "unavailable");
-        $("#city-"+position).off();
-    }
 }
 
 function set_position(player, role, position, dims) {
@@ -87,7 +22,7 @@ function set_position(player, role, position, dims) {
 function animate_position(index, roles, position, dims) {
     var city_w = dims.width;
     var city_l = dims.left;
-    var player_l = city_l + (index+1)*3*city_w/8 - left_offset;
+    var player_l = city_l + (index+1)*3*city_w/8 - left_offset + menu_on*menu_shift;
     $("#"+roles[index]+"-piece").css({'z-index': 500-index}).stop().velocity({left: player_l}, 300);
 }
 
@@ -144,11 +79,16 @@ function set_takeable(team_hands, can_take) {
 }
 
 function set_chosen_player(data, target) {
+    var map = Snap.select('#cities');
     if ($(".chosen").length !== 0) {
         $(".chosen").attr('class', 'role choosable');
     }
-    $(".available").attr('class', 'unavailable');
-    $(".treatable").attr('class', 'unavailable');
+    map.selectAll(".available").forEach( function(el) {
+		el.unavailable();
+	});
+    map.selectAll(".treatable").forEach( function(el) {
+		el.unavailable();
+	});
     set_cities(data.available);
     target.attr('class', 'role chosen');
     $('#build-station').prop('disabled', true);
@@ -173,8 +113,8 @@ function deselect_player() {
         function(data) {
             set_cities(data.available);
             set_treatable(data.position);
-            $('#build-station').prop('disabled', !data.can_build);
-            $('#make-cure').prop('disabled', !data.can_cure);
+            $('#build-station').prop('disabled', !data.can_build || PHASE >= 4);
+            $('#make-cure').prop('disabled', !data.can_cure || PHASE >= 4);
             $('.role').attr('class', 'role choosable');
             $('.role').off().on('click', select_player );
             $('.self-chooseable').attr('class', 'self-unchooseable');
@@ -195,10 +135,11 @@ function escape_select_player(target) {
 
 function buttons_on() {
     if ( PHASE >= 4 ) {
-        $('.action').prop('disabled', true);
+        $('.action').prop('disabled', PHASE >= 4 );
     } else {
         $('#build-station').attr('class', 'action').off().on('click', build_station);
         $('#make-cure').attr('class', 'action').off().on('click', make_cure);
+        
     }
     $('#undo-action').attr('class', 'action').off().on('click', undo).prop('disabled', ACTIONS === 0);
     $('#next-phase').attr('class', 'action').off().on('click', end_turn).prop('disabled', false);
@@ -209,14 +150,18 @@ function buttons_off() {
     $('#build-station').attr('class', 'paused').off();
     $('#make-cure').attr('class', 'paused').off();
     $('#undo-action').attr('class', 'paused').off();
-    $('#next-phase').prop('disabled', true);
+    $('#next-phase').attr('class', 'paused').off();
     $('#cp-store').off().removeClass('giveable');
 }
 
 function escape_card_select(objects) {
-    $(".marked").attr("class", "available");
-    $(".selected").attr("class", "available");
-    $(".available").off().on("click", execute_move);
+    var map = Snap.select('#cities');
+    map.selectAll(".marked").forEach( function(el) {
+		el.available();
+	});
+    map.selectAll(".selected").forEach( function(el) {
+		el.available();
+	});
     objects.off().removeClass('down')
     $('.holding').removeClass('holding').addClass('giveable');
     buttons_on();

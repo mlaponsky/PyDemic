@@ -67,7 +67,6 @@ def set_move():
         session['game'] = pickle.dumps(game)
         return jsonify(selectable=selectable)
     else:
-        print(game.phase)
         if game.phase <= DRAW:
             if trashing == 0:
                 actions.append(action)

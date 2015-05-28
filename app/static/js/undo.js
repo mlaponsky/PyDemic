@@ -56,6 +56,7 @@ function undo_discard(card, data, owner) {
 }
 
 function undo_move(data) {
+    var map = Snap.select('#cities');
     var city = document.getElementById('city-'+String(data['origin']));
     var city_dims = city.getBoundingClientRect();
     var city_w = city_dims.width;
@@ -78,13 +79,18 @@ function undo_move(data) {
             var prev_city = document.getElementById('city-'+String(data['destination']));
             var prev_dims = prev_city.getBoundingClientRect();
             add_cubes(String(data['destination']), prev_dims, String(i), data['rows'][i], data['cubes'][i]);
+            stop_svg(data['origin']);
+            if ( $.inArray(Number(data['origin']), data['at_risk']) !== -1 ) {
+                pulse_svg(data['origin']);
+            }
             cubes_left += data['cubes'][i];
             document.getElementById(String(i)+"-cnt").getElementsByTagName('tspan')[0].textContent = String(cubes_left);
         }
     }
 
-    $(".available").off();
-    $(".available").attr("class", "unavailable");
+    map.selectAll(".available").forEach( function(el) {
+		el.unavailable();
+	});
     $("#"+data['mover']+"-piece").offset({left: player_l, top: player_t});
     set_cities(data['available']);
     if ( $('#'+data['mover']).length === 0 ) {
@@ -125,6 +131,10 @@ function undo_treatment(data) {
     var dims = city.getBoundingClientRect();
     add_cubes(data['origin'], dims, data['color'],
                 data['rows'][Number(data['color'])], data['removed']);
+    stop_svg(data['origin']);
+    if ( $.inArray(Number(data['origin']), data['at_risk']) !== -1 ) {
+        pulse_svg(data['origin']);
+    }
 
     var cubes_left = Number(document.getElementById(data['color']+"-cnt").getElementsByTagName('tspan')[0].textContent)
     document.getElementById(data['color']+"-cnt").getElementsByTagName('tspan')[0].textContent = cubes_left - data['removed'];
@@ -143,6 +153,11 @@ function undo_cure(data) {
         var cube_counter = document.getElementById(String(data['color'])+"-cnt").getElementsByTagName('tspan')[0].textContent;
         var cubes_left = Number(cube_counter);
         add_cubes(String(data['origin']), dims, String(data['color']), data['rows'][data['color']], data['cubes']);
+        stop_svg(data['origin']);
+        if ( $.inArray(Number(data['origin']), data['at_risk']) !== -1 ) {
+            pulse_svg(data['origin']);
+        }
+
         cubes_left += data['cubes'];
         document.getElementById(String(data['color'])+"-cnt").getElementsByTagName('tspan')[0].textContent = String(cubes_left);
     }

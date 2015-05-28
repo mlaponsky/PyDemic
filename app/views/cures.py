@@ -36,7 +36,8 @@ def make_cure():
                         position=str(player.get_position()),
                         cubes_left=game.cubes_left[cure_color],
                         medic=action['medic_pos'],
-                        available=available )
+                        available=available,
+                        phase=game.phase )
     else:
         session['game'] = pickle.dumps(game)
         return jsonify( cards=[str(card) for card in cure_cards],
@@ -71,4 +72,5 @@ def select_cure():
                     position=str(player.get_position()),
                     cubes_left=game.cubes_left[cure_color],
                     medic=action['medic_pos'],
-                    available=available )
+                    available=available,
+                    phase=game.phase )

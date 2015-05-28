@@ -58,7 +58,6 @@ function initial_load() {
         set_takeable(data.team_hands, data.can_take);
         $(".players li:first").hide();
         init_cubes(cubes, rows, data.at_risk);
-        init_cities();
         set_cities(available);
         set_treatable(positions[0])
         set_selectable_players(roles[0]);

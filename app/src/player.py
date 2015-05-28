@@ -43,6 +43,9 @@ class Player:
 
     def can_fly_direct(self, hand, board):
         can_fly = copy(hand)
+        for card in range(48, 53):
+            if card in can_fly:
+                can_fly.remove(card)
         neighbors = board.get_neighbors(self.position)
         if self.position in can_fly:
             can_fly.remove(self.position)

@@ -43,7 +43,6 @@ function set_cube_row(position, dims, color, row, total) {
 
 function add_cubes(position, dims, color, row, added, at_risk) {
     if (added > 0) {
-        $('#city-'+position).css({'stroke-width': 2});
         var class_name = ".city-"+position+".cube-"+color+".row-"+String(row);
         var cubes = $(class_name);
         var orig_cubes = cubes.length;
@@ -91,15 +90,16 @@ function set_cubes(cubes, rows) {
 }
 
 function remove_cubes(city, color, num_cubes, cubes_left, at_risk) {
+    var map = Snap.select('#cities');
     var cubes = $(".city-"+city+".cube-"+color);
     var to_remove = cubes.slice(cubes.length-num_cubes, cubes.length);
     for (var i=0; i<to_remove.length; i++) {
-        $(to_remove[i]).hide(200, function() { this.remove() });
+        $(to_remove[i]).hide(200, function() { this.remove();
+                                               set_treatable(city);});
     }
-    set_treatable(city);
     document.getElementById(color+"-cnt").getElementsByTagName('tspan')[0].textContent = String(cubes_left);
     if ( $.inArray(Number(city), at_risk) === -1 ) {
-        $('#city'+city).stop();
+        stop_svg(city);
     }
     $('#logger').html('Removed '+String(num_cubes)+' '+COLORS[color].bold()+' cube(s) from '+CARDS[Number(city)].bold()+' ('+String(cubes.length-num_cubes)+' remaining).');
 }
@@ -116,12 +116,13 @@ function medic_with_cure(data, position) {
 }
 
 function treat(event) {
+    var map = Snap.select('#cities');
     var city = $(event.target).attr('id').split('-')[1];
     $.getJSON( $SCRIPT_ROOT + '/_treat_disease').success( function(data) {
         if (typeof data.c !== 'undefined') {
             remove_cubes(city, data.c, data.num_cubes, data.cubes_left, data.at_risk);
             ACTIONS++;
-            PHASE++;
+            PHASE = data.phase;
             $("#undo-action").prop('disabled', ACTIONS === 0);
         } else {
             $(".city-"+city).css("border", "2px solid #FFFFF0");
@@ -130,8 +131,13 @@ function treat(event) {
             $(".city-"+city).css('border-radius', 4);
             $(".city-"+city).css("pointer-events", '');
             $(".city-"+city).off().on('click', function(e) { select_cube_color(e) });
-            $(".available").off().attr("class", "unavailable marked");
-            $(".treatable").off().attr("class", "treating");
+            map.selectAll(".available").forEach( function(el) {
+        		el.unavailable();
+                el.addClass('marked');
+        	});
+            map.selectAll(".treatable").forEach( function(el) {
+        		el.treating();
+        	});
             board_off();
             $('#logger').html('(TREATING) Choose a disease color to treat.');
             $('html').on( 'click', function( e ) {
@@ -169,9 +175,13 @@ function select_cube_color(event) {
 }
 
 function escape_cube_select(objects, city) {
-    $(".marked").attr("class", "available");
-    $(".selected").attr("class", "available");
-    $(".available").off().on("click", execute_move);
+    var map = Snap.select('#cities');
+    map.selectAll(".marked").forEach( function(el) {
+		el.available();
+	});;
+    map.selectAll(".selected").forEach( function(el) {
+		el.available();
+	});
     set_treatable(city);
     objects.css("border", '');
     objects.off();

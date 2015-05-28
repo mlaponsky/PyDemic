@@ -18,19 +18,26 @@ def end_turn():
     player_deck = game.player_cards.deck
 
     game.phase = DRAW
+    if len(game.player_cards.deck) <= 2:
+        game.lose = True
+        return jsonify( lose=game.lose )
     draw0 = player_deck.pop(0)
     draw1 = player_deck.pop(0)
     draw = [draw0, draw1]
     for card in draw:
         if card != EPIDEMIC:
             player.add_card(card)
+    oqn = game.oqn
+    game.oqn = False
 
     session['game'] = pickle.dumps(game)
     session['actions'] = []
     return jsonify( draw_0=draw0,
                     draw_1=draw1,
                     num_cards=len(player.hand),
-                    forecast=player_deck[:6] )
+                    forecast=player_deck[:6],
+                    cards_left=len(game.player_cards.deck),
+                    oqn=oqn )
 
 @phase.route('/_epidemic')
 def execute_epidemic():
@@ -42,6 +49,15 @@ def execute_epidemic():
     orig = orig_cubes[card][color]
     row = game.board.get_row(card, color)
     has_rp = game.has_rp()
+    oqn = game.oqn
+    game.oqn = False
+    if game.num_outbreaks >= 8:
+        game.lose = True
+        print(game.num_outbreaks)
+    for cubes in game.cubes_left:
+        print(cubes)
+        if cubes <= 0:
+            game.lose = True
 
     session['game'] = pickle.dumps(game)
     return jsonify( card=card,
@@ -53,7 +69,9 @@ def execute_epidemic():
                     drawn=game.drawn_epidemics,
                     infected = game.infected,
                     at_risk=game.at_risk,
-                    has_rp=has_rp )
+                    has_rp=has_rp,
+                    oqn=oqn,
+                    lose=game.lose )
 
 @phase.route('/_infect')
 def infect_phase():
@@ -64,6 +82,13 @@ def infect_phase():
     num_infect = game.get_infect_number()
     card = game.draw_infect_card(1)
     color = card//CITIES_PER_COLOR
+    if game.num_outbreaks >= 8:
+        game.lose = True
+        print(game.num_outbreaks)
+    for cubes in game.cubes_left:
+        print(cubes)
+        if cubes <= 0:
+            game.lose = True
     session['game'] = pickle.dumps(game)
     return jsonify( infected=game.infected,
                     card=card,
@@ -73,7 +98,8 @@ def infect_phase():
                     rows=game.board.rows,
                     at_risk=game.at_risk,
                     counter=game.phase - DRAW,
-                    total=num_infect )
+                    total=num_infect,
+                    lose=game.lose )
 
 @phase.route('/_has_rp')
 def has_rp():
@@ -90,9 +116,12 @@ def finish_epidemic():
     game = pickle.loads(session['game'])
     game.finish_epidemic()
     has_rp = game.has_rp()
+    oqn = game.oqn
+    game.oqn = False
     session['game'] = pickle.dumps(game)
     return jsonify(at_risk=game.at_risk,
-                   has_rp=has_rp)
+                   has_rp=has_rp,
+                   oqn=oqn)
 
 @phase.route('/_ep_rp')
 def ep_rp():
@@ -124,10 +153,8 @@ def next_turn():
 
     player = game.players[game.active]
     team = game.players[game.active:] + game.players[:game.active]
-    if game.players[game.active].get_role() == DISPATCHER:
-        for p in team:
-            if p != game.players[game.active] and p.get_position() != game.players[game.active].get_position():
-                available.append(p.get_position())
+    available, dispatch, origin, player_id = game.set_available(0)
+    available = available + dispatch
     for p in team:
         pieces.append(ROLES[p.get_role()]['piece_img'])
         roles.append(p.get_id())
@@ -136,8 +163,6 @@ def next_turn():
     can_take, can_give, team_hands = game.set_share()
     can_build = player.can_build( player.get_position(), game.research_stations)
     can_cure = player.can_cure(game.research_stations)
-    for city in player.can_move(player.hand, game.research_stations, board):
-        available.append(str(city))
 
     session['actions'] = actions
     session['game'] = pickle.dumps(game)

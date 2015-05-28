@@ -27,10 +27,17 @@ function create_card(city, data) {
 }
 
 function set_team_trash(owner) {
+    var map = Snap.select('#cities');
     TRASHING = 1;
     $('.can-give').off().removeClass('can-give');
-    $('.available').off().attr('class', 'unavailable marked');
-    $('.treatable').off().attr('class', 'unavailable marked-t');
+    map.selectAll('.available').forEach( function(el) {
+		el.unavailable();
+        el.addClass('marked');
+	});
+    map.selectAll('.treatable').forEach( function(el) {
+		el.unavailable();
+        el.addClass('marked');
+	});
     $('.role').off().attr('class', 'role');
     buttons_off();
     board_off();
@@ -40,11 +47,21 @@ function set_team_trash(owner) {
 }
 
 function set_active_trash() {
+    var map = Snap.select('#cities');
     TRASHING = 1;
-    $(".available").off().attr('class', 'unavailable');
-    $(".selectable").off().attr('class', 'unavailable');
-    $(".selected").off().attr('class', 'unavailable');
-    $('.treatable').off().attr('class', 'unavailable marked-t');
+    map.selectAll(".available").forEach( function(el) {
+		el.unavailable();
+	});
+    map.selectAll(".selectable").forEach( function(el) {
+		el.unavailable();
+	});
+    map.selectAll(".selected").forEach( function(el) {
+		el.unavailable();
+	});
+    map.selectAll('.treatable').forEach( function(el) {
+		el.unavailable();
+        el.addClass('marked-t');
+	});
     buttons_off();
     board_off();
     $('.pl-card').off().on('click', trash).addClass('trashable');
@@ -105,9 +122,9 @@ function trash(event) {
         select_rp(card);
     } else {
         $.getJSON( $SCRIPT_ROOT + '/_trash', { card: Number(card_id),
-                                               action: 1,
-                                               phase: PHASE }).success(
+                                               action: 1 }).success(
             function(data) {
+                PHASE = data.phase;
                 $('#logger').html('');
                 if ( card.hasClass('pl-card') ) {
                     discard(String(data.card));
@@ -123,7 +140,7 @@ function trash(event) {
                     TRASHING = 0;
                     body.removeClass('selecting');
                     if ( data.phase === 4 ) {
-                        infect_phase();
+                        $('#next-phase').off().on('click', infect).prop('disabled', false);
                     }
                 } else {
                     if ( ACTIVE === data.owner ) {
@@ -148,7 +165,7 @@ function give(card, data) {
     set_cities(data.available);
     $('#logger').html('You gave '+CARDS[Number(data.card)].bold()+' to the '+ROLES[data.recipient].bold()+'.');
     ACTIONS++;
-    PHASE++;
+    PHASE = data.phase;
     $('#undo-action').prop('disabled', ACTIONS===0);
 }
 
@@ -173,8 +190,11 @@ function give_card(event) {
         $.getJSON( $SCRIPT_ROOT + '/_give_card', { card: Number(card_id),
                                                    recip: sel }).success(
             function(data) {
+                var map = Snap.select('#cities');
                 if (typeof data.available !== 'undefined') {
-                    $('.available').off();
+                    map.selectAll('.available').forEach( function(el) {
+                        el.unavailable();
+                    });
                     buttons_off();
                     if (!body.hasClass('menu-push-toleft')) {
                         team_toggle();
@@ -199,8 +219,15 @@ function give_card(event) {
                         buttons_on();
                     }
                 } else {
-                    $('.available').off().attr('class', 'unavailable marked');
-                    $('.treatable').off().attr('class', 'unavailable marked-t');
+                    var map = Snap.select('#cities');
+                    map.selectAll('.available').forEach(function(el) {
+                        el.unavailable();
+                        el.addClass('marked');
+                    });
+                    map.selectAll('.treatable').forEach( function(el) {
+                        el.unavailable();
+                        el.addClass('marked-t');
+                    });
                     buttons_off();
                     card.off().attr('class', 'pl-card down');
                     board_off();
@@ -264,6 +291,7 @@ function take_card(event) {
         $.getJSON( $SCRIPT_ROOT + '/_take', { card: Number(card_id),
                                               id: source}).success(
             function(data) {
+                PHASE = data.phase;
                 card.off().attr('class', 'card').hide(200);
                 $('#card-'+card_id).on('click', give_card).show(200).addClass('giveable');
                 set_cities(data.available);

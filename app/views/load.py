@@ -70,8 +70,8 @@ def set_game():
     research_stations = copy(game.research_stations)
     can_build = player.can_build( player.get_position(), research_stations)
     can_cure = player.can_cure(research_stations)
-    for city in player.can_move(player.hand, game.research_stations, board):
-        available.append(str(city))
+    available, dispatch, origin, player_id = game.set_available(0)
+    available = available+dispatch
     cubes = {}
     rows = {}
     cures = game.cures

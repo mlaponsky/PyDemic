@@ -1,4 +1,5 @@
 function select_airlift(target) {
+    var map = Snap.select('#cities');
     target.off().addClass('down').removeClass('giveable takeable trashable');
     buttons_off();
     board_off();
@@ -8,8 +9,12 @@ function select_airlift(target) {
     $('html').keyup( function( e ) {
         if (e.keyCode === 27) { escape_airlift() };
     });
-    $('.available').off().attr('class', 'unavailable');
-    $('.treatable').off().attr('class', 'unavailable');
+    map.selectAll('.available').forEach( function(el) {
+		el.unavailable();
+	});
+    map.selectAll('.treatable').forEach( function(el) {
+		el.unavailable();
+	});
 
     if (!body.hasClass('menu-push-toleft')) {
         team_toggle();
@@ -20,6 +25,7 @@ function select_airlift(target) {
 }
 
 function airlift_select_player(event) {
+    var map = Snap.select('#cities');
     var target = $(event.target);
     var select = target.parent().parent().index();
     var is_airlift = 0;
@@ -33,7 +39,7 @@ function airlift_select_player(event) {
             set_cities(data.available);
             target.attr('class', 'role chosen');
             $('#name').off().attr('class', 'self-unchooseable');
-            $('#'+String(data.position)).off().attr('class', 'selected');
+            map.select('#city-'+String(data.position)).selected();
             buttons_off();
             $('.chosen').off().on('click', function(data) {
                     escape_airlift();
@@ -50,6 +56,7 @@ function airlift_select_player(event) {
 }
 
 function airlift_select_self(event) {
+    var map = Snap.select('#cities');
     var is_airlift = 0;
     if ( $('.event-card').hasClass('down') || $('#cp-store').hasClass('down')) {
         is_airlift = 1;
@@ -61,11 +68,7 @@ function airlift_select_self(event) {
             set_cities(data.available);
             $('.role').off().attr('class', 'role');
             $('#name').attr('class', 'self-chosen');
-            if ( $('#'+String(data.position)).attr('class') === 'unavailable marked_t' ) {
-                $('#'+String(data.position)).off().attr('class', 'selected marked_t');
-            } else {
-                $('#'+String(data.position)).off().attr('class', 'selected');
-            }
+            map.select('#city-'+String(data.position)).selected();
             $('#name').off().on('click', function(data) {
                 escape_airlift()
             });

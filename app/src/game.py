@@ -58,6 +58,8 @@ class Game:
         return self.phase
 
     def get_infect_number(self):
+        if self.oqn:
+            return 0
         if self.drawn_epidemics == 0:
             return 2
         return ( (self.drawn_epidemics-1) // 2 ) + 2
@@ -184,12 +186,12 @@ class Game:
                     self.infected[city][color] = num_cubes
                 risk = self.risk(city)
             else:
-                self.cubes_left[color] -= num_cubes - self.cubes[city][color]
+                self.cubes_left[color] -= MAX_CUBES - self.cubes[city][color]
                 if city in self.infected:
-                    self.infected[city][color] += num_cubes - self.cubes[city][color]
+                    self.infected[city][color] += MAX_CUBES - self.cubes[city][color]
                 else:
                     self.infected[city] = [0]*4
-                    self.infected[city][color] = num_cubes - self.cubes[city][color]
+                    self.infected[city][color] = MAX_CUBES - self.cubes[city][color]
                 self.cubes[city][color] = MAX_CUBES
                 self.outbreak(city, color)
 
@@ -274,6 +276,7 @@ class Game:
         prev_cure = player.can_cure(self.research_stations)
         orig_cubes = copy(self.cubes[new_pos])
         orig_rows = copy(self.board.rows[new_pos])
+        at_risk = copy(self.at_risk)
         action = { 'act': method,
                     'id': player.get_id(),
                     'owner': owner.get_id(),
@@ -292,7 +295,8 @@ class Game:
                     'hand': prev_hand,
                     'team_hands': prev_hands,
                     'give': prev_give,
-                    'take': prev_take }
+                    'take': prev_take,
+                    'at_risk': at_risk }
         mover.move(new_pos, self.board, self.cures, self.cubes, self.cubes_left, self.quarantined)
         self.risk(new_pos)
         self.phase += 1
@@ -332,6 +336,7 @@ player.hand or player.get_role() == OE)
         city = player.get_position()
         orig_cubes = copy(self.cubes[city][color])
         orig_rows = copy(self.board.rows[city])
+        at_risk = copy(self.at_risk)
         player.treat(color, self.cures, self.cubes, self.cubes_left, self.board)
         self.phase += 1
         cubes_removed = orig_cubes - self.cubes[city][color]
@@ -341,7 +346,8 @@ player.hand or player.get_role() == OE)
                     'color': str(color),
                     'cubes': orig_cubes,
                     'removed': cubes_removed,
-                    'rows': orig_rows }
+                    'rows': orig_rows,
+                    'at_risk': at_risk }
         return action
 
     def make_cure(self, cards):
@@ -350,6 +356,7 @@ player.hand or player.get_role() == OE)
         prev_avail, dispatch, origin, player_id = self.set_available(0)
         orig_cubes = self.cubes[player.get_position()][cure_color]
         orig_rows = copy(self.board.get_all_rows(player.get_position()))
+        at_risk = copy(self.at_risk)
 
         player.make_cure(cards, self.cures, self.cubes, self.cubes_left, self.player_cards, self.board)
         medic_pos = -1
@@ -372,7 +379,8 @@ player.hand or player.get_role() == OE)
                     'medic_pos': medic_pos,
                     'cubes': orig_cubes,
                     'rows': orig_rows,
-                    'available': prev_avail }
+                    'available': prev_avail,
+                    'at_risk': at_risk }
         return action
 
     def give_card(self, recipient, card):
@@ -414,6 +422,7 @@ player.hand or player.get_role() == OE)
         prev_cure = player.can_cure(self.research_stations)
         orig_cubes = copy(self.cubes[new_pos])
         orig_rows = copy(self.board.rows[new_pos])
+        at_risk = copy(self.at_risk)
         is_stored = AIRLIFT not in owner.hand
         action = { 'act': 'airlift',
                     'id': player.get_id(),
@@ -431,7 +440,8 @@ player.hand or player.get_role() == OE)
                     'hand': prev_hand,
                     'team_hands': prev_hands,
                     'give': prev_give,
-                    'take': prev_take }
+                    'take': prev_take,
+                    'at_risk': at_risk }
         mover.move(new_pos, self.board, self.cures, self.cubes, self.cubes_left, self.quarantined)
         if not is_stored:
             owner.discard(AIRLIFT, self.player_cards)
@@ -468,7 +478,8 @@ player.hand or player.get_role() == OE)
     def play_forecast(self, index, reorded):
         owner = self.players[(self.active + index) % self.num_players]
         self.infect_cards.deck = reorded + self.infect_cards.deck[:6]
-        if FORECAST not in owner.hand:
+        is_stored = FORECAST not in owner.hand
+        if not is_stored:
             owner.discard(FORECAST, self.player_cards)
         else:
             owner.play_event(self.player_cards)

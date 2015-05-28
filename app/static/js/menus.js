@@ -19,6 +19,11 @@ function team_toggle() {
 		body.toggleClass( 'menu-push-toright' );
 	}
 	team_menu.toggleClass( 'menu-open' );
+	if (body.hasClass('menu-push-toleft')) {
+		menu_on = 1;
+	} else {
+		menu_on = 0;
+	}
 }
 
 function infect_toggle() {
@@ -35,6 +40,11 @@ function infect_toggle() {
 		body.toggleClass( 'menu-push-toright' );
 	}
 	infect_menu.toggleClass( 'menu-open' );
+	if (body.hasClass('menu-push-toright')) {
+		menu_on = -1;
+	} else {
+		menu_on = 0;
+	}
 }
 
 function player_toggle() {
@@ -51,6 +61,11 @@ function player_toggle() {
 		body.toggleClass( 'menu-push-toright' );
 	}
 	player_menu.toggleClass( 'menu-open' );
+	if (body.hasClass('menu-push-toright')) {
+		menu_on = -1;
+	} else {
+		menu_on = 0;
+	}
 }
 
 	team_button.on('click', function() {

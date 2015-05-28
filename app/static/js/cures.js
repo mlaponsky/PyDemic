@@ -1,4 +1,5 @@
 function make_cure() {
+    var map = Snap.select('#cities');
     $.getJSON( $SCRIPT_ROOT + '/_make_cure').success(
         function(data) {
             if (typeof data.cured !== 'undefined') {
@@ -12,7 +13,7 @@ function make_cure() {
                     document.getElementById(String(data.c)+"-cnt").getElementsByTagName('tspan')[0].textContent = String(data.cubes_left);
                 }
                 ACTIONS++;
-                PHASE++;
+                PHASE = data.phase;
                 set_cities(data.available);
                 set_treatable(data.position);
                 $('#make-cure').prop('disabled', true);
@@ -21,8 +22,14 @@ function make_cure() {
                 buttons_off();
                 $('#logger').html('(CURE) Deselect which cards you wish to keep, then click NEXT.');
                 board_off();
-                $('.available').off().attr('class', 'unavailable marked');
-                $('.treatable').off().attr('class', 'unavailable marked-t');
+                map.selectAll('.available').forEach( function(el) {
+            		el.unavailable();
+                    el.addClass('marked');
+            	});
+                map.selectAll('.treatable').forEach( function(el) {
+            		el.unavailable();
+                    el.addClass('marked-t');
+            	});
                 for ( var i=0; i<data.cards.length; i++ ) {
                     $("#card-"+data.cards[i]).off().on('click', toggle_select ).removeClass('giveable').addClass('down curingo');
                     $("#card-"+data.cards[i]).children('div').off().css('pointer-events', 'none');
@@ -86,7 +93,7 @@ function execute_cure() {
             buttons_on();
             $('#make-cure').prop('disabled', true).attr('class', 'action');
             ACTIONS++;
-            PHASE++;
+            PHASE = data.phase;
             set_cities(data.available);
             set_treatable(data.position);
             $('#undo-action').prop('disabled', ACTIONS === 0);
@@ -97,8 +104,13 @@ function execute_cure() {
 
 
 function escape_cure_select() {
-    $('.marked').off().on('click', execute_move).attr('class','available');
-    $('.marked-t').off().on('click', treat).attr('class','treatable')
+    var map = Snap.select('#cities');
+    map.selectAll('.marked').forEach( function(el) {
+		el.available();
+	});
+    map.selectAll('.marked-t').forEach( function(el) {
+		el.treatable();
+	});
     buttons_on();
     $('#make-cure').attr('class', 'action');
     $('#next-phase').prop('disabled', true);

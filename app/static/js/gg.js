@@ -1,20 +1,23 @@
 function select_gg(target) {
+    var map = Snap.select('#cities');
     target.off().on('click', escape_gg).addClass('down').removeClass('giveable takeable trashable');
     board_off();
 
     buttons_off();
     for (var i=0; i<48; i++) {
         if ( $('#station-'+String(i)).attr('class') === 'built' ) {
-            if ( $('#city-'+String(i)).attr('class') === 'available' ) {
-                $('#city-'+String(i)).off().attr('class', 'unavailable marked');
+            if ( map.select('#city-'+String(i)).hasClass('available') ) {
+                map.select('#city-'+String(i)).unavailable();
+                map.select('#city-'+String(i)).addClass('marked');
             } else {
-                $('#city-'+String(i)).off().attr('class', 'unavailable');
+                map.select('#city-'+String(i)).unavailable();
             }
         } else {
-            if ( $('#city-'+String(i)).attr('class') === 'available' ) {
-                $('#city-'+String(i)).off().on('click', build_station).attr('class', 'selectable marked');
+            if ( map.select('#city-'+String(i)).hasClass('available') ) {
+                map.select('#city-'+String(i)).selectable();
+                map.select('#city-'+String(i)).addClass('marked')
             } else {
-                $('#city-'+String(i)).off().on('click', build_station).attr('class', 'selectable');
+                map.select('#city-'+String(i)).selectable();
             }
         }
     }
@@ -24,11 +27,16 @@ function select_gg(target) {
 }
 
 function escape_gg() {
+    var map = Snap.select('#cities');
     $.getJSON( $SCRIPT_ROOT + '/_escape_gg').success(
         function(data) {
             if ( $('.down').length !== 0 && TRASHING === 0 ) {
-                $('.marked').off().on('click', execute_move).attr('class', 'available');
-                $('.selectable').off().attr('class', 'unavailable');
+                map.selectAll('.marked').forEach( function(el) {
+            		el.available();
+            	});
+                map.selectAll('.selectable').forEach( function(el) {
+            		el.unavailable();
+            	});
                 set_treatable(String(data.position));
                 $('html').off();
                 board_on();
@@ -36,7 +44,9 @@ function escape_gg() {
             } else if ( TRASHING === 1 ) {
                 $('.down').off().on('click', trash).addClass('trashable').removeClass('down');
                 $('.holding-t').off().on('click', trash).addClass('trashable').removeClass('holding-t');
-                $('.selectable').off().attr('class', 'unavailable');
+                map.selectAll('.selectable').forEach( function(el) {
+            		el.unavailable();
+            	});
                 $('html').off();
             }
         }

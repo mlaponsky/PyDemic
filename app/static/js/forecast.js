@@ -1,8 +1,14 @@
 function select_forecast(target) {
+    var map = Snap.select('#cities');
     target.off().addClass('down').removeClass('giveable takeable');
     buttons_off();
     board_off();
-    $('.available').off().attr('class', 'unavailable');
+    map.selectAll('.available').forEach( function(el) {
+		el.unavailable();
+	});
+    map.selectAll('.treatable').forEach( function(el) {
+		el.unavailable();
+	});
     $('#forecast').show(200);
     $('#next-phase').off().on('click', execute_forecast).prop('disabled', false);
     $('#logger').html("Rearrange the top six cards of the Infection Deck (top card drawn first). Click 'NEXT' when finished.");

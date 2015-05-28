@@ -90,4 +90,4 @@ def store_on_cp():
     actions.append(action)
     session['actions'] = actions
     session['game'] = pickle.dumps(game)
-    return jsonify( success=True )
+    return jsonify( phase=game.phase )

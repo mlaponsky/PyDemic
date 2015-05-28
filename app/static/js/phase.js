@@ -77,7 +77,6 @@ function end_turn() {
                     $('#logger').html('Drew '+CARDS[data.draw_0].bold()+' and '+CARDS[data.draw_1].bold()+'.');
                     $('#draw-0').delay(500).show(400);
                     $('#draw-1').delay(500).show(400);
-                    events_on();
                     document.getElementById("cards-cnt").getElementsByTagName('tspan')[0].textContent = String(data.cards_left);
 
                     if ( data.draw_0 === 53 ) {
@@ -105,6 +104,7 @@ function end_turn() {
                         $('#logger').html($('#logger').html()+ '. Played One Quiet Night; will skip infection stage.');
                         $('#next-phase').off().on('click', next_turn).prop('disabled', false);
                     } else {
+                        $('.draw-card').delay(800).hide(400, function() {events_on();});
                         $('#next-phase').off().on('click', infect).prop('disabled', false);
                     }
                 }, 1000);
@@ -199,6 +199,7 @@ function finish_epidemic() {
             }
             $('.choice').hide();
             $('.infect-discard').hide();
+            $('#infect').delay(100).hide(400);
             if ( EPIDEMIC > 0 ) {
                 epidemic();
             } else if (data.oqn) {

@@ -152,6 +152,8 @@ def next_turn():
     positions = []
 
     player = game.players[game.active]
+    if player.get_role() == OE:
+        player.has_stationed = False
     team = game.players[game.active:] + game.players[:game.active]
     available, dispatch, origin, player_id = game.set_available(0)
     available = available + dispatch

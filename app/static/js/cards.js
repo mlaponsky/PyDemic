@@ -125,6 +125,7 @@ function trash(event) {
                                                action: 1 }).success(
             function(data) {
                 PHASE = data.phase;
+                $('#actions-'+String(PHASE)).attr('class', 'on');
                 $('#logger').html('');
                 if ( card.hasClass('pl-card') ) {
                     discard(String(data.card));
@@ -133,14 +134,16 @@ function trash(event) {
                     $('#logger').html('Discarded '+CARDS[Number(data.card)].bold()+'.');
                 }
                 board_on();
-                set_cities(data.available);
-                set_treatable(data.origin);
                 buttons_on();
                 if ( data.num_cards <= 7 ) {
                     TRASHING = 0;
                     body.removeClass('selecting');
-                    if ( data.phase === 4 ) {
+                    if (PHASE >= 4) {
+                        actions_off();
                         $('#next-phase').off().on('click', infect).prop('disabled', false);
+                    } else {
+                        set_cities(data.available);
+                        set_treatable(data.origin);
                     }
                 } else {
                     if ( ACTIVE === data.owner ) {
@@ -166,7 +169,15 @@ function give(card, data) {
     $('#logger').html('You gave '+CARDS[Number(data.card)].bold()+' to the '+ROLES[data.recipient].bold()+'.');
     ACTIONS++;
     PHASE = data.phase;
+    $('#actions-'+String(PHASE)).attr('class', 'on');
     $('#undo-action').prop('disabled', ACTIONS===0);
+    if (PHASE >= 4) {
+        actions_off();
+        $('#next-phase').off().on('click', infect).prop('disabled', false);
+    } else {
+        set_cities(data.available);
+        set_treatable(data.origin);
+    }
 }
 
 function give_card(event) {
@@ -292,15 +303,20 @@ function take_card(event) {
                                               id: source}).success(
             function(data) {
                 PHASE = data.phase;
+                $('#actions-'+String(PHASE)).attr('class', 'on');
                 card.off().attr('class', 'card').hide(200);
                 $('#card-'+card_id).on('click', give_card).show(200).addClass('giveable');
-                set_cities(data.available);
                 buttons_on();
                 $('#logger').html('You took '+CARDS[Number(data.card)].bold()+ ' from the '+ROLES[data.source_id].bold()+'.');
                 ACTIONS++;
-                PHASE++;
                 if ( data.num_cards > 7 ) {
                     set_active_trash();
+                }
+                if (PHASE >= 4) {
+                    actions_off();
+                    $('#next-phase').off().on('click', infect).prop('disabled', false);
+                } else {
+                    set_cities(data.available);
                 }
                 $('#undo-action').prop('disabled', ACTIONS===0);
             }).error(function(error) {console.log(errors)} );

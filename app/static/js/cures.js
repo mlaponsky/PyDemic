@@ -14,9 +14,14 @@ function make_cure() {
                 }
                 ACTIONS++;
                 PHASE = data.phase;
-                set_cities(data.available);
-                set_treatable(data.position);
-                $('#make-cure').prop('disabled', true);
+                $('#actions-'+String(PHASE)).attr('class', 'on');
+                if (PHASE >= 4) {
+                    actions_off();
+                    $('#next-phase').off().on('click', infect).prop('disabled', false);
+                } else {
+                    set_cities(data.available);
+                    set_treatable(data.origin);
+                }
                 $('#undo-action').prop('disabled', ACTIONS === 0);
             } else {
                 buttons_off();
@@ -94,8 +99,14 @@ function execute_cure() {
             $('#make-cure').prop('disabled', true).attr('class', 'action');
             ACTIONS++;
             PHASE = data.phase;
-            set_cities(data.available);
-            set_treatable(data.position);
+            $('#actions-'+String(PHASE)).attr('class', 'on');
+            if (PHASE >= 4) {
+                actions_off();
+                $('#next-phase').off().on('click', infect).prop('disabled', false);
+            } else {
+                set_cities(data.available);
+                set_treatable(data.origin);
+            }
             $('#undo-action').prop('disabled', ACTIONS === 0);
             $('#next-phase').prop('disabled', true);
             board_on();

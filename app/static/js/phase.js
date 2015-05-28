@@ -50,7 +50,6 @@ function infect_cities(data) {
 
 function end_turn() {
     var map = Snap.select('#cities');
-    PHASE++;
     ACTIONS = 0;
     EPIDEMIC = 0;
     board_off();
@@ -69,6 +68,7 @@ function end_turn() {
                 board_off();
                 buttons_off();
             } else {
+                buttons_on();
                 $('#draw-0').attr('src', "static/img/player_cards/pl-"+String(data.draw_0)+".svg");
                 $('#draw-1').attr('src', "static/img/player_cards/pl-"+String(data.draw_1)+".svg");
                 $('#stage-name').html("DRAW STAGE");
@@ -327,6 +327,7 @@ function next_turn() {
         ACTIONS = 0;
         PHASE = 0;
         ACTIVE = data.roles[0];
+        set_selectable_players(ACTIVE);
         $('#stage-name').html(ROLES[data.roles[0]]+"'s TURN").delay(100).fadeIn(300).delay(1000).fadeOut(300);
         // var menu_on = 0;
         // if ( $('body').hasClass('menu-push-toright') ) {
@@ -334,7 +335,9 @@ function next_turn() {
         // } else if ( $('body').hasClass('menu-push-toleft') ) {
         //     menu_on = 1;
         // }
-        console.log(body.attr('class'), menu_on);
+        for ( var i=1; i<=4; i++ ) {
+            $('#actions-'+String(i)).attr('class', 'off');
+        }
         for ( var i=0; i<48; i++ ) {
             stop_svg(i);
         }

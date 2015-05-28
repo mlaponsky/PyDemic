@@ -35,10 +35,10 @@ Snap.plugin(function (Snap, Element) {
         this.attr({class: 'available',
                    fill: COLOR_CODES[color],
                    strokeWidth: 2})
-            .unclick()
-            .unhover()
-            .hover( hover_available, unhover_available )
-            .click( execute_move );
+        this.unclick()
+        this.unhover()
+        this.hover( hover_available, unhover_available )
+        this.click( execute_move );
     }
 
     Element.prototype.treatable = function() {
@@ -46,10 +46,10 @@ Snap.plugin(function (Snap, Element) {
         this.attr({class: 'treatable',
                    fill: COLOR_CODES[color],
                    strokeWidth: 2})
-            .unclick()
-            .unhover()
-            .hover( hover_treatable, unhover_treatable )
-            .click( treat );
+        this.unclick()
+        this.unhover()
+        this.hover( hover_treatable, unhover_treatable )
+        this.click( treat );
     }
 
     Element.prototype.selectable = function() {
@@ -57,10 +57,10 @@ Snap.plugin(function (Snap, Element) {
         this.attr({class: 'selectable',
                    fill: COLOR_CODES[color],
                    strokeWidth: 8})
-            .unclick()
-            .unhover()
-            .hover( hover_selectable, unhover_selectable )
-            .click( build_station );
+        this.unclick()
+        this.unhover()
+        this.hover( hover_selectable, unhover_selectable )
+        this.click( build_station );
     }
 
     Element.prototype.removable = function() {
@@ -68,42 +68,42 @@ Snap.plugin(function (Snap, Element) {
         this.attr({class: 'selectable',
                    fill: COLOR_CODES[color],
                    strokeWidth: 8})
-            .unclick()
-            .unhover()
-            .hover( hover_selectable, unhover_selectable )
-            .click( select_station );
+        this.unclick()
+        this.unhover()
+        this.hover( hover_selectable, unhover_selectable )
+        this.click( select_station );
     }
 
     Element.prototype.unavailable = function() {
         var color = Math.floor( Number(this.attr('id').split('-')[1])/12 );
-        this.attr({class: 'available',
+        this.attr({class: 'unavailable',
                    fill: COLOR_CODES[color],
                    strokeWidth: 2})
-            .unclick()
-            .unhover()
+        this.unclick()
+        this.unhover()
     }
 
     Element.prototype.treating = function() {
-        this.attr({class: 'available',
+        this.attr({class: 'treating',
                    fill: '#32CD32',
                    strokeWidth: 2})
-            .unclick()
-            .unhover()
+        this.unclick()
+        this.unhover()
     }
 
     Element.prototype.selected = function() {
-        this.attr({class: 'available',
+        this.attr({class: 'selected',
                    fill: '#FFFFF0',
                    strokeWidth: 2})
-            .unclick()
-            .unhover()
+        this.unclick()
+        this.unhover()
     }
 
     Element.prototype.building = function() {
-        this.attr({class: 'available',
+        this.attr({class: 'building',
                    fill: '#FFFFF0',
                    strokeWidth: 2})
-            .unclick()
-            .unhover()
+        this.unclick()
+        this.unhover()
     }
 });

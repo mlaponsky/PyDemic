@@ -95,7 +95,9 @@ function remove_cubes(city, color, num_cubes, cubes_left, at_risk) {
     var to_remove = cubes.slice(cubes.length-num_cubes, cubes.length);
     for (var i=0; i<to_remove.length; i++) {
         $(to_remove[i]).hide(200, function() { this.remove();
-                                               set_treatable(city);});
+                                               if (PHASE < 4) {
+                                                   set_treatable(city);
+                                            }});
     }
     document.getElementById(color+"-cnt").getElementsByTagName('tspan')[0].textContent = String(cubes_left);
     if ( $.inArray(Number(city), at_risk) === -1 ) {
@@ -120,9 +122,13 @@ function treat(event) {
     var city = $(event.target).attr('id').split('-')[1];
     $.getJSON( $SCRIPT_ROOT + '/_treat_disease').success( function(data) {
         if (typeof data.c !== 'undefined') {
+            PHASE = data.phase;
+            $('#actions-'+String(PHASE)).attr('class', 'on');
             remove_cubes(city, data.c, data.num_cubes, data.cubes_left, data.at_risk);
             ACTIONS++;
-            PHASE = data.phase;
+            if (PHASE >= 4) {
+                actions_off();
+            }
             $("#undo-action").prop('disabled', ACTIONS === 0);
         } else {
             $(".city-"+city).css("border", "2px solid #FFFFF0");
@@ -162,6 +168,8 @@ function select_cube_color(event) {
 
     $.getJSON( $SCRIPT_ROOT + '/_select_color', { color: Number(color) }).success(
         function(data) {
+            PHASE = data.phase;
+            $('#actions-'+String(PHASE)).attr('class', 'on');
             remove_cubes(city, color, data.num_cubes, data.cubes_left);
             board_on();
             $('.marked').off().on('click', execute_move).attr('class', 'available');
@@ -171,6 +179,9 @@ function select_cube_color(event) {
             $("."+class_array[0]).css("fill", '')
             $("."+class_array[0]).off();
             $("."+class_array[0]).css('pointer-events', 'none');
+            if (PHASE === 4) {
+                actions_off();
+            }
         }).error(function(error){console.log(error);});
 }
 

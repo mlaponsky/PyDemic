@@ -130,6 +130,7 @@ def select_move_card():
     session['game'] = pickle.dumps(game)
     return jsonify( available=available,
                     player_id=player_id,
+                    player_pos=player.get_position(),
                     mover_id=action['mover'],
                     move=action['act'],
                     origin=action['origin'],

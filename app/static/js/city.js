@@ -32,6 +32,7 @@ function stop_svg(city) {
 }
 
 function set_cities(cities) {
+    console.log(cities);
 	var map = Snap.select('#cities');
 
 	map.selectAll('.available').forEach( function(el) {
@@ -49,6 +50,7 @@ function set_cities(cities) {
 }
 
 function set_treatable(position) {
+    console.log(position);
 	var map = Snap.select('#cities');
     if ( $(".city-"+position).length !== 0 ) {
         map.select("#city-"+position).treatable();

@@ -3,33 +3,39 @@ function undo() {
         data=data.result;
         undo_trash(data);
         if ( (data['act'] === "drive") || (data['act'] === "shuttle") || (data['act'] === "dispatch") ) {
-            undo_move(data);
+            undo_move(data);$('#actions-'+String(PHASE)).attr('class', 'off');
             PHASE--;
         } else if ((data['act'] === "charter") ||
                    (data['act'] === "fly") ||
                    (data['act'] === "station-fly")) {
             undo_discard(data['cards'], data, data['owner']);
             undo_move(data);
+            $('#actions-'+String(PHASE)).attr('class', 'off');
             PHASE--;
         } else if (data['act'] === "airlift") {
             undo_discard(data['cards'], data, data['owner']);
             undo_move(data);
         } else if (data['act'] === "build") {
             undo_station(data);
+            $('#actions-'+String(PHASE)).attr('class', 'off');
             PHASE--;
         } else if (data['act'] === "gg") {
             undo_station(data);
         } else if (data['act'] === "treat") {
             undo_treatment(data);
+            $('#actions-'+String(PHASE)).attr('class', 'off');
             PHASE--;
         } else if (data['act'] === "cure") {
             undo_cure(data);
+            $('#actions-'+String(PHASE)).attr('class', 'off');
             PHASE--;
         } else if (data['act'] === "take") {
             undo_take(data);
+            $('#actions-'+String(PHASE)).attr('class', 'off');
             PHASE--;
         } else if (data['act'] === "give") {
             undo_give(data);
+            $('#actions-'+String(PHASE)).attr('class', 'off');
             PHASE--;
         } else if (data['act'] === "rp") {
             undo_rp(data);

@@ -36,18 +36,18 @@ function execute_forecast() {
         function(data) {
             discard('49');
             $('#logger').html('Played <b>FORECAST</b>.');
-            $('#next-phase').off().prop('disabled', true);
             $('#forecast').hide(200);
-            buttons_on();
-            board_on();
-            set_cities(data.available);
-            set_treatable(data.position);
+            if (PHASE < 4) {
+                buttons_on();
+                board_on();
+                set_cities(data.available);
+                set_treatable(data.position);
+            } else {
+                actions_off();
+            }
             $('.holding.down').removeClass('down').hide(200);
             if (data.num_cards <= 7) {
                 TRASHING = 0;
-                if (data.phase === 4) {
-                    infect_phase();
-                }
             } else {
                 set_active_trash();
             }

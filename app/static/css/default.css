@@ -345,6 +345,13 @@ a:hover {
 	width: 14.5%;
 }
 
+#actions-count {
+	position: absolute;
+	left: 38%;
+	top: 70%;
+	width: 10%;
+}
+
 #text {
 	font-size: 90%;
 }

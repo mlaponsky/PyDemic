@@ -58,6 +58,7 @@ function select_station(event) {
             if (TRASHING === 0) {
                 ACTIONS++;
                 PHASE = data.phase;
+                $('#actions-'+String(PHASE)).attr('class', 'on');
             }
             if ( data.discard === 50 ) {
                 if ( !$('#cp-store').hasClass('down') ) {
@@ -67,14 +68,11 @@ function select_station(event) {
                     $('#pl-discard-50').off().show(200).attr('class', 'graveyard');
                     STORE = 0;
                 }
-                PHASE--;
             } else {
                 discard(String(data.discard));
             }
             $('.holding.down').removeClass('down').hide(200);
             board_on();
-            set_cities(data.available);
-            set_treatable(data.position);
             if ( data.can_build && data.station !== data.position ) {
                 $("#build-station").attr('class', 'action').prop('disabled', false);
             } else {
@@ -85,8 +83,12 @@ function select_station(event) {
             $('html').off();
             if ( data.num_cards <= 7) {
                 TRASHING = 0;
-                if ( data.phase === 4 ) {
-                    infect_phase();
+                if (PHASE >= 4) {
+                    actions_off();
+                    $('#next-phase').off().on('click', infect).prop('disabled', false);
+                } else {
+                    set_cities(data.available);
+                    set_treatable(data.pozition);
                 }
             } else {
                 set_active_trash();
@@ -118,8 +120,8 @@ function build_station() {
             if (TRASHING === 0) {
                 ACTIONS++;
                 PHASE = data.phase;
+                $('#actions-'+String(PHASE)).attr('class', 'on');
             }
-            console.log(data.can_build, data.station, data.position, data.discard);
             if ( data.discard === '50' ) {
                 if ( !$('#cp-store').hasClass('down') ) {
                     $('.down').off().on('click', select_gg);
@@ -133,8 +135,6 @@ function build_station() {
                 discard(data.discard);
             }
             document.getElementById("research-cnt").getElementsByTagName('tspan')[0].textContent = String(6-data.num_stations-1);
-            set_cities(data.available);
-            set_treatable(data.position);
             $('.holding.down').removeClass('down').hide(200);
             board_on();
             if ( data.can_build && data.station !== data.position ) {
@@ -147,8 +147,12 @@ function build_station() {
             $('html').off();
             if ( data.num_cards <= 7 ) {
                 TRASHING = 0;
-                if (data.phase === 4) {
-                    infect_phase();
+                if (PHASE >= 4) {
+                    actions_off();
+                    $('#next-phase').off().on('click', infect).prop('disabled', false);
+                } else {
+                    set_cities(data.available);
+                    set_treatable(data.position);
                 }
             } else {
                 set_active_trash();

@@ -22,21 +22,22 @@ function move(new_pos, data, is_airlift) {
             medic_with_cure(data, new_pos);
             $("#undo-action").prop('disabled', ACTIONS === 0);
             if (data.player_id === ACTIVE) {
-                set_treatable(data.player_pos);
+                if (PHASE < 4) {
+                    set_treatable(data.player_pos);
+                }
                 $("#build-station").prop('disabled', !data.can_build);
                 $("#make-cure").prop('disabled', !data.can_cure);
             } else {
                 $("#build-station").prop('disabled', true);
                 $("#make-cure").prop('disabled', true);
             }
-            set_cities(data.available);
             if (is_airlift === 1) {
                 $('#name').off().attr('class', 'self-unchooseable');
                 $('.role').off().attr('class', 'role');
                 if ( $('#active-dispatcher').length !== 0 ) {
                     $('.role').off().on('click', select_player).attr('class', 'role choosable')
                 }
-                if (!body.hasClass('selecting') || data.phase === 4 ) {
+                if (!body.hasClass('selecting') || PHASE === 4 ) {
                     team_toggle();
                 } else {
                     body.removeClass('selecting');
@@ -49,6 +50,11 @@ function move(new_pos, data, is_airlift) {
                 $('#logger').html( $('#logger').html() + ' Still over the card limit; choose another card to discard.');
                 board_off();
                 set_active_trash();
+            }
+            if (PHASE >= 4) {
+                actions_off();
+            } else {
+                set_cities(data.available);
             }
     });
 
@@ -75,14 +81,17 @@ function execute_move(event) {
             if (data.move === "drive") {
                 $('#logger').html("Drove from "+CARDS[data.origin].bold()+" to "+CARDS[new_pos].bold()+".");
                 PHASE = data.phase;
+                $('#actions-'+String(PHASE)).attr('class', 'on');
             } else if (data.move === "charter") {
                 $('#logger').html("Flew from "+CARDS[data.origin].bold()+" to "+CARDS[new_pos].bold()+".");
                 discard(data.discard);
                 PHASE = data.phase;
+                $('#actions-'+String(PHASE)).attr('class', 'on');
             } else if (data.move === "fly") {
                 $('#logger').html("Flew from "+CARDS[data.origin].bold()+" to "+CARDS[new_pos].bold()+".");
                 discard(data.discard);
                 PHASE = data.phase;
+                $('#actions-'+String(PHASE)).attr('class', 'on');
             } else if (data.move === "airlift") {
                 $('#logger').html("Airlifted "+ROLES[data.mover_id]+" from "+CARDS[data.origin].bold()+".");
                 if ( !$('#cp-store').hasClass('down') ) {
@@ -99,14 +108,20 @@ function execute_move(event) {
             } else if (data.move === "dispatch") {
                 $('#logger').html("Dispatched "+ROLES[data.player_id]+" from "+CARDS[data.origin].bold()+".");
                 PHASE = data.phase;
+                $('#actions-'+String(PHASE)).attr('class', 'on');
             } else if (data.move === "station-fly") {
                 $('#logger').html("Flew from "+CARDS[data.origin].bold()+" to "+CARDS[new_pos].bold()+". Discarded "+CARDS[data.discard].bold()+". (Cannot use this ability again this turn.)");
                 PHASE = data.phase;
+                $('#actions-'+String(PHASE)).attr('class', 'on');
             } else if (data.move === "shuttle") {
                 $('#logger').html("Shuttled from "+CARDS[data.origin].bold()+" to "+CARDS[new_pos].bold()+".");
                 PHASE = data.phase;
+                $('#actions-'+String(PHASE)).attr('class', 'on');
             }
             move(new_pos, data, is_airlift);
+            if (PHASE === 4) {
+                actions_off();
+            }
         } else {
             // If there are multiple ways to move to new_pos
             map.select('#city-'+new_pos).selected();
@@ -121,7 +136,8 @@ function execute_move(event) {
             }
             $(".action").off();
             map.selectAll(".available").forEach( function(el) {
-        		el.unavailable().addClass('marked');
+        		el.unavailable();
+                el.addClass('marked');
         	});
             $('html').off().on( 'click', function( e ) {
                 if ($( e.target ).parent().attr('class') !== 'down') {
@@ -150,8 +166,12 @@ function select_discard(event) {
                 if (data.move === "station-fly") {
                     $('#logger').html($('#logger').html()+" (Cannot use this ability again this turn.)");
                 }
-                move(city_id, data, 0);
                 PHASE = data.phase;
+                $('#actions-'+String(PHASE)).attr('class', 'on');
+                move(city_id, data, 0);
                 buttons_on();
+                if (PHASE === 4) {
+                    actions_off();
+                }
     }).error(function(error){console.log(error);});
 }

@@ -139,7 +139,7 @@ function buttons_on() {
     } else {
         $('#build-station').attr('class', 'action').off().on('click', build_station);
         $('#make-cure').attr('class', 'action').off().on('click', make_cure);
-        
+
     }
     $('#undo-action').attr('class', 'action').off().on('click', undo).prop('disabled', ACTIONS === 0);
     $('#next-phase').attr('class', 'action').off().on('click', end_turn).prop('disabled', false);
@@ -150,7 +150,7 @@ function buttons_off() {
     $('#build-station').attr('class', 'paused').off();
     $('#make-cure').attr('class', 'paused').off();
     $('#undo-action').attr('class', 'paused').off();
-    $('#next-phase').attr('class', 'paused').off();
+    $('#next-phase').attr('class', 'action').off();
     $('#cp-store').off().removeClass('giveable');
 }
 
@@ -166,4 +166,20 @@ function escape_card_select(objects) {
     $('.holding').removeClass('holding').addClass('giveable');
     buttons_on();
     $('html').off();
+}
+
+function actions_off() {
+    var map = Snap.select('#cities');
+    var roles = $('.role');
+    for ( var i=0; i<48; i++ ) {
+        map.select('#city-'+String(i)).unavailable();
+        $('#card-'+String(i)).off().attr('class', 'pl-card');
+        for (var j=0; j<roles.length; j++) {
+            var id= $(roles[j]).attr('id');
+            $('#'+id+'-card-'+String(i)).off().attr('class','card');
+        }
+    }
+    $('.role').off.attr('class', 'role');
+    $('#build-station').prop('disabled', true);
+    $('#make-cure').prop('disabled', true);
 }

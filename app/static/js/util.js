@@ -26,16 +26,6 @@ function animate_position(index, roles, position, dims) {
     $("#"+roles[index]+"-piece").css({'z-index': 500-index}).stop().velocity({left: player_l}, 300);
 }
 
-function set_cure(color, cured) {
-    if (cured === 1) {
-        document.getElementById("cure-"+color).getElementsByTagName('tspan')[0].textContent = '✓';
-    } else if (cured === 2) {
-        document.getElementById("cure-"+color).getElementsByTagName('tspan')[0].textContent = '✕';
-    } else {
-        document.getElementById("cure-"+color).getElementsByTagName('tspan')[0].textContent = '○';
-    }
-}
-
 function set_selectable_players(active) {
     if (active === 'dispatcher') {
         $('.role').attr('class', 'role choosable');
@@ -78,6 +68,12 @@ function set_takeable(team_hands, can_take) {
     }
 }
 
+function set_cp_store() {
+    for (var i=48; i<53; i++) {
+        $('#pl-discard-'+String(i)).off().on('click', store_on_cp).addClass('takeable');
+    }
+}
+
 function set_chosen_player(data, target) {
     var map = Snap.select('#cities');
     if ($(".chosen").length !== 0) {
@@ -99,7 +95,14 @@ function set_chosen_player(data, target) {
 function select_player(event) {
     var target = $(event.target);
     var select = target.parent().parent().index();
-    $.getJSON( $SCRIPT_ROOT + '/_select_player', { index: select }).success(
+    var is_airlift = 0;
+    if ( $('.event-card').hasClass('down') === 0
+            || $('#cp-store').hasClass('down')
+            || PHASE >= 4 ) {
+        is_airlift = 1;
+    }
+    $.getJSON( $SCRIPT_ROOT + '/_select_player', { index: select,
+                                                   is_airlit: is_airlift }).success(
         function(data) {
             set_chosen_player(data, target);
             escape_select_player(target);
@@ -147,10 +150,10 @@ function buttons_on() {
 }
 
 function buttons_off() {
-    $('#build-station').attr('class', 'paused').off();
-    $('#make-cure').attr('class', 'paused').off();
-    $('#undo-action').attr('class', 'paused').off();
-    $('#next-phase').attr('class', 'action').off();
+    $('#build-station').attr('class', 'paused').prop('disabled', true);
+    $('#make-cure').attr('class', 'paused').prop('disabled', true);
+    $('#undo-action').attr('class', 'paused').prop('disabled', true);
+    $('#next-phase').attr('class', 'action').prop('disabled', true);
     $('#cp-store').off().removeClass('giveable');
 }
 
@@ -179,7 +182,24 @@ function actions_off() {
             $('#'+id+'-card-'+String(i)).off().attr('class','card');
         }
     }
-    $('.role').off.attr('class', 'role');
+    $('.role').off().attr('class', 'role');
     $('#build-station').prop('disabled', true);
     $('#make-cure').prop('disabled', true);
+}
+
+function set_next_button() {
+    console.log(PHASE, COUNTER);
+    if ( PHASE <= 4 ) {
+        $('#next-phase').off().on('click', end_turn);
+    } else if ( (PHASE === 5 || PHASE === 6) && OQN) {
+        $('#next-phase').off().on('click', next_turn);
+        OQN = false;
+    } else if (PHASE === 5 || PHASE === 6) {
+        $('#next-phase').off().on('click', infect);
+    } else if (PHASE < COUNTER + 6) {
+        $('#next-phase').off().on('click', infect);
+    } else if (PHASE = COUNTER + 6) {
+        $('#next-phase').off().on('click', next_turn);
+    }
+    $('#next-phase').prop('disabled', false);
 }

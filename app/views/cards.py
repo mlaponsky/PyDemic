@@ -26,9 +26,12 @@ def give():
         session['game'] = pickle.dumps(game)
         session['actions'] = actions
         return jsonify( card=str(card),
+                        origin=player.get_position(),
                         recipient=game.players[recipients[0]].get_id(),
                         available=available,
                         num_cards=len(game.players[recipients[0]].hand),
+                        can_cure=player.can_cure(game.research_stations),
+                        can_build=player.can_build(player.get_position(), game.research_stations),
                         phase=game.phase )
 
     else:
@@ -55,8 +58,11 @@ def select_recipient():
     return jsonify( card=str(card),
                     recipient=action['taker'],
                     recipients=[r.get_id() for r in game.players[game.active+1:] + game.players[:game.active]],
+                    origin=player.get_position(),
                     available=available,
                     num_cards=len(recipient.hand),
+                    can_cure=player.can_cure(game.research_stations),
+                    can_build=player.can_build(player.get_position(), game.research_stations),
                     phase=game.phase )
 
 @cards.route('/_take')
@@ -78,6 +84,8 @@ def take():
                     source_id=action['giver'],
                     available=available,
                     num_cards=len(player.hand),
+                    can_cure=player.can_cure(game.research_stations),
+                    can_build=player.can_build(player.get_position(), game.research_stations),
                     phase=game.phase )
 
 @cards.route('/_trash')
@@ -86,7 +94,6 @@ def trash():
     actions = session['actions']
 
     card = request.args.get('card', -1, type=int)
-    phase = request.args.get('phase', -1, type=int)
     player = game.players[game.active]
     for p in game.players:
         if card in p.hand:
@@ -108,4 +115,6 @@ def trash():
                     owner=owner.get_id(),
                     card=str(card),
                     num_cards=len(owner.hand),
+                    can_cure=player.can_cure(game.research_stations),
+                    can_build=player.can_build(player.get_position(), game.research_stations),
                     phase=game.phase )

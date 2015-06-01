@@ -33,6 +33,7 @@ def remove_cubes():
         session['game'] = pickle.dumps(game)
         return jsonify( c=str(color),
                         num_cubes=action['removed'],
+                        cure=game.cures[color],
                         cubes_left=game.cubes_left[color],
                         at_risk=game.at_risk,
                         phase=game.phase )
@@ -44,10 +45,13 @@ def get_treatment_color():
     player = game.players[game.active]
     color = request.args.get('color', 0, type=int)
     action = game.treat(color)
+    available, dispatch, origin, player_id = game.set_available(0)
     actions.append(action)
     session['actions'] = actions
     session['game'] = pickle.dumps(game)
     return jsonify( num_cubes=action['removed'],
-                    cubes_left=game.cubes_left,
+                    cure=game.cures[color],
+                    cubes_left=game.cubes_left[color],
                     at_risk=game.at_risk,
+                    available=available,
                     phase=game.phase )

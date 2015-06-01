@@ -33,10 +33,12 @@ def make_cure():
                         cured=game.cures[cure_color],
                         cards=[str(card) for card in cure_cards],
                         role=player.get_id(),
-                        position=str(player.get_position()),
+                        origin=str(player.get_position()),
                         cubes_left=game.cubes_left[cure_color],
                         medic=action['medic_pos'],
                         available=available,
+                        can_build=player.can_build(player.get_position(), game.research_stations),
+                        is_win = game.is_win(),
                         phase=game.phase )
     else:
         session['game'] = pickle.dumps(game)
@@ -73,4 +75,6 @@ def select_cure():
                     cubes_left=game.cubes_left[cure_color],
                     medic=action['medic_pos'],
                     available=available,
+                    can_build=player.can_build(player.get_position(), game.research_stations),
+                    is_win=game.is_win(),
                     phase=game.phase )

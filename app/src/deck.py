@@ -2,6 +2,7 @@
 
 from .constants import *
 from random import shuffle
+from copy import copy
 
 class Deck:
     def __init__(self):
@@ -92,9 +93,11 @@ class InfectCards(Deck):
         shuffle(self.deck)
 
     def recombine(self):
+        print(self.discard)
         shuffle(self.discard)
-        self.deck = self.discard + self.deck
+        self.deck = copy(self.discard) + self.deck
         self.discard = []
+        print(self.deck)
 
     def draw_card(self, index):
         card = self.deck.pop(index)

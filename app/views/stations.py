@@ -27,18 +27,21 @@ def select_station():
     else:
         action = game.build(to_remove)
 
-    if game.phase <= DRAW:
+    if game.phase < DRAW:
         if trashing == 0:
             actions.append(action)
         else:
             actions[-1]['trash'] = action
-    available, new_dispatch, origin, player_id = game.set_available(player)
+    available, new_dispatch, origin, player_id = game.set_available(0)
+    can_build = player.get_position() not in game.research_stations and (player.get_position()
+                                            in player.hand or player.get_role() == OE)
     session['actions'] = actions
     session['game'] = pickle.dumps(game)
     return jsonify( position=player.get_position(),
                     station=position,
                     discard=action['cards'],
-                    can_build=action['can_build'],
+                    can_build=player.can_build(game.research_stations),
+                    can_cure=player.can_cure(game.research_stations),
                     owner=action['owner'],
                     available=available,
                     num_cards=len(owner.hand),
@@ -58,11 +61,13 @@ def build_station():
     owner = game.players[index]
     if num_stations < MAX_STATIONS:
         if position != -1:
+            print("Before", game.board.neighbors[position])
             action = game.play_gg(position, index, -1)
+            print("After", game.board.neighbors[position])
         else:
             position = player.get_position()
             action = game.build(-1)
-        if game.phase <= DRAW:
+        if game.phase < DRAW:
             if trashing == 0:
                 actions.append(action)
             else:
@@ -75,6 +80,7 @@ def build_station():
         return jsonify( position=player.get_position(),
                         station=position,
                         can_build=can_build,
+                        can_cure=player.can_cure(game.research_stations),
                         num_stations=num_stations,
                         discard=action['cards'],
                         owner=action['owner'],

@@ -1,4 +1,4 @@
-#!/home/max/PyDemic/flask/bin/python
+#!/home/max/Documents/PyDemic/flask/bin/python
 
 import logging
 import optparse

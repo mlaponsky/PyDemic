@@ -91,7 +91,7 @@ class Player:
         return (source.has_card(card) and self.position == source.get_position() and card == self.position and card//CITIES_PER_COLOR != EVENT)
 
     def can_give(self, card, target):
-        return (self.has_card(card) and self.position == target.get_position() and card == self.position and card//CITIES_PER_COLOR != EVENT)
+        return (self.has_card(card) and self.position == target.get_position() and card == self.position and card//CITIES_PER_COLOR != EVENT and self.role != target.get_role())
 
     def give_card(self, card, target):
         if card in self.hand:
@@ -203,7 +203,6 @@ class Dispatcher(Player):
         self.color = ROLES[role]['color']
         self.title = ROLES[role]['title_img']
         self.piece = ROLES[role]['piece_img']
-        self.selected = self
 
     # def can_drive(self, selected_id, board):
     #     if self.selected == self:
@@ -254,7 +253,7 @@ class Medic(Player):
         if self.selected == self:
             self.position = new_pos
             for color in COLORS:
-                if cures[color]:
+                if cures[color] > LIVE:
                     cubes_left[color] += cubes[self.position][color]
                     cubes[self.position][color] = 0
                     if all(cubes[self.position][c] == 0 for c in COLORS):
@@ -364,7 +363,7 @@ class Researcher(Player):
         self.selected = self
 
     def can_give(self, card, target):
-        return (self.has_card(card) and self.position == target.get_position())
+        return (self.has_card(card) and self.position == target.get_position() and self.role != target.get_role())
 
 class Scientist(Player):
     def __init__(self):

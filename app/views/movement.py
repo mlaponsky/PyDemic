@@ -37,6 +37,7 @@ def set_move():
     prev_avail, dispatch, origin, player_id = game.set_available(0)
 
     if is_airlift == 1:
+        discard=AIRLIFT
         action = game.play_airlift(index, new_pos)
     elif new_pos in player.can_drive(board):
         action = game.move(new_pos, index, '', 'drive')
@@ -67,7 +68,7 @@ def set_move():
         session['game'] = pickle.dumps(game)
         return jsonify(selectable=selectable)
     else:
-        if game.phase <= DRAW:
+        if game.phase < DRAW:
             if trashing == 0:
                 actions.append(action)
             else:
@@ -79,6 +80,9 @@ def set_move():
         cubes_left = copy(game.cubes_left)
         can_build = player.can_build(new_pos, game.research_stations)
         can_cure = player.can_cure(game.research_stations)
+        for i in range(len(game.board.neighbors)):
+            if i in game.board.neighbors[i]:
+                print(action['act'], i, game.board.neighbors[i])
         session['actions'] = actions
         session['game'] = pickle.dumps(game)
         return jsonify( available=available,
@@ -114,11 +118,11 @@ def select_move_card():
     action = 0
 
     if discard == origin:
-        action = game.move(new_pos, 0, discard, 'charter')
+        action = game.move(new_pos, game.active, discard, 'charter')
     elif discard == new_pos:
-        action = game.move(new_pos, 0, discard, 'fly')
+        action = game.move(new_pos, game.active, discard, 'fly')
     elif player.get_role() == OE:
-        action = game.move(new_pos, 0, discard, 'station-fly')
+        action = game.move(new_pos, game.active, discard, 'station-fly')
     actions.append(action)
 
     can_build = player.can_build(new_pos, game.research_stations)
@@ -126,6 +130,9 @@ def select_move_card():
     available, new_dispatch, origin, player_id = game.set_available(0)
     can_take, can_give, team_hands = game.set_share()
 
+    for i in range(len(game.board.neighbors)):
+        if i in game.board.neighbors[i]:
+            print(method['act'], i, game.board.neighbors[i])
     session['actions'] = actions
     session['game'] = pickle.dumps(game)
     return jsonify( available=available,

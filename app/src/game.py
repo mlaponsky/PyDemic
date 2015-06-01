@@ -10,9 +10,9 @@ from uuid import uuid4
 class Game:
     def __init__(self, roles, epidemics):
         self.lose = False
-        self.day = 0
+        self.turns = 0
         self.phase = ACTION_0
-        self.id = uuid4()
+        self.id = str(uuid4())
 
         self.num_outbreaks = 0
         self.num_epidemics = 0
@@ -51,7 +51,6 @@ class Game:
         self.player_cards = PlayerCards(self.players, self.num_epidemics)
         self.active = self.set_order()
         self.selected = self.active
-
 
     ## Manage game phase
     def get_phase(self):
@@ -171,6 +170,7 @@ class Game:
     def execute_infect(self, city, color, num_cubes):
         self.reset_outbreaks()
         self.infect(city, color, num_cubes)
+        print(self.outbreaks)
 
     def infect(self, city, color, num_cubes):
         if city not in self.quarantined and self.cures[color] != ERADICATED:
@@ -212,7 +212,6 @@ class Game:
         self.infected = {}
 
     def epidemic(self):
-        print(self.infect_cards.deck[-1])
         self.reset_outbreaks()
         self.reset_infection()
         self.drawn_epidemics += 1
@@ -245,7 +244,7 @@ class Game:
     def risk(self, city):
         at_risk = False
         for c in COLORS:
-            if self.cubes[city][c] == MAX_CUBES and city not in self.infect_cards.discard:
+            if self.cubes[city][c] == MAX_CUBES and city in self.infect_cards.deck:
                 at_risk = True
         if not at_risk and city in self.at_risk:
             self.at_risk.remove(city)
@@ -258,17 +257,26 @@ class Game:
         return len(self.research_stations)
 
     def is_eradicated(self, color):
-        eradicated = True
-        for city in range(NUM_CITIES):
-            if self.cubes[city][color] != 0:
-                return False
-        return True
+        return self.cubes_left[color] == NUM_CUBES and self.cures[color] == 1
+
+    def next_turn(self):
+        if self.phase == DRAW or self.phase == EP:
+            self.oqn = False
+        self.phase = ACTION_0
+        self.active = (self.active+1) % self.num_players
+        self.selected = self.active
+        if self.players[self.active].get_role() == OE:
+            self.players[self.active].has_stationed = False
+        self.turns += 1
+
 # Basic actions
     def move(self, new_pos, index, discard, method):
         player = self.players[self.active]
         mover = self.players[self.selected]
         owner = self.players[index]
 
+        true_selected = self.selected
+        self.selected = self.active
         prev_avail, dispatch, origin, player_id = self.set_available(0)
         prev_hand = copy(player.hand)
         prev_take, prev_give, prev_hands = self.set_share()
@@ -277,12 +285,13 @@ class Game:
         orig_cubes = copy(self.cubes[new_pos])
         orig_rows = copy(self.board.rows[new_pos])
         at_risk = copy(self.at_risk)
+        self.selected = true_selected
         action = { 'act': method,
                     'id': player.get_id(),
                     'owner': owner.get_id(),
                     'mover': mover.get_id(),
                     'is_stored': 0,
-                    'origin': origin,
+                    'origin': mover.get_position(),
                     'destination': new_pos,
                     'cards': discard,
                     'owner': owner.get_id(),
@@ -298,12 +307,14 @@ class Game:
                     'take': prev_take,
                     'at_risk': at_risk }
         mover.move(new_pos, self.board, self.cures, self.cubes, self.cubes_left, self.quarantined)
+        for c in COLORS:
+            if self.is_eradicated(c):
+                self.cures[c] = ERADICATED
         self.risk(new_pos)
         self.phase += 1
         if discard != '':
             owner.discard(int(discard), self.player_cards)
-        if player.get_role() != DISPATCHER:
-            self.selected = self.active
+        self.selected = self.active
         if method == 'station-fly':
             player.has_stationed = True
         return action
@@ -326,6 +337,8 @@ player.hand or player.get_role() == OE)
                    'card_data': CARDS[discard],
                    'available': prev_avail }
         self.research_stations.append(player.get_position())
+        if to_remove != -1:
+            self.research_stations.remove(to_remove)
         self.phase += 1
         if discard != -1:
             player.discard(discard, self.player_cards)
@@ -341,6 +354,8 @@ player.hand or player.get_role() == OE)
         self.phase += 1
         cubes_removed = orig_cubes - self.cubes[city][color]
         self.risk(city)
+        if self.is_eradicated(color):
+            self.cures[color] = ERADICATED
         action = { 'act': "treat",
                    'origin': str(city),
                     'color': str(color),
@@ -363,13 +378,13 @@ player.hand or player.get_role() == OE)
         for p in self.players:
             if p.get_role() == MEDIC:
                 medic_pos = p.get_position()
-                cubes[medic_pos][cure_color] = 0
+                self.cubes_left[cure_color] += self.cubes[medic_pos][cure_color]
+                self.cubes[medic_pos][cure_color] = 0
                 self.risk(medic_pos)
                 break
-        self.phase += 1
-
         if self.is_eradicated(cure_color):
-            self.cures[ cure_color ] = ERADICATED
+            self.cures[cure_color] = ERADICATED
+        self.phase += 1
 
         action = { 'act': 'cure',
                     'id': player.get_id(),
@@ -443,6 +458,9 @@ player.hand or player.get_role() == OE)
                     'take': prev_take,
                     'at_risk': at_risk }
         mover.move(new_pos, self.board, self.cures, self.cubes, self.cubes_left, self.quarantined)
+        for c in COLORS:
+            if self.is_eradicated(c):
+                self.cures[c] = ERADICATED
         if not is_stored:
             owner.discard(AIRLIFT, self.player_cards)
         else:
@@ -475,9 +493,9 @@ player.hand or player.get_role() == OE)
         return action
 
 
-    def play_forecast(self, index, reorded):
-        owner = self.players[(self.active + index) % self.num_players]
-        self.infect_cards.deck = reorded + self.infect_cards.deck[:6]
+    def play_forecast(self, index, reordered):
+        owner = self.players[index]
+        self.infect_cards.deck = reordered + self.infect_cards.deck[6:]
         is_stored = FORECAST not in owner.hand
         if not is_stored:
             owner.discard(FORECAST, self.player_cards)

@@ -125,7 +125,6 @@ function trash(event) {
                                                action: 1 }).success(
             function(data) {
                 PHASE = data.phase;
-                $('#actions-'+String(PHASE)).attr('class', 'on');
                 $('#logger').html('');
                 if ( card.hasClass('pl-card') ) {
                     discard(String(data.card));
@@ -137,10 +136,8 @@ function trash(event) {
                 buttons_on();
                 if ( data.num_cards <= 7 ) {
                     TRASHING = 0;
-                    body.removeClass('selecting');
                     if (PHASE >= 4) {
                         actions_off();
-                        $('#next-phase').off().on('click', infect).prop('disabled', false);
                     } else {
                         set_cities(data.available);
                         set_treatable(data.origin);
@@ -152,11 +149,12 @@ function trash(event) {
                         set_team_trash(data.owner)
                     }
                 }
-                if ( !body.hasClass('selecting') && data.phase !== 4 ) {
+                if ( !body.hasClass('selecting') && data.phase <= 4 ) {
                     team_toggle();
                 } else {
                     body.removeClass('selecting');
                 }
+                set_next_button();
             }
         ).error(function(error){console.log(error)});
     }
@@ -173,7 +171,7 @@ function give(card, data) {
     $('#undo-action').prop('disabled', ACTIONS===0);
     if (PHASE >= 4) {
         actions_off();
-        $('#next-phase').off().on('click', infect).prop('disabled', false);
+        $('#next-phase').off().on('click', end_turn).prop('disabled', false);
     } else {
         set_cities(data.available);
         set_treatable(data.origin);
@@ -229,6 +227,9 @@ function give_card(event) {
                         }
                         buttons_on();
                     }
+                    $('#build-station').prop('disabled', !data.can_build);
+                    $('#make-cure').prop('disabled', !data.can_cure);
+                    set_next_button();
                 } else {
                     var map = Snap.select('#cities');
                     map.selectAll('.available').forEach(function(el) {
@@ -281,6 +282,9 @@ function select_recipient(event) {
             if (data.num_cards > 7) {
                 set_team_trash(data.recipient);
             }
+            events_on();
+            set_selectable_players(ACTIVE);
+            set_next_button();
         }).error(function(error) {console.log(errors)} );
 }
 
@@ -314,11 +318,14 @@ function take_card(event) {
                 }
                 if (PHASE >= 4) {
                     actions_off();
-                    $('#next-phase').off().on('click', infect).prop('disabled', false);
+                    $('#next-phase').off().on('click', end_turn).prop('disabled', false);
                 } else {
                     set_cities(data.available);
                 }
+                $('#build-station').off().on('click', build_station).prop('disabled', !data.can_build);
+                $('#make-cure').off().on('click', make_cure).prop('disabled', !data.can_cure)
                 $('#undo-action').prop('disabled', ACTIONS===0);
+                set_next_button();
             }).error(function(error) {console.log(errors)} );
     }
 }

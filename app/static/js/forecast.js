@@ -9,6 +9,8 @@ function select_forecast(target) {
     map.selectAll('.treatable').forEach( function(el) {
 		el.unavailable();
 	});
+    $('.draw-card').hide(200);
+    $('#infect').hide(200)
     $('#forecast').show(200);
     $('#next-phase').off().on('click', execute_forecast).prop('disabled', false);
     $('#logger').html("Rearrange the top six cards of the Infection Deck (top card drawn first). Click 'NEXT' when finished.");
@@ -43,8 +45,18 @@ function execute_forecast() {
                 set_cities(data.available);
                 set_treatable(data.position);
             } else {
-                actions_off();
-            }
+                 events_on();
+                 console.log(PHASE, data.counter);
+                 if ( (PHASE === 4 || PHASE === 5) && data.oqn) {
+                     $('#next-phase').off().on('click', next_turn);
+                 } else if (PHASE === 4 || PHASE === 5) {
+                     $('#next-phase').off().on('click', infect);
+                 } else if (PHASE < data.counter + 5) {
+                     $('#next-phase').off().on('click', infect);
+                 } else if (PHASE = data.counter + 5) {
+                     $('#next-phase').off().on('click', next_turn);
+                 }
+             }
             $('.holding.down').removeClass('down').hide(200);
             if (data.num_cards <= 7) {
                 TRASHING = 0;

@@ -26,6 +26,8 @@ var EPIDEMIC = 0;
 var PHASE = 0;
 var STORE = 0;
 var ACTIVE;
+var COUNTER = 0;
+var OQN = false;
 
 function initial_load() {
     $.getJSON($SCRIPT_ROOT + '/_load').success(function(data) {
@@ -81,7 +83,8 @@ function initial_load() {
 
         $('#forecast').sortable().disableSelection();
         $('#forecast>li').hide();
-        for (var n=0; n<data.forecast.length; n++) {
+        for (var n=data.forecast.length-1; n >= 0; n--) {
+            $('#forecast').prepend($('#forecast-'+String(data.forecast[n])));
             $('#forecast-'+String(data.forecast[n])).show();
         }
 
@@ -105,15 +108,19 @@ function initial_load() {
         $('.menu-left li').hide();
         for ( var i=0; i<data.player_discard.length; i++ ) {
             var card = data.player_discard[i];
-            $('#pl-discard-'+String(card)).show();
+            if (card < 53) {
+                $('#pl-discard-'+String(card)).show();
+            }
         }
         for ( var i=0; i<data.player_grave.length; i++ ) {
             var card = data.player_grave[i];
             $('#pl-discard-'+String(card)).attr('class', 'graveyard').show();
         }
         for ( var i=0; i<data.drawn_epidemics; i++ ) {
-            $('#epidemic-'+String(i)).show();
+            $('#epidemic-'+String(i+1)).show();
+            $('#rate-'+String(i)).attr('class', 'off');
         }
+        $('#rate-'+String(data.drawn_epidemics)).attr('class', 'on');
         for ( var j=0; j<data.infect_discard.length; j++) {
             var card = data.infect_discard[j];
             $('#infect-discard-'+String(card)).show();
@@ -121,6 +128,16 @@ function initial_load() {
         for ( var j=0; j<data.infect_grave.length; j++) {
             var card = data.infect_grave[j];
             $('#infect-discard-'+String(card)).attr('class', 'graveyard').show();
+        }
+
+        for (var p=0; p<=data.phase; p++) {
+            $('#actions-'+String(p)).attr('class', 'on');
+        }
+
+        $('#outbreak-'+String(data.num_outbreaks)).attr('class', 'on');
+        if (PHASE === 4) {
+            actions_off();
+            events_on();
         }
     }).error(function(error){console.log(error);});
 };

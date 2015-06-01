@@ -1,8 +1,0 @@
-.unavailable { 
- 	stroke-width: 2.0;
-}
-.available {
-	stroke-width: 2.0;
-}
-.available:hover {
-	stroke-width: 8.0;

@@ -29,7 +29,7 @@ function airlift_select_player(event) {
     var target = $(event.target);
     var select = target.parent().parent().index();
     var is_airlift = 0;
-    if ( $('.event-card').hasClass('down') || $('#cp-store').hasClass('down')) {
+    if ( $('.event-card').hasClass('down') || $('#cp-store').hasClass('down') || PHASE >= 4) {
         is_airlift = 1;
     }
     $.getJSON( $SCRIPT_ROOT + '/_select_player', { index: select,
@@ -58,7 +58,7 @@ function airlift_select_player(event) {
 function airlift_select_self(event) {
     var map = Snap.select('#cities');
     var is_airlift = 0;
-    if ( $('.event-card').hasClass('down') || $('#cp-store').hasClass('down')) {
+    if ( $('.event-card').hasClass('down') || $('#cp-store').hasClass('down') || PHASE >= 4) {
         is_airlift = 1;
     }
     $.getJSON( $SCRIPT_ROOT + '/_select_player', { index: 0,

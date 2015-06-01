@@ -85,11 +85,13 @@ function select_station(event) {
                 TRASHING = 0;
                 if (PHASE >= 4) {
                     actions_off();
-                    $('#next-phase').off().on('click', infect).prop('disabled', false);
                 } else {
                     set_cities(data.available);
-                    set_treatable(data.pozition);
+                    set_treatable(data.position);
+                    $('#make-cure').prop('disabled', !data.can_cure);
                 }
+                events_on();
+                set_next_button();
             } else {
                 set_active_trash();
             }
@@ -149,11 +151,13 @@ function build_station() {
                 TRASHING = 0;
                 if (PHASE >= 4) {
                     actions_off();
-                    $('#next-phase').off().on('click', infect).prop('disabled', false);
                 } else {
                     set_cities(data.available);
                     set_treatable(data.position);
+                    $('#make-cure').prop('disabled', !data.can_cure)
                 }
+                events_on();
+                set_next_button();
             } else {
                 set_active_trash();
             }

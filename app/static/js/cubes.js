@@ -106,12 +106,15 @@ function remove_cubes(city, color, num_cubes, cubes_left, at_risk) {
     $('#logger').html('Removed '+String(num_cubes)+' '+COLORS[color].bold()+' cube(s) from '+CARDS[Number(city)].bold()+' ('+String(cubes.length-num_cubes)+' remaining).');
 }
 
-function medic_with_cure(data, position) {
-    if (typeof data.cures !== 'undefined') {
+function medic_with_cure(id, data, position) {
+    if (typeof data.cures !== 'undefined' && id === 'medic') {
         for (var color=0; color<4; color++) {
             if (data.cures[color] > 0) {
                 $(".city-"+position+".cube-"+String(color)).remove();
                 document.getElementById(String(color)+"-cnt").getElementsByTagName('tspan')[0].textContent = String(data.cubes_left[color]);
+            }
+            if (data.cubes_left[color] === 24 && data.cures[color] === 1) {
+                set_cure(color, 2);
             }
         }
     }
@@ -125,6 +128,7 @@ function treat(event) {
             PHASE = data.phase;
             $('#actions-'+String(PHASE)).attr('class', 'on');
             remove_cubes(city, data.c, data.num_cubes, data.cubes_left, data.at_risk);
+            set_cure(data.c, data.cure);
             ACTIONS++;
             if (PHASE >= 4) {
                 actions_off();
@@ -171,6 +175,7 @@ function select_cube_color(event) {
             PHASE = data.phase;
             $('#actions-'+String(PHASE)).attr('class', 'on');
             remove_cubes(city, color, data.num_cubes, data.cubes_left);
+            set_cure(color, data.cure);
             board_on();
             $('.marked').off().on('click', execute_move).attr('class', 'available');
             ACTIONS++;
@@ -179,8 +184,10 @@ function select_cube_color(event) {
             $("."+class_array[0]).css("fill", '')
             $("."+class_array[0]).off();
             $("."+class_array[0]).css('pointer-events', 'none');
-            if (PHASE === 4) {
+            if (PHASE >= 4) {
                 actions_off();
+            } else {
+                set_cities(data.available);
             }
         }).error(function(error){console.log(error);});
 }

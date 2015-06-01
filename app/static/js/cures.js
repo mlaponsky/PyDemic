@@ -12,17 +12,26 @@ function make_cure() {
                     $(".city-"+data.medic+".cube-"+String(data.c)).remove();
                     document.getElementById(String(data.c)+"-cnt").getElementsByTagName('tspan')[0].textContent = String(data.cubes_left);
                 }
+                if (data.is_win) {
+                    $('#stage-name').html("YOU WIN");
+                    $('#stage-name').fadeIn(300);
+                    board_off();
+                    buttons_off();
+                }
                 ACTIONS++;
                 PHASE = data.phase;
                 $('#actions-'+String(PHASE)).attr('class', 'on');
                 if (PHASE >= 4) {
                     actions_off();
-                    $('#next-phase').off().on('click', infect).prop('disabled', false);
                 } else {
                     set_cities(data.available);
                     set_treatable(data.origin);
+                    set_selectable_players(ACTIVE);
                 }
+                $('#build-station').prop('disabled', !data.can_build);
+                $('#make-cure').prop('disabled', true);
                 $('#undo-action').prop('disabled', ACTIONS === 0);
+                $('#next-phase').off().on('click', end_turn).prop('disabled', false);
             } else {
                 buttons_off();
                 $('#logger').html('(CURE) Deselect which cards you wish to keep, then click NEXT.');
@@ -65,6 +74,16 @@ function toggle_select(event) {
     $('#next-phase').off().on('click', execute_cure).prop('disabled', $('.down').length !== needed);
 }
 
+function set_cure(color, cured) {
+    if (cured === 1) {
+        document.getElementById("cure-"+String(color)).getElementsByTagName('tspan')[0].textContent = '✓';
+    } else if (cured === 2) {
+        document.getElementById("cure-"+String(color)).getElementsByTagName('tspan')[0].textContent = '✕';
+    } else {
+        document.getElementById("cure-"+String(color)).getElementsByTagName('tspan')[0].textContent = '○';
+    }
+}
+
 function execute_cure() {
     var cards = [];
     $('.down').each( function(index) {
@@ -100,15 +119,19 @@ function execute_cure() {
             ACTIONS++;
             PHASE = data.phase;
             $('#actions-'+String(PHASE)).attr('class', 'on');
+            $('.pl-card').off().removeClass('giveable');
+            events_on();
             if (PHASE >= 4) {
                 actions_off();
-                $('#next-phase').off().on('click', infect).prop('disabled', false);
             } else {
                 set_cities(data.available);
                 set_treatable(data.origin);
+                console.log(ACTIVE);
+                set_selectable_players(ACTIVE);
             }
+            $('#build-station').prop('disabled', !data.can_build);
             $('#undo-action').prop('disabled', ACTIONS === 0);
-            $('#next-phase').prop('disabled', true);
+            $('#next-phase').off().on('click', end_turn).prop('disabled', false);
             board_on();
         }).error(function(error){console.log(error)});
 }

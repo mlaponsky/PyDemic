@@ -59,9 +59,21 @@ def undo_action():
     elif action['act'] == "store":
         undo_store(data, game)
 
+    available, dispatch, origin, player_id = game.set_available(0)
+    can_take, can_give, team_hands = game.set_share()
+    can_build = player.can_build(player.get_position(), game.research_stations)
+    can_cure = player.can_cure(game.research_stations)
+
     session['actions'] = actions
     session['game'] = pickle.dumps(game)
-    return jsonify(result=action)
+    return jsonify( result=action,
+                    available=available,
+                    can_give=can_give,
+                    can_take=can_take,
+                    hand=player.hand,
+                    team_hands=team_hands,
+                    can_build=can_build,
+                    can_cure=can_cure )
 
 def undo_move(data, player, game):
     if player.get_id() != data['mover']:
@@ -115,7 +127,7 @@ def undo_cure(data, player, game):
         player.add_card(int(card))
     game.cures[data['color']] = LIVE
     game.cubes_left[data['color']] -= data['cubes']
-    if medic_pos != -1:
+    if data['medic_pos'] != -1:
         game.cubes[medic_pos][data['color']] = data['cubes']
         game.board.rows[medic_pos] = data['rows']
         game.risk(medic_pos)

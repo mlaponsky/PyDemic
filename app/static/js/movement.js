@@ -17,47 +17,44 @@ function move(new_pos, data, is_airlift) {
 	});
     ACTIONS++;
     //Animate movement and set availability.
-    $("#"+data.mover_id+"-piece").stop().velocity({left: player_l, top: player_t},
-        function() {
-            medic_with_cure(data, new_pos);
-            $("#undo-action").prop('disabled', ACTIONS === 0);
-            if (data.player_id === ACTIVE) {
-                if (PHASE < 4) {
-                    set_treatable(data.player_pos);
-                }
-                $("#build-station").prop('disabled', !data.can_build);
-                $("#make-cure").prop('disabled', !data.can_cure);
-            } else {
-                $("#build-station").prop('disabled', true);
-                $("#make-cure").prop('disabled', true);
-            }
-            if (is_airlift === 1) {
-                $('#name').off().attr('class', 'self-unchooseable');
-                $('.role').off().attr('class', 'role');
-                if ( $('#active-dispatcher').length !== 0 ) {
-                    $('.role').off().on('click', select_player).attr('class', 'role choosable')
-                }
-                if (!body.hasClass('selecting') || PHASE === 4 ) {
-                    team_toggle();
-                } else {
-                    body.removeClass('selecting');
-                }
-            }
-            if (data.num_cards <= 7) {
-                buttons_on();
-            } else {
-                TRASHING = 1;
-                $('#logger').html( $('#logger').html() + ' Still over the card limit; choose another card to discard.');
-                board_off();
-                set_active_trash();
-            }
-            if (PHASE >= 4) {
-                actions_off();
-            } else {
-                set_cities(data.available);
-            }
-    });
-
+    $("#"+data.mover_id+"-piece").stop().velocity({left: player_l, top: player_t}, 300);
+    medic_with_cure(data.mover_id, data, new_pos);
+    $("#undo-action").prop('disabled', ACTIONS === 0);
+    if (data.player_id === ACTIVE) {
+        if (PHASE < 4) {
+            set_treatable(data.player_pos);
+        }
+        $("#build-station").prop('disabled', !data.can_build);
+        $("#make-cure").prop('disabled', !data.can_cure);
+    } else {
+        $("#build-station").prop('disabled', true);
+        $("#make-cure").prop('disabled', true);
+    }
+    if (is_airlift === 1) {
+        if (!body.hasClass('selecting') || PHASE === 4 ) {
+            team_toggle();
+        } else {
+            body.removeClass('selecting');
+        }
+    }
+    $('#name').off().attr('class', 'self-unchooseable');
+    $('.role').off().attr('class', 'role');
+    if ( ACTIVE === 'dispatcher' ) {
+        $('.role').off().on('click', select_player).attr('class', 'role choosable')
+    }
+    if (data.num_cards <= 7) {
+        buttons_on();
+    } else {
+        TRASHING = 1;
+        $('#logger').html( $('#logger').html() + ' Still over the card limit; choose another card to discard.');
+        board_off();
+        set_active_trash();
+    }
+    if (PHASE >= 4) {
+        actions_off();
+    } else {
+        set_cities(data.available);
+    }
 }
 
 function execute_move(event) {
@@ -66,7 +63,7 @@ function execute_move(event) {
     var new_pos = city.attr("id").split('-')[1];
     var is_airlift = 0;
     var select = 0;
-    if ( $('.event-card').hasClass('down') || $('#cp-store').hasClass('down')){
+    if ( $('.event-card').hasClass('down') || $('#cp-store').hasClass('down') || PHASE >= 4 ){
         is_airlift = 1
         if ( $('.card.down').length !== 0 ) {
             select  = $('.event-card.down').parent().parent().index();
@@ -122,6 +119,7 @@ function execute_move(event) {
             if (PHASE === 4) {
                 actions_off();
             }
+            set_next_button();
         } else {
             // If there are multiple ways to move to new_pos
             map.select('#city-'+new_pos).selected();
@@ -160,7 +158,6 @@ function select_discard(event) {
     var city_id = $(".selected").attr("id").split('-')[1];
 
     $.getJSON($SCRIPT_ROOT+'/_select_card_for_move', { card: Number(card), city_id: Number(city_id) }).success(function (data) {
-                escape_card_select( $('.pl-card.down') );
                 $('#logger').html("Flew from "+CARDS[data.origin].bold()+" to "+CARDS[Number(city_id)].bold()+".")
                 discard(card);
                 if (data.move === "station-fly") {
@@ -169,9 +166,11 @@ function select_discard(event) {
                 PHASE = data.phase;
                 $('#actions-'+String(PHASE)).attr('class', 'on');
                 move(city_id, data, 0);
+                escape_card_select( $('.pl-card.down') );
                 buttons_on();
                 if (PHASE === 4) {
                     actions_off();
                 }
+                set_next_button();
     }).error(function(error){console.log(error);});
 }

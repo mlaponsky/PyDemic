@@ -27,6 +27,8 @@ def end_turn():
     for card in draw:
         if card != EPIDEMIC:
             player.add_card(card)
+        else:
+            game.player_cards.discard.append(EPIDEMIC)
     oqn = game.oqn
     game.oqn = False
 
@@ -35,7 +37,6 @@ def end_turn():
     return jsonify( draw_0=draw0,
                     draw_1=draw1,
                     num_cards=len(player.hand),
-                    forecast=player_deck[:6],
                     cards_left=len(game.player_cards.deck),
                     oqn=oqn )
 
@@ -51,13 +52,23 @@ def execute_epidemic():
     has_rp = game.has_rp()
     oqn = game.oqn
     game.oqn = False
+    game.phase = EP
     if game.num_outbreaks >= 8:
         game.lose = True
-        print(game.num_outbreaks)
     for cubes in game.cubes_left:
-        print(cubes)
         if cubes <= 0:
             game.lose = True
+    medic = None
+    for p in game.players:
+        if p.get_role() == MEDIC:
+            medic = p
+    if medic != None:
+        for city in game.infected:
+            for color in COLORS:
+                if medic.get_position() == city and game.cures[color] == CURED:
+                    game.cubes_left[color] += game.infected[city][color]
+                    game.cubes[citty][color] -= game.infect[city][color]
+                    game.infected[city][color] = 0
 
     session['game'] = pickle.dumps(game)
     return jsonify( card=card,
@@ -70,13 +81,18 @@ def execute_epidemic():
                     infected = game.infected,
                     at_risk=game.at_risk,
                     has_rp=has_rp,
+                    forecast=game.infect_cards.deck[:6],
                     oqn=oqn,
                     lose=game.lose )
 
 @phase.route('/_infect')
 def infect_phase():
     game = pickle.loads(session['game'])
-    game.phase += 1
+    if game.phase < INFECT_1:
+        game.phase = INFECT_1
+    else:
+        game.phase += 1
+    print(game.phase)
     orig_cubes = deepcopy(game.cubes)
     game.reset_infection()
     num_infect = game.get_infect_number()
@@ -84,11 +100,20 @@ def infect_phase():
     color = card//CITIES_PER_COLOR
     if game.num_outbreaks >= 8:
         game.lose = True
-        print(game.num_outbreaks)
     for cubes in game.cubes_left:
-        print(cubes)
         if cubes <= 0:
             game.lose = True
+    medic = None
+    for p in game.players:
+        if p.get_role() == MEDIC:
+            medic = p
+    if medic != None:
+        for city in game.infected:
+            for c in COLORS:
+                if medic.get_position() == city and game.cures[c] == CURED:
+                    game.cubes_left[c] += game.infected[city][c]
+                    game.cubes[city][c] -= game.infect[city][c]
+                    game.infected[city][c] = 0
     session['game'] = pickle.dumps(game)
     return jsonify( infected=game.infected,
                     card=card,
@@ -97,8 +122,10 @@ def infect_phase():
                     outbreaks=game.outbreaks,
                     rows=game.board.rows,
                     at_risk=game.at_risk,
-                    counter=game.phase - DRAW,
+                    counter=game.phase - EP,
                     total=num_infect,
+                    forecast=game.infect_cards.deck[:6],
+                    phase=game.phase,
                     lose=game.lose )
 
 @phase.route('/_has_rp')
@@ -121,7 +148,8 @@ def finish_epidemic():
     session['game'] = pickle.dumps(game)
     return jsonify(at_risk=game.at_risk,
                    has_rp=has_rp,
-                   oqn=oqn)
+                   oqn=oqn,
+                   forecast=game.infect_cards.deck[:6])
 
 @phase.route('/_ep_rp')
 def ep_rp():
@@ -142,18 +170,16 @@ def next_turn():
     game = pickle.loads(session['game'])
     actions = session['actions']
     actions = []
-    game.phase = ACTION_0
-    game.active = (game.active+1) % game.num_players
-    game.selected = game.active
+
+    game.next_turn()
+
+    player = game.players[game.active]
     board = game.board
     available = []
     pieces = []
     roles = []
     positions = []
 
-    player = game.players[game.active]
-    if player.get_role() == OE:
-        player.has_stationed = False
     team = game.players[game.active:] + game.players[:game.active]
     available, dispatch, origin, player_id = game.set_available(0)
     available = available + dispatch

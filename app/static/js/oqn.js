@@ -20,16 +20,15 @@ function select_oqn(target) {
             if (TRASHING === 0) {
                 ACTIONS++;
             }
+            OQN = true;
             $('#logger').html('(One Quient Night) You will skip the next Infection Phase.');
             $('#undo-action').prop('disabled', ACTIONS === 0);
             if (data.num_cards <= 7) {
                 TRASHING = 0;
-                if (data.phase === 4) {
-                    infect_phase();
-                }
             } else {
                 set_active_trash();
             }
+            set_next_button();
         }
     ).error(function(error){console.log(error)});
 }

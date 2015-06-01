@@ -19,7 +19,6 @@ function set_outbreaks(outbreaks) {
             } else {
                 $('#outbreak-8').attr('class', 'on');
             }
-
             break;
         };
     }
@@ -62,17 +61,20 @@ function end_turn() {
     buttons_off();
     $.getJSON( $SCRIPT_ROOT + '/_end_turn').success(
         function(data) {
+            PHASE = 5;
+            $('#draw-phase').attr('class', 'on');
+            $('#next-turn').prop('disabled', true);
             if (data.lose) {
                 $('#stage-name').html("YOU LOSE");
                 $('#stage-name').fadeIn(300);
                 board_off();
                 buttons_off();
             } else {
-                buttons_on();
                 $('#draw-0').attr('src', "static/img/player_cards/pl-"+String(data.draw_0)+".svg");
                 $('#draw-1').attr('src', "static/img/player_cards/pl-"+String(data.draw_1)+".svg");
                 $('#stage-name').html("DRAW STAGE");
                 $('#stage-name').fadeIn(300).delay(1000).fadeOut(300).delay(300);
+                $('#next-phase').prop('disabled', true);
                 setTimeout( function() {
                     $('#logger').html('Drew '+CARDS[data.draw_0].bold()+' and '+CARDS[data.draw_1].bold()+'.');
                     $('#draw-0').delay(500).show(400);
@@ -102,10 +104,10 @@ function end_turn() {
                         }, 3000);
                     } else if (data.oqn) {
                         $('#logger').html($('#logger').html()+ '. Played One Quiet Night; will skip infection stage.');
-                        $('#next-phase').off().on('click', next_turn).prop('disabled', false);
+                        set_next_button();
                     } else {
-                        $('.draw-card').delay(800).hide(400, function() {events_on();});
-                        $('#next-phase').off().on('click', infect).prop('disabled', false);
+                        events_on();
+                        set_next_button();
                     }
                 }, 1000);
             }
@@ -122,7 +124,6 @@ function epidemic() {
                 $('#stage-name').fadeIn(300);
                 board_off();
                 buttons_off();
-                $('#infect').delay(100).hide(400);
                 $('#epidemic-'+String(data.drawn)).show();
                 $('#infect').attr('src', '/static/img/infect_cards/inf-'+String(data.card)+'.svg');
                 $('#infect').delay(1000).show(400);
@@ -132,6 +133,12 @@ function epidemic() {
                 EPIDEMIC--;
                 $('#infect-discard-'+String(data.card)).show();
                 $('#stage-name').html('EPIDEMIC').delay(500).fadeIn(300).delay(1000).fadeOut(300).delay(300);;
+
+                $('#forecast>li').hide();
+                for (var n=data.forecast.length-1; n >= 0; n--) {
+                    $('#forecast').prepend($('#forecast-'+String(data.forecast[n])));
+                    $('#forecast-'+String(data.forecast[n])).show();
+                }
                 setTimeout( function() {
                     $('#infect').attr('src', '/static/img/infect_cards/inf-'+String(data.card)+'.svg');
                     $('#infect').delay(1000).show(400);
@@ -143,8 +150,8 @@ function epidemic() {
 
                         if (Object.keys(data.infected).length !== 0) {
                             $('#logger').html('(EPIDEMIC)'.bold()+' Infected '+CARDS[data.card].bold()+' with 3 '+COLORS[data.color].bold()+' cubes.');
-                        } else if ( data.cure === 2 ) {
-                            $('#logger').html('(EPIDEMIC)'.bold()+' Drew '+CARDS[data.card].bold()+' , but '+COLOR(data.color).bold()+' has been eradicated.');
+                        } else if ( data.cured === 2 ) {
+                            $('#logger').html('(EPIDEMIC)'.bold()+' Drew '+CARDS[data.card].bold()+' , but '+COLORS(data.color).bold()+' has been eradicated.');
                         } else {
                             $('#logger').html('(EPIDEMIC)'.bold()+' Drew '+CARDS[data.card].bold()+' , but the city is quarantined.');
                         }
@@ -162,21 +169,24 @@ function epidemic() {
                             $('#decline').show(200).off().on('click', finish_epidemic);
                         } else {
                             setTimeout( function() {
-                                $('#infect').delay(1000).hide(300).delay(300)
                                 if ( EPIDEMIC > 0 ) {
                                     epidemic();
                                 } else if ( TRASHING === 1 ) {
                                     set_active_trash();
                                 } else if (data.oqn) {
+                                    events_on();
                                     $('#logger').html($('#logger').html()+ '. Played One Quiet Night; will skip infection stage.');
-                                    $('#next-phase').off().on('click', next_turn).prop('disabled', false);
+                                    set_next_button();
                                 } else {
-                                    PHASE = 5;
+                                    PHASE = 6;
+                                    events_on();
                                     for (var i=0; i<data.at_risk.length; i++) {
                                         pulse_svg(data.at_risk[i]);
                                     }
-                                    $('#next-phase').off().on('click', infect).prop('disabled', false);
+                                    $('.infect-discard').hide();
+                                    set_next_button();
                                 }
+                                events_on();
                             }, 500);
                         }
                     }, 1000)
@@ -199,14 +209,23 @@ function finish_epidemic() {
             }
             $('.choice').hide();
             $('.infect-discard').hide();
-            $('#infect').delay(100).hide(400);
+            $('#forecast>li').hide();
+            for (var n=data.forecast.length-1; n >= 0; n--) {
+                $('#forecast').prepend($('#forecast-'+String(data.forecast[n])));
+                $('#forecast-'+String(data.forecast[n])).show();
+            }
             if ( EPIDEMIC > 0 ) {
                 epidemic();
+            } else if (TRASHING === 1) {
+                set_active_trash();
             } else if (data.oqn) {
+                events_on();
                 $('#logger').html($('#logger').html()+ '. Played One Quiet Night; will skip infection stage.');
-                $('#next-phase').off().on('click', next_turn).prop('disabled', false);
+                set_next_button();
             } else {
-                $('#next-phase').off().on('click', infect).prop('disabled', false);
+                events_on();
+                PHASE = 6;
+                set_next_button();
             }
         }
     )
@@ -214,7 +233,7 @@ function finish_epidemic() {
 
 function infect() {
     buttons_off();
-    events_on();
+    $('#next-phase').prop('disabled', true);
     $('#logger-box').stop(true);
     $('#logger-box').attr("border-color", "#fffff0");
     $('.choice').hide();
@@ -238,12 +257,21 @@ function infect() {
                 $('#logger').html( $('#logger').html()+" OUTBREAK(S) in "+outbreaks.join(", ").bold()+'.');
             }
         } else {
+            PHASE = data.phase;
+            COUNTER = data.total;
+            $('#forecast>li').hide();
+            for (var n=data.forecast.length-1; n >= 0; n--) {
+                $('#forecast').prepend($('#forecast-'+String(data.forecast[n])));
+                $('#forecast-'+String(data.forecast[n])).show();
+            }
             $('#stage-name').html('INFECT STAGE '+String(data.counter)).delay(500).fadeIn(300).delay(1000).fadeOut(300);
             setTimeout( function() {
+                $('#inf-phase-'+String(data.counter)).attr('class', 'on');
                 $('#infect').delay(500).show(400);
                 $('#infect').attr('src', '/static/img/infect_cards/inf-'+String(data.card)+'.svg');
                 $('#infect-discard-'+String(data.card)).show(200);
                 setTimeout( function() {
+                    events_on();
                     stop_svg(data.card);
                     infect_cities(data);
 
@@ -263,14 +291,9 @@ function infect() {
                         }
                         $('#logger').html( $('#logger').html()+" OUTBREAK(S) in "+outbreaks.join(", ").bold()+'.');
                     }
+                    set_next_button();
                 }, 500)
             }, 2000);
-            PHASE++;
-            if (data.counter < data.total) {
-                $('#next-phase').off().on('click', infect).prop('disabled', false);
-            } else {
-                $('#next-phase').off().on('click', next_turn).prop('disabled', false);
-            }
         }
     }).error(function(errors){console.log(error);});
 }
@@ -310,8 +333,7 @@ function epidemic_rp() {
             }
             $('#infect-discard-'+card).off().attr('class', 'graveyard');
             $('.choice').hide(200);
-            $('.infect-discard').hide();
-            $('#logger').html('Moved '+CARDS[Number(card)].bold()+' from the Infection discard to the graveyard, and shuffled the infection discard pile back into the deck.');
+            $('#logger').html('Moved '+CARDS[Number(card)].bold()+' from the Infection discard to the graveyard.');
             if ( !body.hasClass('selecting') ) {
                 infect_toggle();
             } else {
@@ -327,18 +349,16 @@ function next_turn() {
     $.getJSON( $SCRIPT_ROOT + '/_next_turn' ).success( function(data) {
         ACTIONS = 0;
         PHASE = 0;
+        TRASHING = 0;
         ACTIVE = data.roles[0];
         set_selectable_players(ACTIVE);
+
         $('#stage-name').html(ROLES[data.roles[0]]+"'s TURN").delay(100).fadeIn(300).delay(1000).fadeOut(300);
-        // var menu_on = 0;
-        // if ( $('body').hasClass('menu-push-toright') ) {
-        //     menu_on = -1;
-        // } else if ( $('body').hasClass('menu-push-toleft') ) {
-        //     menu_on = 1;
-        // }
         for ( var i=1; i<=4; i++ ) {
             $('#actions-'+String(i)).attr('class', 'off');
+            $('#inf-phase-'+String(i)).attr('class', 'off');
         }
+        $('#draw-phase').attr('class', 'off');
         for ( var i=0; i<48; i++ ) {
             stop_svg(i);
         }
@@ -350,7 +370,8 @@ function next_turn() {
         $('.pl-name').css('background', "url("+data.role_img+") no-repeat center center");
         $('#player-color').attr('src', data.icon);
         $('#forecast>li').hide();
-        for (var n=0; n<data.forecast.length; n++) {
+        for (var n=data.forecast.length-1; n >= 0; n--) {
+            $('#forecast').prepend($('#forecast-'+String(data.forecast[n])));
             $('#forecast-'+String(data.forecast[n])).show();
         }
 
@@ -372,6 +393,14 @@ function next_turn() {
         set_cities(data.available);
         set_treatable(data.positions[0])
         set_selectable_players(data.roles[0]);
+        events_on();
+        if (ACTIVE === 'cp') {
+            for (var l=48; l<53; l++) {
+                if ( !$('#pl-discard-'+String(l)).hasClass('graveyard') ) {
+                    $('#pl-discard-'+String(l)).off().on('click', store_on_cp).addClass('takeable');
+                }
+            }
+        }
         $('#infect').hide(200);
         $('.draw-card').hide(200);
         $('#build-station').prop('disabled', !data.can_build);

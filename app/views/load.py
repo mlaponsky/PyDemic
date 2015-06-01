@@ -111,6 +111,8 @@ def set_game():
                     infect_discard=game.infect_cards.discard,
                     infect_grave=game.infect_cards.graveyard,
                     at_risk=game.at_risk,
+                    drawn_epidemics=game.drawn_epidemics,
+                    num_outbreaks=game.num_outbreaks,
                     actions=actions,
                     phase=game.phase )
 

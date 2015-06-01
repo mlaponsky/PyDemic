@@ -19,13 +19,12 @@ def forecast():
     card1 = request.args.get('card1', infect[1], type=int)
     card2 = request.args.get('card2', infect[2], type=int)
     card3 = request.args.get('card3', infect[3], type=int)
-    card4 = request.args.get('card0', infect[4], type=int)
-    card5 = request.args.get('card0', infect[5], type=int)
+    card4 = request.args.get('card4', infect[4], type=int)
+    card5 = request.args.get('card5', infect[5], type=int)
     index = request.args.get('index', 0, type=int)
     is_stored = request.args.get('is_stored', 0, type=int)
     forecast = [ card0, card1, card2, card3, card4, card5 ]
-
-    owner = game.play_forecast(index, forecast)
+    owner = game.play_forecast((game.active + index) % game.num_players, forecast)
 
     available, dispatch, origin, player_id = game.set_available(0)
     session['game'] = pickle.dumps(game)
@@ -33,6 +32,8 @@ def forecast():
                     owner=owner.get_id(),
                     position=origin,
                     num_cards=len(owner.hand),
+                    oqn=game.oqn,
+                    counter=game.get_infect_number(),
                     phase=game.phase )
 
 @events.route('/_execute_rp')

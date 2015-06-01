@@ -1,0 +1,29 @@
+Metadata-Version: 1.1
+Name: Flask-Rauth
+Version: 0.3.2
+Summary: Adds OAuth 1.0/a, 2.0, and Ofly consumer support for Flask.
+Home-page: https://github.com/joelverhagen/flask-rauth
+Author: Joel Verhagen
+Author-email: joel.verhagen@gmail.com
+License: BSD
+Description: 
+        Flask-Rauth
+        -----------
+        
+        Adds OAuth 1.0/a, 2.0, and Ofly consumer support for Flask.
+        
+        Links
+        `````
+        
+        * `development version <http://github.com/joelverhagen/flask-rauth/zipball/master#egg=Flask-OAuth-dev>`_
+        * `rauth <https://github.com/litl/rauth>`_
+        
+Platform: any
+Classifier: Development Status :: 4 - Beta
+Classifier: Environment :: Web Environment
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: BSD License
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python
+Classifier: Topic :: Internet :: WWW/HTTP :: Dynamic Content
+Classifier: Topic :: Software Development :: Libraries :: Python Modules

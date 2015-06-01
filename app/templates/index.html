@@ -105,10 +105,9 @@
 				</div>
 				<button class="choice" hidden id="accept">YES</button>
 				<button class="choice" hidden id="decline">NO</button>
-				<ul hidden='true' id="forecast">
-					FORECAST
-					{% for card in game.infect_cards.deck %}
-					<li id="forecast-{{card}}" class="forecast-card" hidden="true">
+				<ul id="forecast" style="display: none">
+					{% for card in range(48) %}
+					<li id="forecast-{{card}}" class="forecast-card" style="display: none">
 						<div class="{{ colors[card // 12] }}"></div>
 	                    <p>{{ cards[card]['name'] }}</p>
 					</li>

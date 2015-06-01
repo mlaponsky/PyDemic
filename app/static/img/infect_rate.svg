@@ -1,57 +1,15 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   id="svg5949"
-   viewBox="0 0 241 43.909"
-   version="1.1"
-   inkscape:version="0.48.4 r9939"
-   width="100%"
-   height="100%"
-   sodipodi:docname="infect_rate.svg">
-  <defs
-     id="defs3085" />
-  <sodipodi:namedview
-     pagecolor="#222222"
-     bordercolor="#666666"
-     borderopacity="1"
-     objecttolerance="10"
-     gridtolerance="10"
-     guidetolerance="10"
-     inkscape:pageopacity="1"
-     inkscape:pageshadow="2"
-     inkscape:window-width="1920"
-     inkscape:window-height="1056"
-     id="namedview3083"
-     showgrid="false"
-     inkscape:zoom="3.7673241"
-     inkscape:cx="33.731671"
-     inkscape:cy="69.871281"
-     inkscape:window-x="0"
-     inkscape:window-y="24"
-     inkscape:window-maximized="1"
-     inkscape:current-layer="layer1" />
-  <metadata
-     id="metadata5954">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
-      </cc:Work>
-    </rdf:RDF>
-  </metadata>
-  <style
-     id="style3057">
+<svg id="infect-rate" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 241 43.909" version="1.1" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/">
+ <metadata id="metadata5954">
+  <rdf:RDF>
+   <cc:Work rdf:about="">
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:title/>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <style>
  	.on {
  		fill: #fffff0;
  	}
@@ -69,129 +27,21 @@
 	    user-select: none;
  	}
  </style>
-  <g
-     id="layer1"
-     transform="translate(75.5,13.137817)">
-    <path
-       id="path6543"
-       d="m-105-17.638c0,8.2843-6.7157,15-15,15s-15-6.7157-15-15,6.7157-15,15-15,15,6.7157,15,15z"
-       transform="translate(60,20)"
-       stroke="#fffff0"
-       stroke-dasharray="none"
-       stroke-miterlimit="4"
-       stroke-width="1"
-       class="on" />
-    <path
-       id="path6543-0"
-       d="m-105-17.638c0,8.2843-6.7157,15-15,15s-15-6.7157-15-15,6.7157-15,15-15,15,6.7157,15,15z"
-       transform="translate(95,20)"
-       stroke="#fffff0"
-       stroke-dasharray="none"
-       stroke-miterlimit="4"
-       stroke-width="1"
-       class="off" />
-    <path
-       id="path6543-7"
-       d="m-105-17.638c0,8.2843-6.7157,15-15,15s-15-6.7157-15-15,6.7157-15,15-15,15,6.7157,15,15z"
-       transform="translate(130,20)"
-       stroke="#fffff0"
-       stroke-dasharray="none"
-       stroke-miterlimit="4"
-       stroke-width="1"
-       class="off" />
-    <path
-       id="path6543-5"
-       d="m-105-17.638c0,8.2843-6.7157,15-15,15s-15-6.7157-15-15,6.7157-15,15-15,15,6.7157,15,15z"
-       transform="translate(165,20)"
-       stroke="#fffff0"
-       stroke-dasharray="none"
-       stroke-miterlimit="4"
-       stroke-width="1"
-       class="off" />
-    <text
-       class="unselectable"
-       id="text6598"
-       style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#92ff49;font-family:Sans"
-       font-weight="normal"
-       xml:space="preserve"
-       font-size="14px"
-       font-style="normal"
-       font-stretch="normal"
-       font-variant="normal"
-       y="7.5574951"
-       x="-64.265625"
-       line-height="125%"
-       sodipodi:linespacing="125%"><tspan
-         id="tspan6600"
-         x="-64.265625"
-         y="7.5574951">4</tspan></text>
-    <text
-       class="unselectable"
-       id="text6602"
-       style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#92ff49;font-family:Sans"
-       font-weight="normal"
-       xml:space="preserve"
-       font-size="14px"
-       font-style="normal"
-       font-stretch="normal"
-       font-variant="normal"
-       y="7.5574951"
-       x="-29.265625"
-       line-height="125%"
-       sodipodi:linespacing="125%"><tspan
-         id="tspan6604"
-         x="-29.265625"
-         y="7.5574951">3</tspan></text>
-    <text
-       class="unselectable"
-       id="text6606"
-       style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#92ff49;font-family:Sans"
-       font-weight="normal"
-       xml:space="preserve"
-       font-size="14px"
-       font-style="normal"
-       font-stretch="normal"
-       font-variant="normal"
-       y="7.5574951"
-       x="5.734375"
-       line-height="125%"
-       sodipodi:linespacing="125%"><tspan
-         id="tspan6608"
-         x="5.734375"
-         y="7.5574951">2</tspan></text>
-    <text
-       class="unselectable"
-       id="text6610"
-       style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#8ae62e;font-family:Sans"
-       font-weight="normal"
-       xml:space="preserve"
-       font-size="14px"
-       font-style="normal"
-       font-stretch="normal"
-       font-variant="normal"
-       y="7.458374"
-       x="40.57373"
-       line-height="125%"
-       sodipodi:linespacing="125%"><tspan
-         id="tspan6612"
-         x="40.57373"
-         y="7.458374">1</tspan></text>
-    <text
-       class="unselectable"
-       id="text6630"
-       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#fffff0;font-family:Droid Sans"
-       font-weight="normal"
-       xml:space="preserve"
-       font-size="12px"
-       font-style="normal"
-       font-stretch="normal"
-       font-variant="normal"
-       y="-18.897226"
-       x="-46.161568"
-       line-height="125%"
-       sodipodi:linespacing="125%"><tspan
-         id="tspan6632"
-         x="-46.161568"
-         y="-18.897226">ACTIONS REMAINING</tspan></text>
-  </g>
+ <g id="infect-rate-paths" transform="translate(75.5,13.137817)">
+  <path id="rate-0" d="m-105-17.638c0,8.2843-6.7157,15-15,15s-15-6.7157-15-15,6.7157-15,15-15,15,6.7157,15,15z" transform="translate(60,20)" stroke="#fffff0" stroke-dasharray="none" stroke-miterlimit="4" stroke-width="1" class="on"/>
+  <path id="rate-1" d="m-105-17.638c0,8.2843-6.7157,15-15,15s-15-6.7157-15-15,6.7157-15,15-15,15,6.7157,15,15z" transform="translate(95,20)" stroke="#fffff0" stroke-dasharray="none" stroke-miterlimit="4" stroke-width="1" class="off"/>
+  <path id="rate-2" d="m-105-17.638c0,8.2843-6.7157,15-15,15s-15-6.7157-15-15,6.7157-15,15-15,15,6.7157,15,15z" transform="translate(130,20)" stroke="#fffff0" stroke-dasharray="none" stroke-miterlimit="4" stroke-width="1" class="off"/>
+  <path id="rate-3" d="m-105-17.638c0,8.2843-6.7157,15-15,15s-15-6.7157-15-15,6.7157-15,15-15,15,6.7157,15,15z" transform="translate(165,20)" stroke="#fffff0" stroke-dasharray="none" stroke-miterlimit="4" stroke-width="1" class="off"/>
+  <path id="rate-4" d="m-105-17.638c0,8.2843-6.7157,15-15,15s-15-6.7157-15-15,6.7157-15,15-15,15,6.7157,15,15z" transform="translate(200,20)" stroke="#fffff0" stroke-dasharray="none" stroke-miterlimit="4" stroke-width="1" class="off"/>
+  <path id="rate-5" d="m-105-17.638c0,8.2843-6.7157,15-15,15s-15-6.7157-15-15,6.7157-15,15-15,15,6.7157,15,15z" transform="translate(235,20)" stroke="#fffff0" stroke-dasharray="none" stroke-miterlimit="4" stroke-width="1" class="off"/>
+  <path id="rate-6" d="m-105-17.638c0,8.2843-6.7157,15-15,15s-15-6.7157-15-15,6.7157-15,15-15,15,6.7157,15,15z" transform="translate(270,20)" stroke="#fffff0" stroke-dasharray="none" stroke-miterlimit="4" stroke-width="1" class="off"/>
+  <text class="unselectable" id="text6598" style="writing-mode:lr-tb;letter-spacing:0px;text-anchor:start;word-spacing:0px;text-align:start;" font-weight="normal" xml:space="preserve" font-size="14px" font-style="normal" font-stretch="normal" font-variant="normal" y="7.5574951" x="-64.265625" font-family="Arial" line-height="125%" fill="#92ff49"><tspan id="tspan6600" x="-64.265625" y="7.5574951">2</tspan></text>
+  <text class="unselectable" id="text6602" style="writing-mode:lr-tb;letter-spacing:0px;text-anchor:start;word-spacing:0px;text-align:start;" font-weight="normal" xml:space="preserve" font-size="14px" font-style="normal" font-stretch="normal" font-variant="normal" y="7.5574951" x="-29.265625" font-family="Arial" line-height="125%" fill="#92ff49"><tspan id="tspan6604" x="-29.265625" y="7.5574951">2</tspan></text>
+  <text class="unselectable" id="text6606" style="writing-mode:lr-tb;letter-spacing:0px;text-anchor:start;word-spacing:0px;text-align:start;" font-weight="normal" xml:space="preserve" font-size="14px" font-style="normal" font-stretch="normal" font-variant="normal" y="7.5574951" x="5.734375" font-family="Arial" line-height="125%" fill="#92ff49"><tspan id="tspan6608" x="5.734375" y="7.5574951">2</tspan></text>
+  <text class="unselectable" id="text6610" style="writing-mode:lr-tb;letter-spacing:0px;text-anchor:start;word-spacing:0px;text-align:start;" font-weight="normal" xml:space="preserve" font-size="14px" font-style="normal" font-stretch="normal" font-variant="normal" y="7.458374" x="40.57373" font-family="Arial" line-height="125%" fill="#8ae62e"><tspan id="tspan6612" x="40.57373" y="7.458374">3</tspan></text>
+  <text class="unselectable" id="text6614" style="writing-mode:lr-tb;letter-spacing:0px;text-anchor:start;word-spacing:0px;text-align:start;" font-weight="normal" xml:space="preserve" font-size="14px" font-style="normal" font-stretch="normal" font-variant="normal" y="7.458374" x="75.57373" font-family="Arial" line-height="125%" fill="#8ae62e"><tspan id="tspan6616" x="75.57373" y="7.458374">3</tspan></text>
+  <text class="unselectable" id="text6618" style="writing-mode:lr-tb;letter-spacing:0px;text-anchor:start;word-spacing:0px;text-align:start;" font-weight="normal" xml:space="preserve" font-size="14px" font-style="normal" font-stretch="normal" font-variant="normal" y="7.46521" x="110.59766" font-family="Arial" line-height="125%" fill="#6bb224"><tspan id="tspan6620" x="110.59766" y="7.46521">4</tspan></text>
+  <text class="unselectable" id="text6622" style="writing-mode:lr-tb;letter-spacing:0px;text-anchor:start;word-spacing:0px;text-align:start;" font-weight="normal" xml:space="preserve" font-size="14px" font-style="normal" font-stretch="normal" font-variant="normal" y="7.46521" x="145.59766" font-family="Arial" line-height="125%" fill="#6bb224"><tspan id="tspan6624" x="145.59766" y="7.46521">4</tspan></text>
+  <text class="unselectable" id="text6630" style="writing-mode:lr-tb;letter-spacing:0px;text-anchor:start;word-spacing:0px;text-align:start;" font-weight="normal" xml:space="preserve" font-size="12px" font-style="normal" font-stretch="normal" font-variant="normal" y="30.654175" x="0.38671875" font-family="Arial" line-height="125%" fill="#fffff0"><tspan id="tspan6632" x="0.38671875" y="30.654175">INFECTION RATE</tspan></text>
+ </g>
 </svg>

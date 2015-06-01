@@ -32,14 +32,5 @@ class GameStore(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     game_id = db.Column(db.String(140), nullable=False, unique=True)
     data = db.Column(db.PickleType)
-    action = db.relationship('Action', backref='author', lazy='dynamic')
+    actions = db.Column(db.PickleType)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-
-class Action(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    game_id = db.Column(db.String(140), db.ForeignKey('game.game_id'))
-    phase = db.Column(db.Integer, nullable=False)
-    turn = db.Column(db.Integer, nullable=False)
-    active = db.Column(db.String(64), nullable=True)
-    mover = db.Column(db.String(64), nullable=True)
-    owner = db.Column(db.String(64), nullable=True)

@@ -254,7 +254,7 @@ function infect() {
                 for ( var i=0; i<data.outbreaks.length; i++ ) {
                     outbreaks.push(CARDS[data.outbreaks[i]]);
                 }
-                $('#logger').html( $('#logger').html()+" OUTBREAK(S) in "+outbreaks.join(", ").bold()+'.');
+                $('#logger').html('Infected '+CARDS[data.card].bold()+' with 1 '+COLORS[data.color].bold()+' cube. OUTBREAK(S) in '+outbreaks.join(", ").bold()+'.');
             }
         } else {
             PHASE = data.phase;
@@ -403,6 +403,7 @@ function next_turn() {
         }
         $('#infect').hide(200);
         $('.draw-card').hide(200);
+        $('#logger').html(ROLES[ACTIVE].bold()+"'s turn.")
         $('#build-station').prop('disabled', !data.can_build);
         $('#make-cure').prop('disabled', !data.can_cure);
         $('#undo-action').prop('disabled', ACTIONS === 0)

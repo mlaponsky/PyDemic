@@ -33,8 +33,8 @@ def authorized():
             request.args['error_description']
         )
     session['google_token'] = (resp['access_token'], '')
+    data = google.get('userinfo').data
     try:
-        data = google.get('userinfo').data
         if User.query.filter_by(email=data['email']).first() == None:
             user = User(nickname=data['name'], email=data['email'])
             db.session.add(user)

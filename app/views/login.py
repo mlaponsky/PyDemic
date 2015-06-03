@@ -15,7 +15,6 @@ login = Blueprint('login', __name__)
 
 @login.route('/login')
 def login_user():
-    print(SQLALCHEMY_DATABASE_URI)
     return google.authorize(callback=url_for('login.authorized', _external=True))
 
 

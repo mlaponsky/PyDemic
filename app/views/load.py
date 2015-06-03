@@ -54,7 +54,7 @@ def setup():
         if 'email' in data:
             user = models.User.query.filter_by(email=data['email']).first()
         else:
-            redirect(url_for('login.logout_user'))
+            return redirect(url_for('login.logout_user'))
         if user.game_id != None:
             game_id = user.game_id
             game = models.GameStore.query.filter_by(game_id=game_id).first().game

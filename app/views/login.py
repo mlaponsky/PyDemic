@@ -41,7 +41,8 @@ def authorized():
             db.session.commit()
         return redirect(url_for('load.setup'))
     except KeyError:
-        return data
+        print(data)
+        return False
 
 @google.tokengetter
 def get_google_oauth_token():

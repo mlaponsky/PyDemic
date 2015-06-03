@@ -1,4 +1,4 @@
-from app import app
+from app import app, db, google, models
 from ..src.game import Game
 from ..src.constants import *
 from flask import render_template, g, flash, redirect, url_for, request, jsonify, \
@@ -36,18 +36,56 @@ def setup():
                                     form=form)
         game = Game(chosen, form.difficulty.data)
         actions = []
-        session.clear()
+        if 'google_token' in session:
+            data = google.get('userinfo').data
+            user = models.User.query.filter_by(email=data['email']).first()
+            prev_game = models.GameStore.query.filter_by(game_id=user.game_id).first()
+            if not prev_game.game.win and not prev_game.game.lose:
+                db.session.delete(prev_game)
+            user.game_id = game.id
+            game_store = models.GameStore(game_id=game.id, game=game, actions=actions, author=user)
+            db.session.add(game_store)
+            db.session.commit()
         session['game'] = pickle.dumps(game)
         session['actions'] = actions
         return redirect(url_for('load.start_game'))
+    if 'google_token' in session:
+        data = google.get('userinfo').data
+        user = models.User.query.filter_by(email=data['email']).first()
+        if user.game_id != None:
+            game_id = user.game_id
+            game = models.GameStore.query.filter_by(game_id=game_id).first().game
+            print('Logged in with saved game finished', game.win, game.lose)
+            can_resume = not game.win and not game.lose
+        else:
+            print('Logged in with no saved game.')
+            can_resume = False
+    else:
+        print('Not logged in.')
+        can_resume = False
     return render_template("setup.html",
                             title="Pandemic Setup",
-                            form=form)
+                            form=form,
+                            can_resume=can_resume)
+
+@load.route('/_resume')
+def resume():
+    data = google.get('userinfo').data
+    user = models.User.query.filter_by(email=data['email']).first()
+    game_store = models.GameStore.query.filter_by(game_id=user.game_id).first()
+    game = game_store.game
+    actions = game_store.actions
+    session['game'] = pickle.dumps(game)
+    session['actions'] = actions
+    return redirect(url_for('load.start_game'))
 
 @load.route('/_load')
 def set_game():
-    game = pickle.loads(session['game'])
-    actions = session['actions']
+    data = google.get('userinfo').data
+    user = models.User.query.filter_by(email=data['email']).first()
+    game_store = models.GameStore.query.filter_by(game_id=user.game_id).first()
+    game = game_store.game
+    actions = game_store.actions
     player = game.players[game.active]
     board = game.board
     available = []

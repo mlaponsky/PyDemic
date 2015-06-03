@@ -9,6 +9,7 @@ from uuid import uuid4
 
 class Game:
     def __init__(self, roles, epidemics):
+        self.win = False
         self.lose = False
         self.turns = 0
         self.phase = ACTION_0
@@ -170,7 +171,8 @@ class Game:
     def execute_infect(self, city, color, num_cubes):
         self.reset_outbreaks()
         self.infect(city, color, num_cubes)
-        print(self.outbreaks)
+        if self.is_outbreak_lose() or self.is_cube_lose(color):
+            self.lose = True
 
     def infect(self, city, color, num_cubes):
         if city not in self.quarantined and self.cures[color] != ERADICATED:
@@ -194,6 +196,7 @@ class Game:
                     self.infected[city][color] = MAX_CUBES - self.cubes[city][color]
                 self.cubes[city][color] = MAX_CUBES
                 self.outbreak(city, color)
+
 
     def outbreak(self, city, color):
         if city not in self.outbreaks \
@@ -374,6 +377,8 @@ player.hand or player.get_role() == OE)
         at_risk = copy(self.at_risk)
 
         player.make_cure(cards, self.cures, self.cubes, self.cubes_left, self.player_cards, self.board)
+        if self.is_win():
+            self.win = True
         medic_pos = -1
         for p in self.players:
             if p.get_role() == MEDIC:
@@ -550,8 +555,8 @@ player.hand or player.get_role() == OE)
         return True
 
     # Lose
-    def is_cube_lose(self, color, added):
-        self.lose = self.cubes_left[color] - added < 0
+    def is_cube_lose(self, color):
+        self.lose = self.cubes_left[color] <= 0
         return self.lose
 
     def is_outbreak_lose(self):

@@ -19,7 +19,3 @@ class SetupForm(Form):
         if len(chosen) < 2:
             return False
         return True
-
-class LoginForm(Form):
-    openid = StringField('openid', validators=[DataRequired()])
-    remember_me = BooleanField("remember_me", default=False)

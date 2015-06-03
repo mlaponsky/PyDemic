@@ -6,7 +6,7 @@ body {
 #char-box {
     width: 80%;
     position: absolute;
-    bottom: 30%;
+    bottom: 35%;
     left: 10%;
 }
 
@@ -45,8 +45,10 @@ body {
 
 #difficulty {
     position: absolute;
-    left: 42.5%;
-    top: 70%;
+    margin: 0 auto;
+    left: 0;
+    right: 0;
+    top: 65%;
     border: 2px solid #fffff0;
     border-radius: 15px;
     width: 15%;
@@ -60,19 +62,97 @@ input {
     background-color: #8ab800;
     color: #fffff0;
     width: 8%;
+    height: 6%;
     padding: 0.5%;
     position: absolute;
-    top: 80%;
-    left: 46%%;
+    top: 73%;
+    margin: 0 auto;
+    left: 0;
+    right: 0;
     border: 2px solid #fffff0;
     border-radius: 15px;
-    font-size: 20pt;
+    font-size: 18pt;
+}
+
+input:hover {
+    border: 2px solid #222222;
+}
+
+#google-sign-in, #google-sign-out {
+    color: #fffff0;
+    width: 13%;
+    padding: 0.5%;
+    position: absolute;
+    top: 88%;
+    margin: 0 auto;
+    left: 0;
+    right: 0;
+    border: 2px solid #fffff0;
+    border-radius: 12px;
+    font-size: 14pt;
+    text-align: center;
+    font-family: Arial;
+    text-decoration: none;
+}
+
+#google-sign-in {
+    background-color: #ff1919;
+}
+
+#google-sign-in:hover {
+    border: 2px solid #222222;
+}
+
+#google-sign-out {
+    background-color: #222222;
+    font-size: 12pt;
+    border: 1px solid #fffff0;
+    border-radius: 10px;
+    margin: 0 auto;
+    width: 6%;
+    left: 0;
+    right: 0;
+}
+
+#google-sign-out:hover {
+    background-color: #fffff0;
+    color: #222222;
+}
+
+#continue {
+    background-color: #ff1919;
+    color: #fffff0;
+    width: 8%;
+    height: 6%;
+    padding: 0.5%;
+    position: absolute;
+    top: 81%;
+    margin: 0 auto;
+    left: 0;
+    right: 0;
+    border: 2px solid #fffff0;
+    border-radius: 15px;
+    font-size: 18pt;
+    text-align: center;
+    font-family: Arial;
+    text-decoration: none;
+}
+
+#continue:disabled, #continue:disabled:hover {
+	background: #333333;
+	color: #666666;
+    border: 2px solid #666666;
+    border-radius: 15px;
+}
+
+#continue:hover {
+    border: 2px solid #222222;
 }
 
 #flashes {
     display: block;
     position: absolute;
-    top: 75%;
+    top: 70%;
     left: 37%;
 }
 

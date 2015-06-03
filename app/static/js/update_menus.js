@@ -43,4 +43,5 @@ window.onload = function () {
         }
     }
     document.getElementById('difficulty').options[1].selected = "selected";
+    $('#continue').off().on('click', resume_game);
 }

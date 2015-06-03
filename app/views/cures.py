@@ -24,9 +24,12 @@ def make_cure():
     cure_color = cure_cards[0] // CITIES_PER_COLOR
     if len(cure_cards) == needed:
         action = game.make_cure(cure_cards)
-
         available, new_dispatch, origin, player_id = game.set_available(player)
         actions.append(action)
+        if game.win:
+            game_store = models.GameStore.query.filter_by(game_id=game.id).first()
+            game_store.game = game
+            db.session.commit()
         session['actions'] = actions
         session['game'] = pickle.dumps(game)
         return jsonify( c=cure_color,
@@ -64,6 +67,8 @@ def select_cure():
     needed = 5 if player.get_role() != SCIENTIST else 4
     cure_color = cure_cards[0] // CITIES_PER_COLOR
     action = game.make_cure(cure_cards)
+    if game.is_win():
+        game.done = True
     available, new_dispatch, origin, player_id = game.set_available(player)
     actions.append(action)
     session['actions'] = actions

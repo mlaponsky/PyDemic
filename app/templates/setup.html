@@ -1,12 +1,18 @@
 <!DOCTYPE html>
 <html>
-    <link rel="stylesheet" type="text/css"
-                           href="../static/css/setup.css" />
-    <script src="../static/js/modernizr.custom.js"></script>
-    <script src="../static/js/jquery-1.11.2.js"></script>
-    <script src="../static/js/jquery-ui.js"></script>
-    <script src="../static/js/update_menus.js"></script>
     <head>
+        <meta name="google-signin-client_id" content="371660565684-4jqrhi9bjdci61cvuba1ojm94hb1suao.apps.googleusercontent.com">
+        <link rel="stylesheet" type="text/css"
+                               href="../static/css/setup.css" />
+        <script src="https://apis.google.com/js/platform.js" async defer></script>
+        <script charset="utf-8" type="text/javascript">
+			$SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+		</script>
+        <script src="../static/js/modernizr.custom.js"></script>
+        <script src="../static/js/jquery-1.11.2.js"></script>
+        <script src="../static/js/jquery-ui.js"></script>
+        <script src="../static/js/update_menus.js"></script>
+        <script src="../static/js/login.js"></script>
         <title>PyDemic</title>
     </head>
     <body>
@@ -21,6 +27,24 @@
           </div>
           {% endif %}
         {% endwith %}
+
+        {% if 'google_token' not in session %}
+        <a id="google-sign-in" href={{url_for('login.login_user')}}>Sign-In with Google</a>
+        <form action="">
+            <input id="continue" type="submit" value="Resume" disabled>
+        </form>
+        {% else %}
+        <a id="google-sign-out" href={{url_for('login.logout_user')}}>Sign Out</a>
+        {% if can_resume %}
+        <form action="{{ url_for('load.resume') }}">
+            <input id="continue" type="submit" value="Resume">
+        </form>
+        {% else %}
+        <form action="{{ url_for('load.resume') }}">
+            <input id="continue" type="submit" value="Resume" disabled>
+        </form>
+        {% endif %}
+        {% endif %}
         <form action="" method="post" name="setup">
             {{form.hidden_tag()}}
             <div id="char-box">

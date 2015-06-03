@@ -1,4 +1,4 @@
-from app import app
+from app import app, db, google, models
 from ..src.game import Game
 from ..src.constants import *
 from flask import render_template, flash, redirect, url_for, request, jsonify, \
@@ -20,6 +20,9 @@ def end_turn():
     game.phase = DRAW
     if len(game.player_cards.deck) <= 2:
         game.lose = True
+        game_store = models.GameStore.query.filter_by(game_id=game.id).first()
+        game_store.game = game
+        db.session.commit()
         return jsonify( lose=game.lose )
     draw0 = player_deck.pop(0)
     draw1 = player_deck.pop(0)
@@ -71,6 +74,10 @@ def execute_epidemic():
                     game.infected[city][color] = 0
 
     session['game'] = pickle.dumps(game)
+    if game.lose:
+        game_store = models.GameStore.query.filter_by(game_id=game.id).first()
+        game_store.game = game
+        db.session.commit()
     return jsonify( card=card,
                     color=color,
                     rows=game.board.rows,
@@ -92,17 +99,11 @@ def infect_phase():
         game.phase = INFECT_1
     else:
         game.phase += 1
-    print(game.phase)
     orig_cubes = deepcopy(game.cubes)
     game.reset_infection()
     num_infect = game.get_infect_number()
     card = game.draw_infect_card(1)
     color = card//CITIES_PER_COLOR
-    if game.num_outbreaks >= 8:
-        game.lose = True
-    for cubes in game.cubes_left:
-        if cubes <= 0:
-            game.lose = True
     medic = None
     for p in game.players:
         if p.get_role() == MEDIC:
@@ -114,6 +115,10 @@ def infect_phase():
                     game.cubes_left[c] += game.infected[city][c]
                     game.cubes[city][c] -= game.infect[city][c]
                     game.infected[city][c] = 0
+    if game.lose:
+        game_store = models.GameStore.query.filter_by(game_id=game.id).first()
+        game_store.game = game
+        db.session.commit()
     session['game'] = pickle.dumps(game)
     return jsonify( infected=game.infected,
                     card=card,
@@ -194,6 +199,11 @@ def next_turn():
 
     session['actions'] = actions
     session['game'] = pickle.dumps(game)
+    game_store = models.GameStore.query.filter_by(game_id=game.id).first()
+    game_store.game = game
+    game_store.actions = actions
+    db.session.commit()
+
     return jsonify( available=available,
                     pieces=pieces,
                     roles=roles,

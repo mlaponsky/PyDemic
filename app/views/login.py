@@ -33,13 +33,16 @@ def authorized():
             request.args['error_description']
         )
     session['google_token'] = (resp['access_token'], '')
-    data = google.get('userinfo').data
-    if User.query.filter_by(email=data['email']).first() == None:
-        user = User(nickname=data['name'], email=data['email'])
-        db.session.add(user)
-        db.session.commit()
-    return redirect(url_for('load.setup'))
-
+    try:
+        data = google.get('userinfo').data
+        if User.query.filter_by(email=data['email']).first() == None:
+            user = User(nickname=data['name'], email=data['email'])
+            db.session.add(user)
+            db.session.commit()
+        return redirect(url_for('load.setup'))
+    except KeyError:
+        print(data)
+        return False
 
 @google.tokengetter
 def get_google_oauth_token():

@@ -3,9 +3,12 @@ from flask.ext.sqlalchemy import SQLAlchemy
 from flask_oauthlib.client import OAuth
 from config import basedir, GOOGLE
 from .src.session import *
+import logging
 
 app = Flask(__name__)
 app.config.from_object('config')
+app.logger.addHandler(logging.StreamHandler(sys.stdout))
+app.logger.setLevel(logging.ERROR)
 app.session_interface=RedisSessionInterface()
 db = SQLAlchemy(app)
 oauth = OAuth(app)

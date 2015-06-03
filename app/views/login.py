@@ -1,7 +1,7 @@
 from flask import render_template, flash, redirect, session, url_for, request, g, Blueprint, jsonify
 from app import app, db, google
 from ..models import User, GameStore
-
+from config import *
 
 login = Blueprint('login', __name__)
 
@@ -15,6 +15,7 @@ login = Blueprint('login', __name__)
 
 @login.route('/login')
 def login_user():
+    print(SQLALCHEMY_DATABASE_URI)
     return google.authorize(callback=url_for('login.authorized', _external=True))
 
 

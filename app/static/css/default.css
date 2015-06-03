@@ -12,30 +12,6 @@
 	font-style: normal;
 }
 
-@-webkit-keyframes pulse {
- 0% {
- -webkit-transform: scale(1, 1);
-}
- 50% {
- -webkit-transform: scale(1.2, 1.2);
-}
- 100% {
- -webkit-transform: scale(1, 1);
-};
-}
-
-@keyframes pulse {
- 0% {
- transform: scale(1, 1);
-}
- 50% {
- transform: scale(1.2, 1.2);
-}
- 100% {
-transform: scale(1, 1);
-};
-}
-
 ::-webkit-scrollbar
 {
   width: 6%;  /* for vertical scrollbars */
@@ -388,6 +364,16 @@ a:hover {
 	cursor: default;
 	-webkit-animation: move_eye 5s linear 0s infinite normal;
 }
+
+@move_eye {
+    from {
+        -webkit-transform: translate(0%,0)
+    }
+    to {
+        -webkit-transform: translate(-100%,0)
+    }
+}
+
 
 @-webkit-keyframes move_eye {
     from {

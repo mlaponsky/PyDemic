@@ -40,7 +40,7 @@ def setup():
             data = google.get('userinfo').data
             user = models.User.query.filter_by(email=data['email']).first()
             prev_game = models.GameStore.query.filter_by(game_id=user.game_id).first()
-            if not prev_game.game.win and not prev_game.game.lose:
+            if prev_game != None and not prev_game.game.win and not prev_game.game.lose:
                 db.session.delete(prev_game)
             user.game_id = game.id
             game_store = models.GameStore(game_id=game.id, game=game, actions=actions, author=user)

@@ -29,4 +29,5 @@ class GameStore(db.Model):
     game_id = db.Column(db.String(140), nullable=False, unique=True)
     game = db.Column(db.PickleType)
     actions = db.Column(db.PickleType)
+    original = db.Column(db.PickleType)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))

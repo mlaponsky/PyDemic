@@ -106,6 +106,7 @@ function initial_load() {
             player.appendTo('#map');
         }
         $('.menu-left li').hide();
+        $('#options li').show();
         for ( var i=0; i<data.player_discard.length; i++ ) {
             var card = data.player_discard[i];
             if (card < 53) {

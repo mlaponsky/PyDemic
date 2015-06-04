@@ -11,6 +11,7 @@ class Game:
     def __init__(self, roles, epidemics):
         self.win = False
         self.lose = False
+        self.new = True
         self.turns = 0
         self.phase = ACTION_0
         self.id = str(uuid4())

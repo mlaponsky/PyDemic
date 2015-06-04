@@ -7,6 +7,7 @@ import json
 from ..forms import SetupForm
 import random
 import pickle
+import flask_oauthlib
 from copy import copy
 
 load = Blueprint('load', __name__)
@@ -43,10 +44,11 @@ def setup():
             if prev_game != None and not prev_game.game.win and not prev_game.game.lose:
                 db.session.delete(prev_game)
             user.game_id = game.id
-            game_store = models.GameStore(game_id=game.id, game=game, actions=actions, author=user)
+            game_store = models.GameStore(game_id=game.id, game=game, actions=actions, original=game, author=user)
             db.session.add(game_store)
             db.session.commit()
         session['game'] = pickle.dumps(game)
+        session['original'] = pickle.dumps(game)
         session['actions'] = actions
         return redirect(url_for('load.start_game'))
     if 'google_token' in session:
@@ -55,14 +57,19 @@ def setup():
             user = models.User.query.filter_by(email=data['email']).first()
         else:
             return redirect(url_for('login.logout_user'))
-        if user.game_id != None:
-            game_id = user.game_id
-            game = models.GameStore.query.filter_by(game_id=game_id).first().game
-            print('Logged in with saved game finished', game.win, game.lose)
-            can_resume = not game.win and not game.lose
-        else:
-            print('Logged in with no saved game.')
-            can_resume = False
+
+        try:
+            if user.game_id != None:
+                game_id = user.game_id
+                game = models.GameStore.query.filter_by(game_id=game_id).first().game
+                print('Logged in with saved game finished', game.win, game.lose)
+                can_resume = not game.win and not game.lose
+            else:
+                print('Logged in with no saved game.')
+                can_resume = False
+        except AttributeError:
+            session.pop('google_token')
+            return redirect(url_for('load.setup'))
     else:
         print('Not logged in.')
         can_resume = False
@@ -78,17 +85,23 @@ def resume():
     game_store = models.GameStore.query.filter_by(game_id=user.game_id).first()
     game = game_store.game
     actions = game_store.actions
+    game.new = True;
     session['game'] = pickle.dumps(game)
     session['actions'] = actions
     return redirect(url_for('load.start_game'))
 
 @load.route('/_load')
 def set_game():
-    data = google.get('userinfo').data
-    user = models.User.query.filter_by(email=data['email']).first()
-    game_store = models.GameStore.query.filter_by(game_id=user.game_id).first()
-    game = game_store.game
-    actions = game_store.actions
+    try:
+        data = google.get('userinfo').data
+        user = models.User.query.filter_by(email=data['email']).first()
+        game_store = models.GameStore.query.filter_by(game_id=user.game_id).first()
+        game = game_store.game
+        actions = game_store.actions
+        game_store.game.new = False;
+    except flask_oauthlib.client.OAuthException:
+        game = pickle.loads(session['game'])
+        actions = session['actions']
     player = game.players[game.active]
     board = game.board
     available = []
@@ -160,12 +173,23 @@ def set_game():
 @load.route('/game')
 def start_game():
     try:
-        game = pickle.loads(session['game'])
-    except:
-        return redirect(url_for('setup'))
-    active = game.active
-    active_player = game.players[active]
-    team = game.players[active:] + game.players[:active]
+        print('Getting game from user.')
+        data = google.get('userinfo').data
+        user = models.User.query.filter_by(email=data['email']).first()
+        game_store = models.GameStore.query.filter_by(game_id=user.game_id).first()
+        game = game_store.game
+        actions = game_store.actions
+    except flask_oauthlib.client.OAuthException:
+        try:
+            game = pickle.loads(session['game'])
+        except:
+            return redirect(url_for('load.setup'))
+    if not game.new:
+        return redirect(url_for('load.setup'))
+
+    active_player = game.players[game.active]
+    team = game.players[game.active:] + game.players[:game.active]
+    game.new = False
 
     session['game'] = pickle.dumps(game)
     return render_template("index.html",
@@ -178,3 +202,15 @@ def start_game():
                             colors = COLOR_STRINGS,
                             num_cities=NUM_CITIES,
                             num_epidemics=game.num_epidemics )
+
+@load.route('/_restart')
+def restart_game():
+    session['game'] = session['original']
+    if 'google_token' in session:
+        data = google.get('userinfo').data
+        user = models.User.query.filter_by(email=data['email']).first()
+        game_store = models.GameStore.query.filter_by(game_id=user.game_id).first()
+        game_store.game = game_store.original
+        db.session.add(game_store)
+        db.session.commit()
+    return redirect(url_for('load.start_game'))

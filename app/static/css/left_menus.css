@@ -53,21 +53,60 @@
 	padding: 0.2%;
 }
 
-#infect-button:hover, #player-button:hover {
+#options-button {
+	border: 2px solid #fffff0;
+	background: #434343;
+	border-radius: 25%;
+	width: 2.4%;
+	cursor: pointer;
+	position: absolute;
+	top: 5%;
+	left: 6.5%;
+	display: block;
+	color: #fffff0;
+	font-size: 1.4vw;
+	padding: 0.2%;
+}
+
+#infect-button:hover, #player-button:hover, #options-button:hover {
 	border: 4px solid #fffff0;
 	padding: 0.1%;
 }
 
-#infect-button.active, #player-button.active {
+#infect-button.active, #player-button.active, #options-button:active {
 	background: #fffff0;
 	border: 4px solid #fffff0;
 	color: #434343;
 	padding: 0.1%;
 }
 
-#player-button.active {
+#options {
+	padding-top: 5%;
+}
+
+#options>li {
+	border-bottom: 1px solid #fffff0;
+}
+
+#options>li>a, #options>li>a:visited, #options>li>a:active {
+	display: block;
+	padding-left: 10%;
+	font-size: 0.9vw;
+	font-weight: 350;
+	text-decoration: none;
+	color: #fffff0;
+	padding-top: 5%;
+	padding-bottom: 5%;
+}
+
+#options>li a:hover {
 	background: #fffff0;
-	border: 4px solid #fffff0;
-	color: #434343;
-	padding: 0.1%;
+	color: #222222;
+}
+
+#options>li>p {
+	padding-left: 10%;
+	font-size: 0.9vw;
+	font-weight: 350;
+
 }

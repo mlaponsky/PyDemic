@@ -1,0 +1,14 @@
+<div class="menu menu-vertical menu-left" id="options-menu">
+    <h3>OPTIONS MENU</h3>
+    <ul id="options">
+        <li id="restart"><a href={{ url_for('load.restart_game') }}>
+            Restart Current Game
+        </a></li>
+        <li id="sign-out"><a href {{ url_for('login.logout_user') }}>
+            Sign Out of Google
+        </a></li>
+        <li id="return"><a href={{ url_for('load.setup') }}>
+            Return to Main Menu
+        </a></li>
+    </ul>
+</div>

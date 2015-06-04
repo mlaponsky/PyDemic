@@ -199,10 +199,11 @@ def next_turn():
 
     session['actions'] = actions
     session['game'] = pickle.dumps(game)
-    game_store = models.GameStore.query.filter_by(game_id=game.id).first()
-    game_store.game = game
-    game_store.actions = actions
-    db.session.commit()
+    if 'google_token' in session:
+        game_store = models.GameStore.query.filter_by(game_id=game.id).first()
+        game_store.game = game
+        game_store.actions = actions
+        db.session.commit()
 
     return jsonify( available=available,
                     pieces=pieces,

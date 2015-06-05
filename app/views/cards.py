@@ -104,7 +104,7 @@ def trash():
                'cards': str(card),
                'owner': owner.get_id(),
                'available': prev_avail}
-    if game.phase >= DRAW:
+    if game.phase < DRAW:
         actions[-1]['trash'] = action
     owner.discard(card, game.player_cards)
     available, dispatch, origin, player_id = game.set_available(player)

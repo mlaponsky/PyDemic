@@ -282,7 +282,7 @@ function infect() {
                     } else if (data.cure === 2) {
                         $('#logger').html('Drew '+CARDS[data.card].bold()+', but the disease is eradicated.');
                     } else {
-                        $('#logger').html('Drew '+CARDS[data.card].bold()+', the city is quarantined.');
+                        $('#logger').html('Drew '+CARDS[data.card].bold()+', but the city is quarantined.');
                     }
                     if (data.outbreaks.length !== 0) {
                         var outbreaks = [];

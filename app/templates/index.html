@@ -4,12 +4,10 @@
 		<meta charset="UTF-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<meta name="google-signin-client_id" content="YOUR_CLIENT_ID.apps.googleusercontent.com">
 		<title>PyDemic</title>
 		<meta name="description" content="Pandemic Web App" />
-		<meta name="keywords" content="sliding menu, pushing menu, navigation, responsive, menu, css, jquery" />
 		<meta name="author" content="Max Laponsky" />
-		<link rel="icon" href="../static/img/icon.png">
+		<link rel="icon" href="/static/img/favicon.ico">
 		<link rel="stylesheet" type="text/css"
 							   href="static/css/default.css" />
 		<link rel="stylesheet" type="text/css"
@@ -22,34 +20,6 @@
 							   href="static/css/team.css" />
 		<link rel="stylesheet" type="text/css"
 							   href="static/css/left_menus.css" />
-		<script charset="utf-8" src="static/js/modernizr.custom.js"></script>
-		<script charset="utf-8" src="static/js/jquery-1.11.2.js"></script>
-		<script charset="utf-8" src="static/js/jquery-ui.js"></script>
-		<script charset="utf-8" src="static/js/velocity.js"></script>
-		<script charset="utf-8" type="text/javascript">
-			$SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
-		</script>
-		<script charset="utf-8" src="/static/js/classie.js"></script>
-		<script charset="utf-8" src="/static/js/svg.min.js"></script>
-		<script charset="utf-8" src="/static/js/snap.svg-min.js"></script>
-		<script charset="utf-8" src="/static/js/snap-util.js"></script>
-		<script charset="utf-8" src="static/js/util.js"></script>
-		<script charset="utf-8" src="/static/js/city.js"></script>
-		<script charset="utf-8" src="static/js/cubes.js"></script>
-		<script charset="utf-8" src="static/js/cures.js"></script>
-		<script charset="utf-8" src="static/js/movement.js"></script>
-		<script charset="utf-8" src="static/js/stations.js"></script>
-		<script charset="utf-8" src="static/js/cards.js"></script>
-		<script charset="utf-8" src="static/js/airlift.js"></script>
-		<script charset="utf-8" src="static/js/forecast.js"></script>
-		<script charset="utf-8" src="static/js/gg.js"></script>
-		<script charset="utf-8" src="static/js/oqn.js"></script>
-		<script charset="utf-8" src="static/js/rp.js"></script>
-		<script charset="utf-8" src="static/js/cp_event.js"></script>
-		<script charset="utf-8" src="static/js/phase.js"></script>
-		<script charset="utf-8" src="static/js/undo.js"></script>
-		<script charset="utf-8" src="static/js/load.js"></script>
-		<script charset="utf-8" src="static/js/image_size.js"></script>
 	</head>
 
 	<body class="menu-push">
@@ -81,7 +51,7 @@
 				{% include 'actions_count.html' %}
 
 				<button id="team-button" title="Team">
-					<img src="../static/img/team.svg" style="pointer-events: none;">
+					<img src="static/img/team_icon.svg" style="pointer-events: none;">
 				</button>
 
 				<button id="infect-button" title="Infect Discard">☣</button>
@@ -119,11 +89,37 @@
 				<div id="stage-text" hidden>CARDS</div>
 				<img id="draw-0" hidden class="draw-card" src='static/img/infect_cards/inf-0.svg'/>
 				<img id="draw-1" hidden class="draw-card" src='static/img/infect_cards/inf-0.svg'/>
-				<img id="infect" hidden src='static/img/infect_cards/inf-0.svg'/>
+				<img id="infect" hidden src="static/img/infect_cards/inf-0.svg"/>
 			</div>
 
 		</div>
-		<!-- Classie - class helper functions by @desandro https://github.com/desandro/classie -->
-		<script charset="utf-8" src="static/js/menus.js"></script>
+		<script charset="utf-8" type="text/javascript">
+			$SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+		</script>
+		<script charset="utf-8" src="static/js/modernizr.custom.js"></script>
+		<script charset="utf-8" src="static/js/jquery-1.11.2.js"></script>
+		<script charset="utf-8" src="static/js/jquery-ui.js"></script>
+		<script charset="utf-8" src="static/js/velocity.js"></script>
+		<script charset="utf-8" src="/static/js/classie.js"></script>
+		<script charset="utf-8" src="/static/js/snap.svg-min.js"></script>
+		<script charset="utf-8" src="/static/js/snap-util.js"></script>
+		<script charset="utf-8" src="static/js/game/util.js"></script>
+		<script charset="utf-8" src="/static/js/game/city.js"></script>
+		<script charset="utf-8" src="static/js/game/cubes.js"></script>
+		<script charset="utf-8" src="static/js/game/cures.js"></script>
+		<script charset="utf-8" src="static/js/game/movement.js"></script>
+		<script charset="utf-8" src="static/js/game/stations.js"></script>
+		<script charset="utf-8" src="static/js/game/cards.js"></script>
+		<script charset="utf-8" src="static/js/game/events/airlift.js"></script>
+		<script charset="utf-8" src="static/js/game/events/forecast.js"></script>
+		<script charset="utf-8" src="static/js/game/events/gg.js"></script>
+		<script charset="utf-8" src="static/js/game/events/oqn.js"></script>
+		<script charset="utf-8" src="static/js/game/events/rp.js"></script>
+		<script charset="utf-8" src="static/js/game/cp_event.js"></script>
+		<script charset="utf-8" src="static/js/game/phase.js"></script>
+		<script charset="utf-8" src="static/js/game/undo.js"></script>
+		<script charset="utf-8" src="static/js/game/load.js"></script>
+		<script charset="utf-8" src="static/js/game/start.js"></script>
+		<script charset="utf-8" src="static/js/game/menus.js"></script>
 	</body>
 </html>

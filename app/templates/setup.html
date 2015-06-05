@@ -4,15 +4,6 @@
         <meta name="google-signin-client_id" content="371660565684-4jqrhi9bjdci61cvuba1ojm94hb1suao.apps.googleusercontent.com">
         <link rel="stylesheet" type="text/css"
                                href="../static/css/setup.css" />
-        <script src="https://apis.google.com/js/platform.js" async defer></script>
-        <script charset="utf-8" type="text/javascript">
-			$SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
-		</script>
-        <script src="../static/js/modernizr.custom.js"></script>
-        <script src="../static/js/jquery-1.11.2.js"></script>
-        <script src="../static/js/jquery-ui.js"></script>
-        <script src="../static/js/update_menus.js"></script>
-        <script src="../static/js/login.js"></script>
         <title>PyDemic</title>
     </head>
     <body>
@@ -61,7 +52,7 @@
                     {{ form.char2(class_="char-select") }}
                 </div>
                 <div id="char3-box" class="role-box">
-                    <img id="char3-info" class="role-info" src="../static/img/roles/none_info.svg">
+                    <img id="char3-info" class="role-info" src="/static/img/roles/none_info.svg">
                     {{ form.char3(class_="char-select") }}
                 </div>
             </div>
@@ -84,4 +75,12 @@
             {% endfor %}
         </form>
     </body>
+    <script charset="utf-8" type="text/javascript">
+        $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+    </script>
+    <script src="static/js/modernizr.custom.js"></script>
+    <script src="static/js/jquery-1.11.2.js"></script>
+    <script src="static/js/jquery-ui.js"></script>
+    <script src="static/js/game/login.js"></script>
+    <script src="static/js/game/update_menus.js"></script>
 </html>

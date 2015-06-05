@@ -1,3 +1,26 @@
+#team-button {
+	border: 2px solid #fffff0;
+	border-radius: 25%;
+	background: #434343;
+	padding: 0.45%;
+	width: 2.5%;
+	cursor: pointer;
+	position: absolute;
+	top: 4.5%;
+	right: 6.5%;
+	display: block;
+}
+
+#team-button:hover {
+	border: 4px solid #fffff0;
+	padding: 0.35%;
+}
+
+#team-button.active {
+	background: #fffff0;
+	border: 4px solid #fffff0;
+	padding: 0.35%;
+}
 
 #team-menu {
 	background: #222222;

@@ -1,9 +1,15 @@
 # -*- coding: utf-8 -*-
 
-from .constants import *
-from .deck import *
-from copy import copy
-from .board import *
+try:
+    from .constants import *
+    from .deck import *
+    from copy import copy
+    from .board import *
+except SystemError:
+    from constants import *
+    from deck import *
+    from copy import copy
+    from board import *
 
 class Player:
     def __init__(self, role):

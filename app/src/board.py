@@ -1,16 +1,23 @@
 # -*- coding: utf-8 -*-
 
-from .constants import *
+try:
+    from .constants import *
+except SystemError:
+    from constants import *
 
 class Board:
     def __init__(self):
         self.neighbors = []
         self.rows = []
-        self.distance = 0
+        self.distances = {}
+        self.next = {}
         for city in range(NUM_CITIES):
             self.neighbors.append([])
             self.rows.append([-1] * 4)
+            self.distances[city] = [float('inf')]*48
+            self.next[city] = [None]*48
         self.fill_neighbors()
+        self.set_distances()
 
     def add_neighbor(self, n1, n2):
         self.neighbors[n1].append(n2)
@@ -162,16 +169,6 @@ class Board:
     def get_board(self):
         return self.neighbors
 
-    def get_distance(self, start, end):
-        queue = []
-        queue.append(start)
-        if start == end:
-            return self.distance
-        else:
-            self.distance += 1
-            for neighbor in self.neighbors[start]:
-                self.getDistance(neighbor, end)
-
     def set_row(self, city, color):
         for row in range(3):
             if row not in self.rows[city]:
@@ -191,3 +188,23 @@ class Board:
     def delete_rows(self, city):
         for c in COLORS:
             self.rows[city][c] -= 1
+
+    def set_distances(self):
+        for city in range(NUM_CITIES):
+            self.distances[city][city] = 0
+            for n in self.get_neighbors(city):
+                self.distances[city][n] = 1
+                self.next[city][n] = n
+        for k in range(NUM_CITIES):
+            for i in range(NUM_CITIES):
+                for j in range(NUM_CITIES):
+                    if self.distances[i][k] + self.distances[k][j] < self.distances[i][j]:
+                        self.distances[i][j] = self.distances[i][k] + self.distances[k][j]
+                        self.next[i][j] = self.next[i][k]
+
+    def get_path(self, origin, target):
+        path = [origin]
+        while origin != target:
+            origin = self.next[origin][target]
+            path.append(origin)
+        return path

@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
 
-from .constants import *
-from random import shuffle
+try:
+    from .constants import *
+except SystemError:
+    from constants import *
+
+from random import shuffle    
 from copy import copy
 
 class Deck:

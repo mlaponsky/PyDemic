@@ -1,5 +1,6 @@
 from app import app, db, google, models
 from ..src.game import Game
+from ..src.graph import dataGame
 from ..src.constants import *
 from flask import render_template, g, flash, redirect, url_for, request, jsonify, \
                     session, Blueprint
@@ -35,16 +36,16 @@ def setup():
             return render_template("setup.html",
                                     title="Pandemic Setup",
                                     form=form)
-        game = Game(chosen, form.difficulty.data)
+        game = dataGame(chosen, form.difficulty.data)
         actions = []
         if 'google_token' in session:
             data = google.get('userinfo').data
             user = models.User.query.filter_by(email=data['email']).first()
-            prev_game = models.GameStore.query.filter_by(game_id=user.game_id).first()
+            prev_game = models.Store.query.filter_by(game_id=user.game_id).first()
             if prev_game != None and not prev_game.game.win and not prev_game.game.lose:
                 db.session.delete(prev_game)
             user.game_id = game.id
-            game_store = models.GameStore(game_id=game.id, game=game, actions=actions, original=game, author=user)
+            game_store = models.Store(game_id=game.id, game=game, actions=actions, original=game, author=user)
             db.session.add(game_store)
             db.session.commit()
         session['game'] = pickle.dumps(game)
@@ -61,7 +62,7 @@ def setup():
         try:
             if user.game_id != None:
                 game_id = user.game_id
-                game = models.GameStore.query.filter_by(game_id=game_id).first().game
+                game = models.Store.query.filter_by(game_id=game_id).first().game
                 print('Logged in with saved game finished', game.win, game.lose)
                 can_resume = not game.win and not game.lose
             else:
@@ -82,7 +83,7 @@ def setup():
 def resume():
     data = google.get('userinfo').data
     user = models.User.query.filter_by(email=data['email']).first()
-    game_store = models.GameStore.query.filter_by(game_id=user.game_id).first()
+    game_store = models.Store.query.filter_by(game_id=user.game_id).first()
     game = game_store.game
     actions = game_store.actions
     game.new = True;

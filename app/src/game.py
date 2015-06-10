@@ -1,9 +1,15 @@
 # -*- coding: utf-8 -*-
 
-from .player import *
-from .board import Board
-from .deck import Deck, PlayerCards, InfectCards
-from .constants import *
+try:
+    from .player import *
+    from .board import Board
+    from .deck import Deck, PlayerCards, InfectCards
+    from .constants import *
+except SystemError:
+    from player import *
+    from board import Board
+    from deck import Deck, PlayerCards, InfectCards
+    from constants import *
 from random import shuffle
 from uuid import uuid4
 

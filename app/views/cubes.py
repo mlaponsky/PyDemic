@@ -31,6 +31,9 @@ def remove_cubes():
         actions.append(action)
         session['actions'] = actions
         session['game'] = pickle.dumps(game)
+        for c in COLORS:
+            cities = [ city for city in range(NUM_CITIES) if game.cubes[city][c] != 0]
+            print(c, game.get_subset_center(cities, c))
         return jsonify( c=str(color),
                         num_cubes=action['removed'],
                         cure=game.cures[color],

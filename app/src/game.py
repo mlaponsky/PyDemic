@@ -157,10 +157,10 @@ class Game:
 
     ## The procedures for adding cubes.     '''     The below function is a generic cube adding
 ## function. It takes the color and number of cubes to be added, and the city to infect. This
-## function is implemented in all situations in which a city would be infected. A normal infect city
-## action will just call the function directly with numCubes = 1. The other cube-adding scenarios
-## are outbreak and epidemic. Notice the recursive coupling between infect and outbreak below, and
-## infect will call outbreak when it would go over the cube limit, and outbreaks will infect,
+## function is implemented in all situations in which a city would be infected. A normal infect event
+## will just call the function directly with numCubes = 1. The other cube-adding scenarios
+## are outbreak and epidemic. An infection will call the outbreak function
+## when it would go over the cube limit. Outbreaks will then call back to the infect functions,
 ## potentially chaining into other outbreaks. The outbreak function handles all conditions for
 ## outbreaks, and tracks outbreaks that have already occurred on a turn so as not to repeat. The
 ## function to reset the outbreak array is called after each epidemic AND each infect stage.     '''
